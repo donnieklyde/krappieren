@@ -2,8 +2,11 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import prisma from "@/lib/prisma"
 
-const handler = NextAuth({
+export const authOptions = {
+    adapter: PrismaAdapter(prisma),
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || (() => { throw new Error("Missing GOOGLE_CLIENT_ID") })(),
@@ -47,11 +50,16 @@ const handler = NextAuth({
         })
     ],
     callbacks: {
-        async session({ session, token }) {
-            // Pass user ID or other tokens if needed
+        async session({ session, user, token }) {
+            if (session?.user && user?.id) {
+                session.user.id = user.id; // Populate ID from DB user
+                session.user.languages = user.languages; // Populate languages from DB
+            }
             return session;
         },
     },
-})
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST }

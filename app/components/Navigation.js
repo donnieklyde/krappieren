@@ -45,6 +45,9 @@ function Navigation() {
                     // Initialize if needed, though usually auto-init works with config
                     await GoogleAuth.initialize();
 
+                    // Force sign-out locally to ensure the user sees the account picker every time
+                    await GoogleAuth.signOut();
+
                     const user = await GoogleAuth.signIn();
 
                     // Sign in with the custom credentials provider

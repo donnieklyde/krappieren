@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { INITIAL_POSTS, INITIAL_ACTIVITIES } from "../data/mockData";
 
 const PostsContext = createContext();
@@ -9,6 +9,23 @@ export function PostsProvider({ children }) {
     const [posts, setPosts] = useState(INITIAL_POSTS);
     const [followedUsers, setFollowedUsers] = useState(['zuck']); // Init with one for testing
     const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const res = await fetch('/api/posts');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        setPosts(data);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+            }
+        };
+        fetchPosts();
+    }, []);
 
     const checkMentions = (text) => {
         const mentions = text.match(/@(\w+)/g);

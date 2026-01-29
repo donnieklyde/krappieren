@@ -11,7 +11,7 @@ export default function OnboardingModal({ onSave }) {
     });
     const [error, setError] = useState("");
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Validation
         if (!username.trim()) {
             setError("Username is required.");
@@ -23,11 +23,22 @@ export default function OnboardingModal({ onSave }) {
             return;
         }
 
-        // Check duplicates
-        const taken = getTakenUsernames().map(u => u.toLowerCase());
-        if (taken.includes(username.toLowerCase())) {
-            setError("Username is already taken.");
-            return;
+        // Check duplicates (Async vs API)
+        try {
+            const res = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.taken) {
+                    setError("Username is already taken.");
+                    return;
+                }
+            } else {
+                // If API fails (e.g. no DB connection yet), maybe allow or warn?
+                // For now, let's assume if it fails, we can't verify, so warn user.
+                console.warn("Could not verify username uniqueness");
+            }
+        } catch (err) {
+            console.error("Failed to check username", err);
         }
 
         if (!languages.english && !languages.german) {

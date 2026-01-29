@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">krappieren</string>
+    <string name="title_activity_main">krappieren</string>
+    <string name="package_name">com.krappieren.app</string>
+    <string name="custom_url_scheme">com.krappieren.app</string>
+    <string name="server_client_id">460311552143-tgeaqub4hj0cgevc0nivg1t3ghs2hgj6.apps.googleusercontent.com</string>
+</resources>

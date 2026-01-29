@@ -1,0 +1,69 @@
+.dock {
+    position: fixed;
+    bottom: 0;
+    left: 76px;
+    /* Offset for sidebar */
+    width: calc(100% - 76px);
+    padding: 20px;
+    background: black;
+    border-top: 2px solid white;
+    z-index: 1000;
+}
+
+@media (max-width: 1024px) {
+    .dock {
+        left: 0 !important;
+        width: 100% !important;
+        bottom: 60px !important;
+        /* Sit above bottom navbar */
+        padding-bottom: 20px;
+    }
+}
+
+.preview {
+    background: #222;
+    padding: 10px 15px;
+    border-left: 3px solid white;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+}
+
+.form {
+    display: flex;
+    gap: 10px;
+}
+
+.input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #333;
+    color: white;
+    padding: 15px;
+    font-family: var(--font-mono, monospace);
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-transform: lowercase;
+}
+
+.input:focus {
+    outline: none;
+    border-color: white;
+    background: #111;
+}
+
+.button {
+    background: white;
+    color: black;
+    font-weight: 900;
+    padding: 0 20px;
+    font-size: 16px;
+    border: 1px solid white;
+}
+
+.button:hover {
+    background: black;
+    color: white;
+}

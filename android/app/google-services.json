@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "460311552143",
+    "project_id": "krappieren-44564",
+    "storage_bucket": "krappieren-44564.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460311552143:android:d90644d4c893db2e1850fa",
+        "android_client_info": {
+          "package_name": "com.krappieren.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460311552143-kk7stnij7ncvshg50qc31tg2dmb0ml19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.krappieren.app",
+            "certificate_hash": "d17c7c81ddecc4facf7f3ce9ae31b1297c4840ac"
+          }
+        },
+        {
+          "client_id": "460311552143-tgeaqub4hj0cgevc0nivg1t3ghs2hgj6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9PBhnSTlovogWI3eQeUMk8BhVl4BxL2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "460311552143-tgeaqub4hj0cgevc0nivg1t3ghs2hgj6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

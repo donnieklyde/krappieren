@@ -1,0 +1,185 @@
+.nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 80px;
+    /* Or wider if labels are shown, Threads is usually icon-only or with labels on hover? Usually just icons on sidebar */
+    width: 245px;
+    /* Desktop width usually includes labels or just icons. krappieren: Let's go with Sidebar with Labels for desktop premium feel, or just icons. Threads web is icons + labels sometimes? It's icons only usually on tablet, interactions on desktop. Let's stick to Icons + Labels for Desktop, Icons only for Mobile.*/
+    /* Actually threads.net is icons-only sidebar on large screens, centered? No, it's left-aligned but pinned. */
+    /* Let's go with a sidebar that is 72px wide (icons) or 240px (icons + label). I'll do Icons only to start, cleaner. */
+    width: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 0 20px 0;
+    background-color: var(--background);
+    z-index: 9999;
+    border-right: 1px solid var(--border-color);
+    /* Optional */
+}
+
+.logo {
+    margin-bottom: 40px;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    outline: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    outline: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.link:hover {
+    background-color: var(--hover-bg);
+    color: var(--foreground);
+    transform: scale(1.05);
+    transform: scale(1.05);
+    /* Micro-interaction */
+}
+
+.blueTint {
+    color: #4da6ff !important;
+    /* Bright blue */
+}
+
+.blueTint:hover {
+    background-color: rgba(77, 166, 255, 0.1);
+    color: #80bfff !important;
+}
+
+.logoutBtn {
+    margin-top: auto;
+    margin-bottom: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #ff4444 !important;
+}
+
+.active {
+    color: var(--foreground);
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.link:focus {
+    outline: none;
+}
+
+.mobileHeader {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .nav {
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        /* Ensure vertical center */
+        padding: 0 10px;
+        /* Reduced padding */
+        border-right: none;
+        border-top: 1px solid var(--border-color);
+        border-bottom: none;
+        background-color: rgba(16, 16, 16, 0.95);
+        /* Glassmorphism start */
+        backdrop-filter: blur(10px);
+    }
+
+    .logo {
+        display: block;
+        margin-bottom: 0;
+        margin-right: 5px;
+        width: 40px;
+        /* Smaller on mobile */
+        height: 40px;
+        padding-top: 7.6px;
+    }
+
+    .link {
+        margin-bottom: 0;
+        width: auto;
+        flex: 1;
+        height: 100%;
+        /* Full height for touch targets */
+    }
+
+    /* Container logic replaced by .logoutBtn class */
+    .logoutBtn {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .mobileHeader {
+        display: none;
+    }
+}
+
+.comeButton {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0px;
+    /* Desktop bottom */
+    padding: 15px 0;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+.debugButton {
+    position: fixed;
+    top: 140px;
+    right: 20px;
+    padding: 8px 16px;
+    background: #333;
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 1000;
+    border: none;
+    opacity: 0.7;
+}
+
+.debugButton:hover {
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .comeButton {
+        bottom: 60px;
+        /* Above the 60px navbar */
+    }
+}

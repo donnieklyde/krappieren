@@ -1,0 +1,83 @@
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --accordion-border: #ffffff;
+  --hover-bg: #222222;
+  --accent: #ff0055;
+  /* Sharp accent */
+  --text-secondary: #888888;
+  --border-color: #ffffff;
+  /* High contrast borders */
+  --font-mono: 'Bahnschrift', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  /* Removes blue tap box on mobile */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow: hidden;
+  /* No scrolling allowed */
+  height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: 'Bahnschrift', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Utilities */
+.container {
+  max-width: 100%;
+  margin: 0;
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  position: relative;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  padding-left: calc(76px + 20px);
+  overflow-y: auto;
+  /* Enable scrolling for pages like Activity */
+}
+
+@media (max-width: 1024px) {
+  html body .mainContent {
+    padding-left: 20px !important;
+    padding-top: 20px;
+    padding-bottom: 80px;
+  }
+}

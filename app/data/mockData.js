@@ -1,5 +1,15 @@
 export const INITIAL_POSTS = [
     {
+        id: 20260129,
+        username: "RSHBKR",
+        content: "foreshadowings are canceled",
+        time: "Just now",
+        likes: 0,
+        replies: 0,
+        avatarUrl: "",
+        comments: []
+    },
+    {
         id: 999999, // High ID to avoid collision or could be 0
         username: "donnieklyde",
         content: "BE NASTY",

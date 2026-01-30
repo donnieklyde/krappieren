@@ -21,6 +21,7 @@
     margin-bottom: 8px;
     /* Increased margin */
     width: 100%;
+    text-transform: uppercase;
 }
 
 .input {

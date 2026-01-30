@@ -9,11 +9,12 @@ export default function BossesPage() {
     const { followedUsers, toggleFollow, posts, activities } = usePosts();
     const router = useRouter();
 
-    // Derive all unique users from current posts (authors + commenters) and activities
     const [allUsers, setAllUsers] = useState([]);
     const [loading, setLoading] = useState(false); // Initially false, only load on search or if we want initial list
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [trigger, setTrigger] = useState(0); // For manual refresh
+    const [dbId, setDbId] = useState("");
 
     // Debounce Search
     useEffect(() => {
@@ -24,10 +25,16 @@ export default function BossesPage() {
                     ? `/api/users?query=${encodeURIComponent(searchQuery)}`
                     : '/api/users'; // Empty query returns all/some users
 
+                console.log(`[Frontend] Fetching: ${url}`);
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
-                    setAllUsers(data.map(u => u.username).filter(Boolean));
+                    console.log("[Frontend] Received:", data);
+                    // Handle both array (legacy) and object response
+                    const userList = Array.isArray(data) ? data : data.users;
+                    if (data.dbId) setDbId(data.dbId);
+
+                    setAllUsers(userList.map(u => u.username).filter(Boolean));
                 } else {
                     setError("API Error");
                 }
@@ -44,7 +51,7 @@ export default function BossesPage() {
         }, 300); // 300ms debounce
 
         return () => clearTimeout(debounceTimer);
-    }, [searchQuery]);
+    }, [searchQuery, trigger]);
 
     // Long Press Logic State
     const timerRef = useRef(null);
@@ -124,6 +131,12 @@ export default function BossesPage() {
                 <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4 }}>
                     {loading ? "Loading..." : error ? "Error!" : `${allUsers.length} Bosses Found`}
                 </span>
+                <button
+                    onClick={() => setTrigger(t => t + 1)}
+                    style={{ marginLeft: 10, background: 'transparent', border: '1px solid #333', color: 'white', borderRadius: 4, cursor: 'pointer', padding: '2px 6px' }}
+                >
+                    ↻
+                </button>
             </p>
 
             {error && <p style={{ color: 'red' }}>Failed to load bosses. Please refresh.</p>}
@@ -167,6 +180,10 @@ export default function BossesPage() {
                     );
                 })}
             </ul>
+
+            <div style={{ marginTop: 20, textAlign: 'center', opacity: 0.3, fontSize: 10, fontFamily: 'monospace' }}>
+                DB: {dbId || "???"}
+            </div>
         </div>
     );
 }

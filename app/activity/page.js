@@ -89,7 +89,8 @@ export default function ActivityPage() {
                                                 fontWeight: 'bold',
                                                 color: isEnslaved ? 'gold' : 'white',
                                                 cursor: 'pointer',
-                                                textDecoration: 'none'
+                                                textDecoration: 'none',
+                                                textTransform: 'uppercase'
                                             }}
                                         >
                                             @{item.user}
@@ -108,7 +109,8 @@ export default function ActivityPage() {
                                                 fontWeight: 'bold',
                                                 color: isEnslaved ? 'gold' : 'white',
                                                 cursor: 'pointer',
-                                                textDecoration: 'none'
+                                                textDecoration: 'none',
+                                                textTransform: 'uppercase'
                                             }}
                                         >
                                             @{item.user}
@@ -128,7 +130,8 @@ export default function ActivityPage() {
                                                 // color: isEnslaved ? 'gold' : 'gold', 
                                                 color: isEnslaved ? 'gold' : 'white',
                                                 cursor: 'pointer',
-                                                textDecoration: 'none'
+                                                textDecoration: 'none',
+                                                textTransform: 'uppercase'
                                             }}
                                         >
                                             @{item.user}

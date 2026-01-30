@@ -16,7 +16,11 @@ export default function CreatePost() {
     const handleInput = (e) => {
         const value = e.target.value;
         // Prohibited characters: ;,:._-'#*+~`´?=()/&%$§"!²³{[]}\
-        const sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+        let sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+
+        if (sanitizedValue.length > 100) {
+            sanitizedValue = sanitizedValue.substring(0, 100);
+        }
 
         setContent(sanitizedValue);
         e.target.style.height = 'auto';
@@ -76,7 +80,8 @@ export default function CreatePost() {
                 </div>
                 <textarea
                     className={styles.input}
-                    placeholder="Start a thread..."
+                    placeholder="Start a thread... (max 100 chars)"
+                    maxLength={100}
                     value={content}
                     onChange={handleInput}
                     onKeyDown={(e) => {

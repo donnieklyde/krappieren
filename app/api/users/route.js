@@ -49,6 +49,7 @@ export async function GET(req) {
                 username: true,
                 name: true,
                 image: true,
+                bio: true,
                 _count: {
                     select: { followers: true }
                 }
@@ -62,6 +63,7 @@ export async function GET(req) {
             username: u.username,
             name: u.name,
             avatar: u.image,
+            bio: u.bio,
             slaveCount: u._count.followers
         }));
 

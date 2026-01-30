@@ -133,6 +133,7 @@ export default function Profile() {
                             <label style={{ display: 'block', marginBottom: 5, fontSize: 13, color: '#888' }}>Bio</label>
                             <textarea
                                 value={editBio}
+                                maxLength={25}
                                 onChange={(e) => setEditBio(e.target.value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, ""))}
                                 style={{ width: '100%', background: 'black', border: '1px solid #333', color: 'white', padding: 10, borderRadius: 5, resize: 'none', height: 80 }}
                             />

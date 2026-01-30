@@ -36,7 +36,7 @@ export async function GET() {
         });
 
         // Transform to match frontend format if needed
-        const formattedPosts = posts.map(p => ({
+        const formattedPosts = finalPosts.map(p => ({
             id: p.id,
             content: p.content,
             username: p.author.username || p.author.name || 'Anonymous',

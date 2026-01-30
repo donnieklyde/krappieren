@@ -153,7 +153,8 @@ export default function SearchPage() {
                     const user = userObj.username;
                     const isBoss = followedUsers.includes(user);
                     const slaveCount = userObj.slaveCount || 0;
-                    const status = slaveCount === 0 ? "krappiert" : `${slaveCount} slaves`;
+                    // const status = slaveCount === 0 ? "krappiert" : `${slaveCount} slaves`;
+                    const bio = userObj.bio ? userObj.bio.substring(0, 25) : (slaveCount === 0 ? "krappiert" : `${slaveCount} slaves`);
                     return (
                         <li key={user} style={{
                             display: 'flex',
@@ -184,7 +185,7 @@ export default function SearchPage() {
                             >
                                 @{user}
                                 <span style={{ marginLeft: 10, fontSize: 12, color: '#888', fontWeight: 'normal' }}>
-                                    [{status}]
+                                    {bio}
                                 </span>
                                 {isBoss && <span style={{ fontSize: 10, border: '1px solid gold', padding: '2px 4px', borderRadius: 4, marginLeft: 10 }}>BOSS</span>}
                             </span>

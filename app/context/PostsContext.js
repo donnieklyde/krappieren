@@ -58,6 +58,15 @@ export function PostsProvider({ children }) {
         fetchPosts();
         fetchFollowing();
         fetchActivity();
+
+        // Poll for updates every 5 seconds
+        const interval = setInterval(() => {
+            fetchPosts();
+            fetchActivity();
+            fetchFollowing();
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const checkMentions = (text) => {

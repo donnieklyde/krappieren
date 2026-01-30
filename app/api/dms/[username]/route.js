@@ -14,7 +14,6 @@ export async function GET(req, { params }) {
     try {
         const userId = session.user.id;
         const { username } = await params;
-        const { username } = await params;
         const targetUsername = decodeURIComponent(username);
 
         // Find target user ID

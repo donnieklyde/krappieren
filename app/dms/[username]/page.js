@@ -85,8 +85,9 @@ export default function ChatPage({ params }) {
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            height: 'calc(100vh - 80px)',
-            maxHeight: 'calc(100vh - 80px)',
+            height: '100%',
+            // maxHeight: 'calc(100vh - 80px)', // removed fixed height restriction to let flex grow
+            flex: 1,
             overflow: 'hidden',
             marginTop: 20,
             border: '1px solid #333',
@@ -108,7 +109,7 @@ export default function ChatPage({ params }) {
 
             {/* Chat Area */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px', paddingBottom: 100, display: 'flex', flexDirection: 'column', gap: 15 }}>
-                {messages.length > 0 ? messages.map(msg => {
+                {messages && messages.length > 0 ? messages.map(msg => {
                     const isMe = msg.sender === 'currentUser';
                     return (
                         <div

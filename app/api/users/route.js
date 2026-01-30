@@ -8,10 +8,15 @@ export async function GET(req) {
     try {
         const { searchParams } = new URL(req.url);
         let query = searchParams.get('query');
+        console.log(`[API] Search Query Raw: "${query}"`);
 
-        if (query && query.startsWith('@')) {
-            query = query.substring(1);
+        if (query) {
+            query = query.trim(); // Trim whitespace first!
+            if (query.startsWith('@')) {
+                query = query.substring(1);
+            }
         }
+        console.log(`[API] Search Query Processed: "${query}"`);
 
         const where = query ? {
             OR: [

@@ -7,6 +7,8 @@ export async function GET() {
     try {
         const session = await getServerSession(authOptions);
         const currentUserId = session?.user?.id;
+        const { searchParams } = new URL(req.url);
+        const isSticky = searchParams.get('sticky') === 'true';
 
         let where = {};
         if (session?.user?.languages) {

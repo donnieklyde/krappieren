@@ -10,9 +10,10 @@ export function PostsProvider({ children }) {
     const [activities, setActivities] = useState([]);
 
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchPosts = async (isSticky = false) => {
             try {
-                const res = await fetch('/api/posts');
+                const url = isSticky ? '/api/posts?sticky=true' : '/api/posts';
+                const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
                     if (data && data.length > 0) {
@@ -55,13 +56,13 @@ export function PostsProvider({ children }) {
             }
         };
 
-        fetchPosts();
+        fetchPosts(true); // Initial load: Sticky
         fetchFollowing();
         fetchActivity();
 
-        // Poll for updates every 5 seconds
+        // Poll for updates every 5 seconds (No Sticky)
         const interval = setInterval(() => {
-            fetchPosts();
+            fetchPosts(false);
             fetchActivity();
             fetchFollowing();
         }, 5000);

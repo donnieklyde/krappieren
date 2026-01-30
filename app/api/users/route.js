@@ -45,7 +45,7 @@ export async function GET(req) {
             where,
             select: { username: true, name: true, image: true },
             orderBy: { username: 'asc' },
-            take: 100
+            take: 300
         });
 
         // Ensure username exists, fallback to name or default

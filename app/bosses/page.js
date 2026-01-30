@@ -24,11 +24,10 @@ export default function BossesPage() {
                     ? `/api/users?query=${encodeURIComponent(searchQuery)}`
                     : '/api/users'; // Empty query returns all/some users
 
-                console.log(`[Frontend] Fetching: ${url}`);
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
-                    console.log("[Frontend] Received:", data);
+
                     // Handle both array (legacy) and object response
                     const userList = Array.isArray(data) ? data : data.users;
                     // if (data.dbId) setDbId(data.dbId); // Removed for production

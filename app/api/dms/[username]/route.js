@@ -14,6 +14,7 @@ export async function GET(req, { params }) {
     try {
         const userId = session.user.id;
         const targetUsername = decodeURIComponent(params.username);
+        console.log(`[API] Fetching DMs for user ${userId} with target ${targetUsername}`);
 
         // Find target user ID
         const targetUser = await prisma.user.findUnique({
@@ -21,8 +22,11 @@ export async function GET(req, { params }) {
         });
 
         if (!targetUser) {
+            console.log(`[API] Target user ${targetUsername} not found`);
             return NextResponse.json([], { status: 404 });
         }
+
+        console.log(`[API] Found target user ${targetUser.id}. Querying messages...`);
 
         const messages = await prisma.message.findMany({
             where: {
@@ -34,6 +38,8 @@ export async function GET(req, { params }) {
             orderBy: { createdAt: 'asc' },
             take: 100
         });
+
+        console.log(`[API] Found ${messages.length} messages`);
 
         // Mark as read
         // We really should mark messages where sender is target and receiver is me as read

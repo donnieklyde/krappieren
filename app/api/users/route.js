@@ -1,21 +1,31 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export const dynamic = 'force-dynamic'; // Ensure this endpoint is never cached statically
 export const revalidate = 0;
 
 export async function GET(req) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { searchParams } = new URL(req.url);
         let query = searchParams.get('query');
-        console.log(`[API] Search Query Raw: "${query}"`);
 
         if (query) {
-            query = query.trim(); // Trim whitespace first!
+            if (query.length > 50) {
+                query = query.substring(0, 50); // Truncate overly long queries
+            }
+            query = query.trim();
             if (query.startsWith('@')) {
                 query = query.substring(1);
             }
         }
+
         console.log(`[API] Search Query Processed: "${query}"`);
 
         const where = query ? {

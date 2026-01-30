@@ -10,11 +10,10 @@ export default function BossesPage() {
     const router = useRouter();
 
     const [allUsers, setAllUsers] = useState([]);
-    const [loading, setLoading] = useState(false); // Initially false, only load on search or if we want initial list
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [trigger, setTrigger] = useState(0); // For manual refresh
-    const [dbId, setDbId] = useState("");
+    const [trigger, setTrigger] = useState(0);
 
     // Debounce Search
     useEffect(() => {
@@ -32,7 +31,7 @@ export default function BossesPage() {
                     console.log("[Frontend] Received:", data);
                     // Handle both array (legacy) and object response
                     const userList = Array.isArray(data) ? data : data.users;
-                    if (data.dbId) setDbId(data.dbId);
+                    // if (data.dbId) setDbId(data.dbId); // Removed for production
 
                     setAllUsers(userList.map(u => u.username).filter(Boolean));
                 } else {
@@ -128,19 +127,20 @@ export default function BossesPage() {
 
             <p style={{ marginBottom: 20, opacity: 0.7 }}>
                 Hold to Serve/Quit. Tap to View Profile.
-                <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4 }}>
-                    {loading ? "Loading..." : error ? "Error!" : `${allUsers.length} Bosses Found`}
+                <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4, opacity: 0.8 }}>
+                    {loading ? "Searching..." : error ? "Connection Error" : `${allUsers.length} Bosses found`}
                 </span>
                 <button
                     onClick={() => setTrigger(t => t + 1)}
-                    style={{ marginLeft: 10, background: 'transparent', border: '1px solid #333', color: 'white', borderRadius: 4, cursor: 'pointer', padding: '2px 6px' }}
+                    style={{ marginLeft: 10, background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 16, padding: 0 }}
+                    title="Refresh List"
                 >
                     ↻
                 </button>
             </p>
 
-            {error && <p style={{ color: 'red' }}>Failed to load bosses. Please refresh.</p>}
-            {loading && <p style={{ color: '#666' }}>Searching database...</p>}
+            {error && <p style={{ color: '#ff4444', textAlign: 'center', marginBottom: 20 }}>Unable to load bosses. Please check your connection.</p>}
+            {loading && <p style={{ color: '#666', textAlign: 'center', marginBottom: 20 }}>Scanning frequency...</p>}
 
             <ul style={{ listStyle: 'none' }}>
                 {allUsers.map(user => {
@@ -181,8 +181,8 @@ export default function BossesPage() {
                 })}
             </ul>
 
-            <div style={{ marginTop: 20, textAlign: 'center', opacity: 0.3, fontSize: 10, fontFamily: 'monospace' }}>
-                DB: {dbId || "???"}
+            <div style={{ marginTop: 40, textAlign: 'center', opacity: 0.2, fontSize: 10, fontFamily: 'monospace' }}>
+                TREEDZ NETWORK
             </div>
         </div>
     );

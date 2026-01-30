@@ -25,6 +25,18 @@ export function PostsProvider({ children }) {
             }
         };
 
+        const fetchFollowing = async () => {
+            try {
+                const res = await fetch('/api/user/following');
+                if (res.ok) {
+                    const data = await res.json();
+                    setFollowedUsers(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch following:", error);
+            }
+        };
+
         const fetchActivity = async () => {
             try {
                 const res = await fetch('/api/user/activity');

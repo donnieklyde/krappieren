@@ -11,6 +11,8 @@ export default function BossesPage() {
 
     // Derive all unique users from current posts (authors + commenters) and activities
     const [allUsers, setAllUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -19,9 +21,14 @@ export default function BossesPage() {
                 if (res.ok) {
                     const data = await res.json();
                     setAllUsers(data.map(u => u.username).filter(u => u !== "currentUser" && u));
+                } else {
+                    setError("API Error");
                 }
             } catch (error) {
                 console.error("Failed to fetch users", error);
+                setError("Network Error");
+            } finally {
+                setLoading(false);
             }
         };
         fetchUsers();
@@ -83,9 +90,12 @@ export default function BossesPage() {
             <p style={{ marginBottom: 20, opacity: 0.7 }}>
                 Hold to Serve/Quit. Tap to View Profile.
                 <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4 }}>
-                    {allUsers.length} Bosses Found
+                    {loading ? "Loading..." : error ? "Error!" : `${allUsers.length} Bosses Found`}
                 </span>
             </p>
+
+            {error && <p style={{ color: 'red' }}>Failed to load bosses. Please refresh.</p>}
+            {loading && <p style={{ color: '#666' }}>Searching database...</p>}
 
             <ul style={{ listStyle: 'none' }}>
                 {allUsers.map(user => {

@@ -1,6 +1,9 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic'; // Ensure this endpoint is never cached statically
+export const revalidate = 0;
+
 export async function GET() {
     try {
         const users = await prisma.user.findMany({

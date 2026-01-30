@@ -7,6 +7,9 @@ import prisma from "@/lib/prisma"
 
 export const authOptions = {
     adapter: PrismaAdapter(prisma),
+    session: {
+        strategy: "jwt",
+    },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || (() => { throw new Error("Missing GOOGLE_CLIENT_ID") })(),
@@ -34,15 +37,32 @@ export const authOptions = {
                 image: { label: "Image", type: "text" }
             },
             async authorize(credentials, req) {
-                // Ideally verify validation of idToken here using google-auth-library
-                // For MVP, we trust the client-side Google Auth plugin response
                 if (credentials.email) {
                     const email = credentials.email.toLowerCase();
+
+                    // Upsert user in DB (Create if not exists, Update if exists)
+                    // We need this because CredentialsProvider doesn't use the Adapter automatically
+                    const user = await prisma.user.upsert({
+                        where: { email: email },
+                        update: {
+                            name: credentials.name,
+                            image: credentials.image
+                        },
+                        create: {
+                            email: email,
+                            name: credentials.name,
+                            image: credentials.image,
+                            username: credentials.name?.replace(/\s+/g, '').toLowerCase(),
+                        }
+                    });
+
                     return {
-                        id: email, // Use email as ID for simple mapping
-                        name: credentials.name,
-                        email: email,
-                        image: credentials.image
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        isOnboarded: user.isOnboarded,
+                        languages: user.languages
                     };
                 }
                 return null;
@@ -50,11 +70,28 @@ export const authOptions = {
         })
     ],
     callbacks: {
-        async session({ session, user, token }) {
-            if (session?.user && user?.id) {
-                session.user.id = user.id; // Populate ID from DB user
-                session.user.languages = user.languages; // Populate languages from DB
-                session.user.isOnboarded = user.isOnboarded;
+        async jwt({ token, user, trigger, session }) {
+            // Initial sign in
+            if (user) {
+                token.id = user.id;
+                token.isOnboarded = user.isOnboarded;
+                token.languages = user.languages;
+                token.username = user.username;
+            }
+
+            // Handle updates (e.g. after onboarding)
+            if (trigger === "update" && session) {
+                return { ...token, ...session.user };
+            }
+
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                session.user.id = token.id;
+                session.user.isOnboarded = token.isOnboarded;
+                session.user.languages = token.languages;
+                session.user.username = token.username;
             }
             return session;
         },

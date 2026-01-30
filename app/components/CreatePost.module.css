@@ -18,7 +18,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    /* Increased margin */
+    width: 100%;
 }
 
 .input {

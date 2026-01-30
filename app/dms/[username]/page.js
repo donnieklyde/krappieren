@@ -18,8 +18,10 @@ export default function ChatPage({ params }) {
     useEffect(() => {
         const fetchHistory = async () => {
             const res = await fetch(`/api/dms/${decodedUsername}`);
+            console.log("ChatPage fetch status:", res.status);
             if (res.ok) {
                 const data = await res.json();
+                console.log("ChatPage fetched messages:", data);
                 setLocalMessages(data);
             }
         };

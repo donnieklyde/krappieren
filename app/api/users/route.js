@@ -48,17 +48,15 @@ export async function GET(req) {
             take: 100
         });
 
-    });
+        // Ensure username exists, fallback to name or default
+        const safeUsers = users.map(u => ({
+            username: u.username || u.name?.replace(/\s+/g, '').toLowerCase() || `user${Math.floor(Math.random() * 1000)}`,
+            avatar: u.image
+        }));
 
-    // Ensure username exists, fallback to name or default
-    const safeUsers = users.map(u => ({
-        username: u.username || u.name?.replace(/\s+/g, '').toLowerCase() || `user${Math.floor(Math.random() * 1000)}`,
-        avatar: u.image
-    }));
-
-    return NextResponse.json({ users: safeUsers });
-} catch (error) {
-    console.error("Fetch Users Error:", error);
-    return NextResponse.json([], { status: 500 });
-}
+        return NextResponse.json({ users: safeUsers });
+    } catch (error) {
+        console.error("Fetch Users Error:", error);
+        return NextResponse.json([], { status: 500 });
+    }
 }

@@ -63,7 +63,17 @@ export default function CreatePost() {
         <div className={styles.container}>
 
             <div className={styles.inputContainer}>
-                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>{user.username}</div>
+                <div className={styles.header}>
+                    <div style={{ fontWeight: 600, fontSize: 15 }}>{user.username}</div>
+                    {content && (
+                        <button
+                            className={`${styles.postButton} ${isPostable ? styles.active : ""}`}
+                            onClick={handlePost}
+                        >
+                            Post
+                        </button>
+                    )}
+                </div>
                 <textarea
                     className={styles.input}
                     placeholder="Start a thread..."
@@ -78,19 +88,6 @@ export default function CreatePost() {
                                 const end = e.target.selectionEnd;
                                 const newContent = content.substring(0, start) + "\n" + content.substring(end);
                                 setContent(newContent);
-                                // Need to fix cursor position after render (state update is async-ish in React logic but we need to set it)
-                                // Actually, simpler way is to just let default happen if we didn't prevent default? 
-                                // WAIT: Default Enter is Newline. 
-                                // User asked: "functionality of CTRL+ENTER for newline".
-                                // This implies Enter usually does NOT do newline (it submits).
-                                // So:
-                                // Enter -> Submit (preventDefault)
-                                // Ctrl+Enter -> Newline (allow default? or insert manually?)
-                                // If I allow default for Ctrl+Enter, it depends on binding.
-                                // Actually standard Textarea: Enter = Newline.
-                                // If I block Enter to Submit, then I need to handle Ctrl+Enter to insert Newline manually.
-
-                                // CORRECT LOGIC:
                             } else {
                                 // Enter only: Submit
                                 e.preventDefault();
@@ -135,14 +132,6 @@ export default function CreatePost() {
                     <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
                         {/* Paperclip icon or similar could go here */}
                     </div>
-                    {content && (
-                        <button
-                            className={`${styles.postButton} ${isPostable ? styles.active : ""}`}
-                            onClick={handlePost}
-                        >
-                            Post
-                        </button>
-                    )}
                 </div>
             </div>
         </div>

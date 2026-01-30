@@ -35,6 +35,27 @@ export async function GET() {
             take: 50
         });
 
+        // Sticky Logic: Latest post from 'donnieklyde' always first
+        const stickyIndex = posts.findIndex(p => p.author.username === 'donnieklyde');
+        let stickyPost = null;
+        let otherPosts = [...posts];
+
+        if (stickyIndex !== -1) {
+            stickyPost = otherPosts.splice(stickyIndex, 1)[0];
+        } else {
+            const sticky = await prisma.post.findFirst({
+                where: { author: { username: 'donnieklyde' }, ...where },
+                include: {
+                    author: { select: { name: true, username: true, image: true } },
+                    comments: { include: { author: { select: { username: true } } } },
+                    likes: true
+                },
+                orderBy: { createdAt: 'desc' }
+            });
+            if (sticky) stickyPost = sticky;
+        }
+        const finalPosts = stickyPost ? [stickyPost, ...otherPosts] : otherPosts;
+
         // Transform to match frontend format if needed
         const formattedPosts = finalPosts.map(p => ({
             id: p.id,

@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "@/lib/prisma"
 
 export const authOptions = {
+    debug: true, // Enable debugging to see exact error in Vercel logs
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
@@ -14,6 +15,7 @@ export const authOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || (() => { throw new Error("Missing GOOGLE_CLIENT_ID") })(),
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || (() => { throw new Error("Missing GOOGLE_CLIENT_SECRET") })(),
+            allowDangerousEmailAccountLinking: true, // Allow signing in with Google even if user exists
         }),
         CredentialsProvider({
             name: "Mock Login",

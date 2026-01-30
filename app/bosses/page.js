@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getTakenUsernames } from "../data/mockData";
+
 
 export default function BossesPage() {
     const { followedUsers, toggleFollow, posts, activities } = usePosts();
@@ -11,13 +11,20 @@ export default function BossesPage() {
 
     // Derive all unique users from current posts (authors + commenters) and activities
     const [allUsers, setAllUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false); // Initially false, only load on search or if we want initial list
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
+    // Debounce Search
     useEffect(() => {
         const fetchUsers = async () => {
+            setLoading(true);
             try {
-                const res = await fetch('/api/users');
+                const url = searchQuery.trim()
+                    ? `/api/users?query=${encodeURIComponent(searchQuery)}`
+                    : '/api/users'; // Empty query returns all/some users
+
+                const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
                     setAllUsers(data.map(u => u.username).filter(u => u !== "currentUser" && u));
@@ -31,8 +38,13 @@ export default function BossesPage() {
                 setLoading(false);
             }
         };
-        fetchUsers();
-    }, []);
+
+        const debounceTimer = setTimeout(() => {
+            fetchUsers();
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(debounceTimer);
+    }, [searchQuery]);
 
     // Long Press Logic State
     const timerRef = useRef(null);
@@ -85,6 +97,26 @@ export default function BossesPage() {
             <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
                 <Link href="/" style={{ fontSize: 24 }}>←</Link>
                 <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace' }}>FIND A BOSS</h1>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+                <input
+                    type="text"
+                    placeholder="Search for a boss..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '12px',
+                        background: '#1a1a1a',
+                        border: '1px solid #333',
+                        borderRadius: 8,
+                        color: 'white',
+                        fontSize: 16,
+                        outline: 'none',
+                        fontFamily: 'inherit'
+                    }}
+                />
             </div>
 
             <p style={{ marginBottom: 20, opacity: 0.7 }}>

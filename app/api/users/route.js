@@ -4,12 +4,23 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic'; // Ensure this endpoint is never cached statically
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(req) {
     try {
+        const { searchParams } = new URL(req.url);
+        const query = searchParams.get('query');
+
+        const where = query ? {
+            OR: [
+                { username: { contains: query, mode: 'insensitive' } },
+                { name: { contains: query, mode: 'insensitive' } }
+            ]
+        } : {};
+
         const users = await prisma.user.findMany({
+            where,
             select: { username: true, name: true, image: true },
             orderBy: { username: 'asc' },
-            take: 100 // Limit for now
+            take: 100
         });
 
         // Ensure username exists, fallback to name or default

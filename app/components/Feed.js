@@ -18,12 +18,12 @@ export default function Feed() {
     const filteredPosts = posts.filter(post => {
         if (!session || !user || !user.languages) return true; // Show all to guests or incomplete profiles
 
-        // Assuming post has a 'language' property. 
-        // If posts don't have language, we might need to mock it or assume 'english'
-        // For now, let's filter IF the post has a language property.
+        // If posts don't have language, we assume they are global/default
         if (!post.language) return true;
 
         // user.languages is { english: true, german: false }
+        // If user hasn't selected any languages yet (e.g. during onboarding), show all?
+        // Or if the language key matches
         return user.languages[post.language];
     });
 

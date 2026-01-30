@@ -38,25 +38,31 @@ export async function GET() {
         });
 
         // Sticky Logic: Latest post from 'donnieklyde' always first
-        const stickyIndex = posts.findIndex(p => p.author.username === 'donnieklyde');
-        let stickyPost = null;
-        let otherPosts = [...posts];
+        // Only apply if requested (e.g. initial load)
+        let finalPosts = [...posts];
 
-        if (stickyIndex !== -1) {
-            stickyPost = otherPosts.splice(stickyIndex, 1)[0];
-        } else {
-            const sticky = await prisma.post.findFirst({
-                where: { author: { username: 'donnieklyde' }, ...where },
-                include: {
-                    author: { select: { name: true, username: true, image: true } },
-                    comments: { include: { author: { select: { username: true } } } },
-                    likes: true
-                },
-                orderBy: { createdAt: 'desc' }
-            });
-            if (sticky) stickyPost = sticky;
+        if (isSticky) {
+            const stickyIndex = finalPosts.findIndex(p => p.author.username === 'donnieklyde');
+            let stickyPost = null;
+
+            if (stickyIndex !== -1) {
+                stickyPost = finalPosts.splice(stickyIndex, 1)[0];
+            } else {
+                const sticky = await prisma.post.findFirst({
+                    where: { author: { username: 'donnieklyde' }, ...where },
+                    include: {
+                        author: { select: { name: true, username: true, image: true } },
+                        comments: { include: { author: { select: { username: true } } } },
+                        likes: true
+                    },
+                    orderBy: { createdAt: 'desc' }
+                });
+                if (sticky) stickyPost = sticky;
+            }
+            if (stickyPost) {
+                finalPosts.unshift(stickyPost);
+            }
         }
-        const finalPosts = stickyPost ? [stickyPost, ...otherPosts] : otherPosts;
 
         // Transform to match frontend format if needed
         const formattedPosts = finalPosts.map(p => ({

@@ -82,6 +82,9 @@ export default function BossesPage() {
 
             <p style={{ marginBottom: 20, opacity: 0.7 }}>
                 Hold to Serve/Quit. Tap to View Profile.
+                <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4 }}>
+                    {allUsers.length} Bosses Found
+                </span>
             </p>
 
             <ul style={{ listStyle: 'none' }}>

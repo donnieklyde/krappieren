@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";

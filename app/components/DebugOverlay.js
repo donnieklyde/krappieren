@@ -8,7 +8,10 @@ export default function DebugOverlay() {
     const { posts } = usePosts();
     const { user, isInitialized } = useUser();
 
-    if (process.env.NODE_ENV === 'production' && !session) return null; // Hide for guests in prod if desired, but for now show it
+    const { user, isInitialized } = useUser();
+
+    // Show always for debugging
+    // if (process.env.NODE_ENV === 'production' && !session) return null;
 
     return (
         <div style={{

@@ -30,8 +30,7 @@ export default function SearchPage() {
 
                     // Handle both array (legacy) and object response
                     const userList = Array.isArray(data) ? data : data.users;
-
-                    setAllUsers(userList.map(u => u.username).filter(Boolean));
+                    setAllUsers(userList);
                 } else {
                     setError("API Error");
                 }
@@ -52,8 +51,8 @@ export default function SearchPage() {
 
     // Sorting: Bosses (followed users) first, then alphabetical (from API)
     const sortedUsers = [...allUsers].sort((a, b) => {
-        const isBossA = followedUsers.includes(a);
-        const isBossB = followedUsers.includes(b);
+        const isBossA = followedUsers.includes(a.username);
+        const isBossB = followedUsers.includes(b.username);
         if (isBossA && !isBossB) return -1;
         if (!isBossA && isBossB) return 1;
         return 0;
@@ -150,8 +149,11 @@ export default function SearchPage() {
             {loading && <p style={{ color: '#666', textAlign: 'center', marginBottom: 20 }}>Scanning...</p>}
 
             <ul style={{ listStyle: 'none' }}>
-                {sortedUsers.map(user => {
+                {sortedUsers.map(userObj => {
+                    const user = userObj.username;
                     const isBoss = followedUsers.includes(user);
+                    const slaveCount = userObj.slaveCount || 0;
+                    const status = slaveCount === 0 ? "krappiert" : `${slaveCount} slaves`;
                     return (
                         <li key={user} style={{
                             display: 'flex',
@@ -181,7 +183,10 @@ export default function SearchPage() {
                                 title={isBoss ? "Hold to Quit Boss" : "Hold to Serve"}
                             >
                                 @{user}
-                                {isBoss && <span style={{ fontSize: 10, border: '1px solid gold', padding: '2px 4px', borderRadius: 4 }}>BOSS</span>}
+                                <span style={{ marginLeft: 10, fontSize: 12, color: '#888', fontWeight: 'normal' }}>
+                                    [{status}]
+                                </span>
+                                {isBoss && <span style={{ fontSize: 10, border: '1px solid gold', padding: '2px 4px', borderRadius: 4, marginLeft: 10 }}>BOSS</span>}
                             </span>
                         </li>
                     );

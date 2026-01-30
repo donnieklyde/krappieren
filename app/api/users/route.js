@@ -40,18 +40,29 @@ export async function GET(req) {
             where.OR.push({ username: { equals: query, mode: 'insensitive' } });
         }
 
+        // Ensure we only get users with usernames (crucial for DMs)
+        where.username = { not: null };
 
         const users = await prisma.user.findMany({
             where,
-            select: { username: true, name: true, image: true },
+            select: {
+                username: true,
+                name: true,
+                image: true,
+                _count: {
+                    select: { followers: true }
+                }
+            },
             orderBy: { username: 'asc' },
             take: 300
         });
 
-        // Ensure username exists, fallback to name or default
+        // Map users
         const safeUsers = users.map(u => ({
-            username: u.username || u.name?.replace(/\s+/g, '').toLowerCase() || `user${Math.floor(Math.random() * 1000)}`,
-            avatar: u.image
+            username: u.username,
+            name: u.name,
+            avatar: u.image,
+            slaveCount: u._count.followers
         }));
 
         return NextResponse.json({ users: safeUsers });

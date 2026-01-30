@@ -26,7 +26,6 @@ export async function GET(req) {
             }
         }
 
-        console.log(`[API] Search Query Processed: "${query}"`);
 
         const where = query ? {
             OR: [
@@ -36,6 +35,12 @@ export async function GET(req) {
             ]
         } : {};
 
+        // Force exact username match if it looks like a username
+        if (query && query.length < 20 && !query.includes('@')) {
+            where.OR.push({ username: { equals: query, mode: 'insensitive' } });
+        }
+
+
         const users = await prisma.user.findMany({
             where,
             select: { username: true, name: true, image: true },
@@ -43,19 +48,17 @@ export async function GET(req) {
             take: 100
         });
 
-        console.log(`[API] Found ${users.length} users for query: "${query}"`);
+    });
 
-        // Ensure username exists, fallback to name or default
-        const safeUsers = users.map(u => ({
-            username: u.username || u.name?.replace(/\s+/g, '').toLowerCase() || `user${Math.floor(Math.random() * 1000)}`,
-            avatar: u.image
-        }));
+    // Ensure username exists, fallback to name or default
+    const safeUsers = users.map(u => ({
+        username: u.username || u.name?.replace(/\s+/g, '').toLowerCase() || `user${Math.floor(Math.random() * 1000)}`,
+        avatar: u.image
+    }));
 
-        const dbId = (process.env.POSTGRES_URL || "").slice(-4);
-
-        return NextResponse.json({ users: safeUsers, dbId });
-    } catch (error) {
-        console.error("Fetch Users Error:", error);
-        return NextResponse.json([], { status: 500 });
-    }
+    return NextResponse.json({ users: safeUsers });
+} catch (error) {
+    console.error("Fetch Users Error:", error);
+    return NextResponse.json([], { status: 500 });
+}
 }

@@ -54,6 +54,7 @@ export const authOptions = {
             if (session?.user && user?.id) {
                 session.user.id = user.id; // Populate ID from DB user
                 session.user.languages = user.languages; // Populate languages from DB
+                session.user.isOnboarded = user.isOnboarded;
             }
             return session;
         },

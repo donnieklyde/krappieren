@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'krappieren',
   webDir: 'public',
   server: {
-    url: 'https://hypsographical-joseph-enticingly.ngrok-free.dev',
+    url: 'https://krappieren-project.vercel.app',
     cleartext: true
   },
   backgroundColor: '#000000',

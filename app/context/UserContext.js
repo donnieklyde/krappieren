@@ -35,12 +35,14 @@ export function UserProvider({ children }) {
             setUser(stored);
         } else {
             // New user or fresh login on this device
+            // Prioritize Session data from DB
             setUser(prev => ({
                 ...prev,
-                username: session.user.name?.replace(/\s+/g, '').toLowerCase() || "newuser",
-                email: session.user.email, // Store email for validation
+                username: session.user.username || session.user.name?.replace(/\s+/g, '').toLowerCase() || "newuser",
+                email: session.user.email,
                 avatar: session.user.image || prev.avatar,
-                isOnboarded: false // Force onboarding
+                isOnboarded: session.user.isOnboarded === true, // Trust DB
+                languages: session.user.languages || prev.languages
             }));
         }
         setIsInitialized(true);
@@ -54,7 +56,8 @@ export function UserProvider({ children }) {
         });
     };
 
-    const completeOnboarding = (data) => {
+    const completeOnboarding = async (data) => {
+        // Optimistic update
         setUser(prev => {
             const newUser = {
                 ...prev,
@@ -65,7 +68,18 @@ export function UserProvider({ children }) {
             localStorage.setItem('krappieren_user', JSON.stringify(newUser));
             return newUser;
         });
-        // Here you would typically save to DB
+
+        // Persist to DB
+        try {
+            await fetch('/api/user/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            // We could reload session here if needed, but optimistic update is fine
+        } catch (err) {
+            console.error("Failed to save user data", err);
+        }
     };
 
     return (

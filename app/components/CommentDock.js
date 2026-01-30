@@ -162,7 +162,6 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                         }
                     }}
                     rows={1}
-                    rows={1}
                     style={{ resize: 'none', height: 'auto', minHeight: '44px', paddingTop: '10px', overflow: 'hidden' }}
                 />
                 {comment.length > 0 && (

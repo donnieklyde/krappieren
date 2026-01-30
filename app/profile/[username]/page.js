@@ -60,9 +60,9 @@ export default function UserProfile({ params }) {
 
                 <div className={styles.bio}>
                     {isCurrentUser ? (
-                        user?.bio || "No bio yet."
+                        user?.bio
                     ) : (
-                        "krappieren User."
+                        user?.bio
                     )}
                     {isCurrentUser && user?.link && (
                         <div style={{ marginTop: 5 }}>

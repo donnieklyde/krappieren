@@ -1,25 +1,63 @@
 "use client";
-import { useState, useRef } from "react";
+import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-const MOCK_USERS = [
-    "fan1",
-    "hater0",
-    "observer",
-    "elonmusk",
-    "zuck",
-    "webdesigner",
-    "cryptoking",
-    "aigod"
-];
 
 export default function SearchPage() {
     const { followedUsers, toggleFollow } = usePosts();
-    const [query, setQuery] = useState("");
     const router = useRouter();
 
-    const filteredUsers = MOCK_USERS.filter(u => u.toLowerCase().includes(query.toLowerCase()));
+    const [allUsers, setAllUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [trigger, setTrigger] = useState(0);
+
+    // Debounce Search
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setLoading(true);
+            try {
+                const url = searchQuery.trim()
+                    ? `/api/users?query=${encodeURIComponent(searchQuery)}`
+                    : '/api/users'; // Empty query returns all/some users
+
+                const res = await fetch(url);
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Handle both array (legacy) and object response
+                    const userList = Array.isArray(data) ? data : data.users;
+
+                    setAllUsers(userList.map(u => u.username).filter(Boolean));
+                } else {
+                    setError("API Error");
+                }
+            } catch (error) {
+                console.error("Failed to fetch users", error);
+                setError("Network Error");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const debounceTimer = setTimeout(() => {
+            fetchUsers();
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(debounceTimer);
+    }, [searchQuery, trigger]);
+
+    // Sorting: Bosses (followed users) first, then alphabetical (from API)
+    const sortedUsers = [...allUsers].sort((a, b) => {
+        const isBossA = followedUsers.includes(a);
+        const isBossB = followedUsers.includes(b);
+        if (isBossA && !isBossB) return -1;
+        if (!isBossA && isBossB) return 1;
+        return 0;
+    });
 
     // Long Press Logic State
     const timerRef = useRef(null);
@@ -31,7 +69,7 @@ export default function SearchPage() {
         isLongPress.current = false;
         timerRef.current = setTimeout(() => {
             isLongPress.current = true;
-            // Long Press Action: Toggle Follow
+            // Long Press Action: Toggle Follow (Quit Boss / Serve)
             toggleFollow(targetUser);
             if (window.navigator && window.navigator.vibrate) {
                 try {
@@ -68,41 +106,71 @@ export default function SearchPage() {
 
 
     return (
-        <div style={{ padding: 20, maxWidth: 600, margin: '0 auto', color: 'white', minHeight: '100vh' }}>
-            <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 20 }}>FIND A BOSS</h1>
+        <div style={{ padding: 40, maxWidth: 600, margin: '0 auto', color: 'white' }}>
+            <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
+                <Link href="/" style={{ fontSize: 24 }}>←</Link>
+                <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace' }}>FIND A BOSS</h1>
+            </div>
 
-            <input
-                type="text"
-                placeholder="SEARCH..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, ""))}
-                style={{
-                    width: '100%',
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: '2px solid white',
-                    color: 'white',
-                    fontFamily: 'Bahnschrift, sans-serif',
-                    fontSize: 24,
-                    padding: '10px 0',
-                    outline: 'none',
-                    marginBottom: 40,
-                    textTransform: 'uppercase'
-                }}
-            />
+            <div style={{ marginBottom: 20 }}>
+                <input
+                    type="text"
+                    placeholder="Search for a boss..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '12px',
+                        background: '#1a1a1a',
+                        border: '1px solid #333',
+                        borderRadius: 8,
+                        color: 'white',
+                        fontSize: 16,
+                        outline: 'none',
+                        fontFamily: 'inherit'
+                    }}
+                />
+            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {filteredUsers.map(user => {
-                    const isEnslaved = followedUsers.includes(user);
+            <p style={{ marginBottom: 20, opacity: 0.7 }}>
+                Hold to Serve/Quit. Tap to View Profile.
+                <span style={{ marginLeft: 10, fontSize: 12, border: '1px solid #333', padding: '2px 6px', borderRadius: 4, opacity: 0.8 }}>
+                    {loading ? "Searching..." : error ? "Connection Error" : `${sortedUsers.length} Bosses found`}
+                </span>
+                <button
+                    onClick={() => setTrigger(t => t + 1)}
+                    style={{ marginLeft: 10, background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 16, padding: 0 }}
+                    title="Refresh List"
+                >
+                    ↻
+                </button>
+            </p>
+
+            {error && <p style={{ color: '#ff4444', textAlign: 'center', marginBottom: 20 }}>Unable to load bosses. Please check your connection.</p>}
+            {loading && <p style={{ color: '#666', textAlign: 'center', marginBottom: 20 }}>Scanning...</p>}
+
+            <ul style={{ listStyle: 'none' }}>
+                {sortedUsers.map(user => {
+                    const isBoss = followedUsers.includes(user);
                     return (
-                        <div key={user} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <li key={user} style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '20px 0',
+                            borderBottom: '1px solid #333'
+                        }}>
                             <span
                                 style={{
-                                    fontSize: 18,
+                                    color: isBoss ? 'gold' : 'white',
                                     fontWeight: 'bold',
-                                    color: isEnslaved ? 'gold' : 'white',
+                                    fontSize: 18,
                                     cursor: 'pointer',
-                                    userSelect: 'none'
+                                    userSelect: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 10,
+                                    textTransform: 'uppercase'
                                 }}
                                 onMouseDown={(e) => startPress(e, user)}
                                 onMouseUp={(e) => endPress(e, user)}
@@ -110,21 +178,19 @@ export default function SearchPage() {
                                 onTouchStart={(e) => startPress(e, user)}
                                 onTouchEnd={(e) => endPress(e, user)}
                                 onContextMenu={(e) => e.preventDefault()}
-                                title={isEnslaved ? "Hold to Quit Boss / Tap for Profile" : "Hold to Serve / Tap for Profile"}
+                                title={isBoss ? "Hold to Quit Boss" : "Hold to Serve"}
                             >
                                 @{user}
+                                {isBoss && <span style={{ fontSize: 10, border: '1px solid gold', padding: '2px 4px', borderRadius: 4 }}>BOSS</span>}
                             </span>
-                            {/* Button removed */}
-                        </div>
+                        </li>
                     );
                 })}
+            </ul>
 
-                {
-                    filteredUsers.length === 0 && (
-                        <div style={{ opacity: 0.5, fontStyle: 'italic' }}>No subjects found.</div>
-                    )
-                }
-            </div >
-        </div >
+            <div style={{ marginTop: 40, textAlign: 'center', opacity: 0.2, fontSize: 10, fontFamily: 'monospace' }}>
+                TREEDZ NETWORK
+            </div>
+        </div>
     );
 }

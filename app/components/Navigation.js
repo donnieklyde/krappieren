@@ -104,9 +104,6 @@ function Navigation() {
                         <Link href="/activity" className={styles.link + (pathname === "/activity" ? " " + styles.active : "")}>
                             <HeartIcon />
                         </Link>
-                        <Link href="/bosses" className={styles.link + (pathname === "/bosses" ? " " + styles.active : "")}>
-                            <BriefcaseIcon />
-                        </Link>
                         <Link href="/dms" className={styles.link + (pathname === "/dms" ? " " + styles.active : "")}>
                             <MessageIcon />
                         </Link>

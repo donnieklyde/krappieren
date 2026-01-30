@@ -132,7 +132,7 @@ function Navigation() {
                         <Link href="/activity" className={`${styles.link} ${pathname === '/activity' ? styles.active : ''}`}>
                             <ActivityIcon hasNew={notifications.hasNewActivity} />
                         </Link>
-                        <Link href="/dms" className={`${styles.link} ${pathname === '/dms' ? styles.active : ''}`}>
+                        <Link href="/dms" className={`${styles.link} ${pathname === '/dms' ? styles.active : ''}`} onClick={() => setNotifications(prev => ({ ...prev, hasUnreadDMs: false }))}>
                             <DMsIcon hasUnread={notifications.hasUnreadDMs} />
                         </Link>
                         <Link href="/profile" className={styles.link + (pathname === "/profile" ? " " + styles.active : "")}>
@@ -167,12 +167,6 @@ function Navigation() {
                             register
                         </button>
 
-                        <button
-                            onClick={handleMockLogin}
-                            className={styles.debugButton}
-                        >
-                            DEBUG
-                        </button>
                     </>
                 )}
             </nav >

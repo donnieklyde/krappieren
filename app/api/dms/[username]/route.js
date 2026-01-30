@@ -13,7 +13,7 @@ export async function GET(req, { params }) {
 
     try {
         const userId = session.user.id;
-        const targetUsername = params.username; // Note: 'username' is the folder name [username]
+        const targetUsername = decodeURIComponent(params.username);
 
         // Find target user ID
         const targetUser = await prisma.user.findUnique({

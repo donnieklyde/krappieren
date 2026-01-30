@@ -149,7 +149,16 @@ export default function ChatPage({ params }) {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         rows={1}
-                        style={{ resize: 'none', height: 'auto', minHeight: '44px', paddingTop: '10px', overflow: 'hidden', textTransform: 'none' }}
+                        style={{
+                            resize: 'none',
+                            height: 'auto',
+                            minHeight: '44px',
+                            paddingTop: '10px',
+                            overflow: 'hidden',
+                            textTransform: 'none',
+                            color: 'white',
+                            background: 'transparent'
+                        }}
                     />
                     <button type="submit" className={styles.button}>SEND</button>
                 </form>

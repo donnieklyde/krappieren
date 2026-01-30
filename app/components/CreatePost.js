@@ -69,14 +69,26 @@ export default function CreatePost() {
             <div className={styles.inputContainer}>
                 <div className={styles.header}>
                     <div style={{ fontWeight: 600, fontSize: 15 }}>{user.username}</div>
-                    {content && (
-                        <button
-                            className={`${styles.postButton} ${isPostable ? styles.active : ""}`}
-                            onClick={handlePost}
-                        >
-                            Post
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        {content.length > 0 && (
+                            <span style={{
+                                fontSize: 12,
+                                fontWeight: 'bold',
+                                color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`, // Green (120) to Red (0)
+                                transition: 'color 0.2s'
+                            }}>
+                                {100 - content.length}
+                            </span>
+                        )}
+                        {content && (
+                            <button
+                                className={`${styles.postButton} ${isPostable ? styles.active : ""}`}
+                                onClick={handlePost}
+                            >
+                                Post
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <textarea
                     className={styles.input}

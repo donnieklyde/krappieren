@@ -40,7 +40,11 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
     const handleInput = (e) => {
         const value = e.target.value;
         // Prohibited characters: ;,:._-'#*+~`´?=()/&%$§"!²³{[]}\
-        const sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+        let sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+
+        if (sanitizedValue.length > 100) {
+            sanitizedValue = sanitizedValue.substring(0, 100);
+        }
 
         setComment(sanitizedValue);
 
@@ -158,8 +162,23 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                         }
                     }}
                     rows={1}
+                    rows={1}
                     style={{ resize: 'none', height: 'auto', minHeight: '44px', paddingTop: '10px', overflow: 'hidden' }}
                 />
+                {comment.length > 0 && (
+                    <div style={{
+                        position: 'absolute',
+                        right: 80,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        color: `hsl(${120 - ((comment.length / 100) * 120)}, 100%, 50%)`,
+                        pointerEvents: 'none'
+                    }}>
+                        {100 - comment.length}
+                    </div>
+                )}
                 <button
                     type="submit"
                     className={styles.button}

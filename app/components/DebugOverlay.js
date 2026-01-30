@@ -8,7 +8,7 @@ export default function DebugOverlay() {
     const { posts } = usePosts();
     const { user, isInitialized } = useUser();
 
-    const { user, isInitialized } = useUser();
+
 
     // Show always for debugging
     // if (process.env.NODE_ENV === 'production' && !session) return null;

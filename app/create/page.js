@@ -29,7 +29,26 @@ export default function CreatePage() {
             margin: '0 auto',
             color: 'white'
         }}>
-            <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 40 }}>BROADCAST</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+                <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', margin: 0 }}>BROADCAST</h1>
+                <button
+                    onClick={handleBroadcast}
+                    disabled={!content.trim()}
+                    style={{
+                        background: content.trim() ? 'white' : '#333',
+                        color: content.trim() ? 'black' : '#666',
+                        border: 'none',
+                        padding: '10px 20px',
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        fontFamily: 'monospace',
+                        cursor: content.trim() ? 'pointer' : 'not-allowed',
+                        textTransform: 'uppercase'
+                    }}
+                >
+                    Broadcast
+                </button>
+            </div>
 
             <textarea
                 placeholder="What is your command?"
@@ -47,26 +66,6 @@ export default function CreatePage() {
                 }}
                 autoFocus
             />
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 20 }}>
-                <button
-                    onClick={handleBroadcast}
-                    disabled={!content.trim()}
-                    style={{
-                        background: content.trim() ? 'white' : '#333',
-                        color: content.trim() ? 'black' : '#666',
-                        border: 'none',
-                        padding: '15px 40px',
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        fontFamily: 'monospace',
-                        cursor: content.trim() ? 'pointer' : 'not-allowed',
-                        textTransform: 'uppercase'
-                    }}
-                >
-                    Broadcast
-                </button>
-            </div>
         </div>
     );
 }

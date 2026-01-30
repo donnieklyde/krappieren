@@ -6,6 +6,7 @@ const PostsContext = createContext();
 
 export function PostsProvider({ children }) {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [followedUsers, setFollowedUsers] = useState([]);
     const [activities, setActivities] = useState([]);
 
@@ -16,12 +17,14 @@ export function PostsProvider({ children }) {
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.length > 0) {
+                    if (data) {
                         setPosts(data);
                     }
                 }
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -205,7 +208,7 @@ export function PostsProvider({ children }) {
     };
 
     return (
-        <PostsContext.Provider value={{ posts, addPost, toggleLike, addComment, followedUsers, toggleFollow, activities }}>
+        <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, followedUsers, toggleFollow, activities }}>
             {children}
         </PostsContext.Provider>
     );

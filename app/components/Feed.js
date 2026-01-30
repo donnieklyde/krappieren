@@ -8,7 +8,7 @@ import { useUser } from "../context/UserContext";
 import { useSession } from "next-auth/react";
 
 export default function Feed() {
-    const { posts } = usePosts();
+    const { posts, loading } = usePosts();
     const { data: session } = useSession();
     const { user } = useUser(); // Get user preferences
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -122,7 +122,14 @@ export default function Feed() {
         }
     };
 
-    if (!currentPost) return <div style={{ padding: 20 }}>LOADING...</div>;
+    if (loading) return <div style={{ padding: 20, color: 'white' }}>LOADING...</div>;
+
+    if (!currentPost) return (
+        <div style={{ padding: 40, textAlign: 'center', color: '#666', marginTop: '20vh' }}>
+            <h2>No threads yet.</h2>
+            <p>Be the first to create one!</p>
+        </div>
+    );
 
     return (
         <div

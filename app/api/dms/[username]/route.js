@@ -13,7 +13,8 @@ export async function GET(req, { params }) {
 
     try {
         const userId = session.user.id;
-        const targetUsername = decodeURIComponent(params.username);
+        const { username } = await params;
+        const targetUsername = decodeURIComponent(username);
         console.log(`[API] Fetching DMs for user ${userId} with target ${targetUsername}`);
 
         // Find target user ID

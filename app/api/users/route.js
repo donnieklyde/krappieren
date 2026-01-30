@@ -7,7 +7,11 @@ export const revalidate = 0;
 export async function GET(req) {
     try {
         const { searchParams } = new URL(req.url);
-        const query = searchParams.get('query');
+        let query = searchParams.get('query');
+
+        if (query && query.startsWith('@')) {
+            query = query.substring(1);
+        }
 
         const where = query ? {
             OR: [

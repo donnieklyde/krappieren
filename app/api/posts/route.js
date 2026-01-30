@@ -41,6 +41,44 @@ export async function GET() {
 }
 
 export async function POST(req) {
-    // Create post logic here
-    return NextResponse.json({ status: 'Not implemented yet' });
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+        const { content, language } = await req.json();
+
+        const post = await prisma.post.create({
+            data: {
+                content,
+                authorId: session.user.id,
+                language // e.g., 'english' or 'german'
+            },
+            include: {
+                author: {
+                    select: { name: true, username: true, image: true }
+                }
+            }
+        });
+
+        // Format for frontend
+        const formattedPost = {
+            id: post.id,
+            content: post.content,
+            username: post.author.username || post.author.name || 'Anonymous',
+            avatarUrl: post.author.image,
+            time: "Just now",
+            likes: 0,
+            replies: 0,
+            comments: [],
+            likedByMe: false,
+            language: post.language
+        };
+
+        return NextResponse.json(formattedPost);
+    } catch (error) {
+        console.error("Create Post Error:", error);
+        return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
+    }
 }

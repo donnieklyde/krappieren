@@ -1,7 +1,6 @@
 "use client";
 import { usePosts } from "../context/PostsContext";
-import Link from "next/link";
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getTakenUsernames } from "../data/mockData";
 
@@ -10,12 +9,22 @@ export default function BossesPage() {
     const router = useRouter();
 
     // Derive all unique users from current posts (authors + commenters) and activities
-    const allUsers = Array.from(new Set([
-        ...posts.map(p => p.username),
-        ...posts.flatMap(p => (p.comments || []).map(c => c.user)),
-        ...(activities || []).map(a => a.user),
-        "admin", "god"
-    ])).filter(u => u !== "currentUser").sort();
+    const [allUsers, setAllUsers] = useState([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch('/api/users');
+                if (res.ok) {
+                    const data = await res.json();
+                    setAllUsers(data.map(u => u.username).filter(u => u !== "currentUser" && u));
+                }
+            } catch (error) {
+                console.error("Failed to fetch users", error);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     // Long Press Logic State
     const timerRef = useRef(null);

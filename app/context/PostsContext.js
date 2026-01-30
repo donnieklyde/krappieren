@@ -25,20 +25,28 @@ export function PostsProvider({ children }) {
             }
         };
 
-        const fetchFollowing = async () => {
+        const fetchActivity = async () => {
             try {
-                const res = await fetch('/api/user/following');
+                const res = await fetch('/api/user/activity');
                 if (res.ok) {
                     const data = await res.json();
-                    setFollowedUsers(data);
+                    // Format time relative (simple version)
+                    const formattedData = data.map(item => ({
+                        ...item,
+                        time: new Date(item.time).toLocaleDateString() === new Date().toLocaleDateString()
+                            ? new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                            : new Date(item.time).toLocaleDateString()
+                    }));
+                    setActivities(formattedData);
                 }
             } catch (error) {
-                console.error("Failed to fetch following:", error);
+                console.error("Failed to fetch activity:", error);
             }
         };
 
         fetchPosts();
         fetchFollowing();
+        fetchActivity();
     }, []);
 
     const checkMentions = (text) => {

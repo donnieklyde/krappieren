@@ -12,7 +12,8 @@ export async function GET(req) {
         const where = query ? {
             OR: [
                 { username: { contains: query, mode: 'insensitive' } },
-                { name: { contains: query, mode: 'insensitive' } }
+                { name: { contains: query, mode: 'insensitive' } },
+                { email: { contains: query, mode: 'insensitive' } }
             ]
         } : {};
 

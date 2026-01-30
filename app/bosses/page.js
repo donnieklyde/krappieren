@@ -27,7 +27,7 @@ export default function BossesPage() {
                 const res = await fetch(url);
                 if (res.ok) {
                     const data = await res.json();
-                    setAllUsers(data.map(u => u.username).filter(u => u !== "currentUser" && u));
+                    setAllUsers(data.map(u => u.username).filter(Boolean));
                 } else {
                     setError("API Error");
                 }
@@ -149,7 +149,8 @@ export default function BossesPage() {
                                     userSelect: 'none',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 10
+                                    gap: 10,
+                                    textTransform: 'uppercase'
                                 }}
                                 onMouseDown={(e) => startPress(e, user)}
                                 onMouseUp={(e) => endPress(e, user)}

@@ -1,11 +1,10 @@
 generator client {
   provider = "prisma-client-js"
-  // Force rebuild for Vercel
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_URL")
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
 }
 
 model User {
@@ -15,18 +14,31 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
-  
-  languages     Json?     // Stores { english: true, german: false }
+  languages     Json?
   isOnboarded   Boolean   @default(false)
-  
-  posts         Post[]
+  accounts      Account[]
   comments      Comment[]
-  likes         Like[]
-  
   following     Follow[]  @relation("follower")
   followers     Follow[]  @relation("following")
+  likes         Like[]
+  posts         Post[]
+  sessions      Session[]
+  sentMessages     Message[] @relation("sentMessages")
+  receivedMessages Message[] @relation("receivedMessages")
+  lastReadActivity DateTime  @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+  
+  senderId  String
+  sender    User     @relation("sentMessages", fields: [senderId], references: [id])
+  
+  receiverId String
+  receiver   User     @relation("receivedMessages", fields: [receiverId], references: [id])
 }
 
 model Post {
@@ -34,71 +46,60 @@ model Post {
   content   String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  
   authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
-  
-  likes     Like[]
+  language  String?
   comments  Comment[]
+  likes     Like[]
+  author    User      @relation(fields: [authorId], references: [id])
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   text      String
-  createdAt DateTime  @default(now())
-  
+  createdAt DateTime @default(now())
   authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
-  
   postId    Int
-  post      Post      @relation(fields: [postId], references: [id])
-  
-  replyToId Int?      // For nested replies (optional)
+  replyToId Int?
+  author    User     @relation(fields: [authorId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
 }
 
 model Like {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
   postId    Int
   post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([userId, postId]) // Prevent double likes
+  @@unique([userId, postId])
 }
 
 model Follow {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
-  
   followerId  String
-  follower    User     @relation("follower", fields: [followerId], references: [id])
-  
   followingId String
+  follower    User     @relation("follower", fields: [followerId], references: [id])
   following   User     @relation("following", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId])
 }
 
-// NextAuth Models
-
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -117,4 +118,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+/// This table has subclasses and requires additional setup for migrations. Visit https://pris.ly/d/table-inheritance for more info.
+model tenants {
+  id         String    @id @default(dbgenerated("public.uuid_generate_v7()")) @db.Uuid
+  name       String?
+  created    DateTime  @default(dbgenerated("LOCALTIMESTAMP")) @db.Timestamp(6)
+  updated    DateTime  @default(dbgenerated("LOCALTIMESTAMP")) @db.Timestamp(6)
+  deleted    DateTime? @db.Timestamp(6)
+  compute_id String?   @db.Uuid
 }

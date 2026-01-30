@@ -10,11 +10,14 @@ export default function CreatePage() {
     const { user } = useUser();
     const router = useRouter();
 
+    const [language, setLanguage] = useState("english"); // Default language
+
     const handleBroadcast = () => {
         if (!content.trim()) return;
         addPost(content, {
             username: user.username,
-            avatarUrl: user.avatar
+            avatarUrl: user.avatar,
+            language // Pass selected language
         });
         router.push('/'); // Go back to feed
     };
@@ -62,10 +65,33 @@ export default function CreatePage() {
                     fontFamily: 'Bahnschrift, sans-serif',
                     fontSize: 24,
                     resize: 'none',
-                    outline: 'none'
+                    outline: 'none',
+                    marginBottom: 20
                 }}
                 autoFocus
             />
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                {['english', 'german'].map(lang => (
+                    <button
+                        key={lang}
+                        onClick={() => setLanguage(lang)}
+                        style={{
+                            background: language === lang ? 'white' : 'transparent',
+                            color: language === lang ? 'black' : '#666',
+                            border: '1px solid #333',
+                            padding: '6px 12px',
+                            borderRadius: 20,
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            fontSize: 12,
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        {lang}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 }

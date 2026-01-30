@@ -8,7 +8,20 @@ export async function GET() {
         const session = await getServerSession(authOptions);
         const currentUserId = session?.user?.id;
 
+        let where = {};
+        if (session?.user?.languages) {
+            const userLangs = session.user.languages;
+            // userLangs example: { english: true, german: false }
+            // Filter keys where value is true
+            const enabledLangs = Object.keys(userLangs).filter(lang => userLangs[lang]);
+
+            if (enabledLangs.length > 0) {
+                where.language = { in: enabledLangs };
+            }
+        }
+
         const posts = await prisma.post.findMany({
+            where,
             include: {
                 author: {
                     select: { name: true, username: true, image: true }

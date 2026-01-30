@@ -12,7 +12,25 @@ export default function ChatPage({ params }) {
 
     // Safety check just in case, though getConversation handles default
     const conversation = getConversation(decodedUsername);
-    const messages = conversation.messages || [];
+    const [localMessages, setLocalMessages] = useState([]);
+
+    // Fetch History
+    useEffect(() => {
+        const fetchHistory = async () => {
+            const res = await fetch(`/api/dms/${decodedUsername}`);
+            if (res.ok) {
+                const data = await res.json();
+                setLocalMessages(data);
+            }
+        };
+        fetchHistory();
+
+        // Poll for new messages every 5s while chat is open
+        const interval = setInterval(fetchHistory, 5000);
+        return () => clearInterval(interval);
+    }, [decodedUsername]);
+
+    const messages = localMessages; // Use local state
 
     const [input, setInput] = useState("");
     const textareaRef = useRef(null);
@@ -34,7 +52,18 @@ export default function ChatPage({ params }) {
     const handleSend = (e) => {
         e.preventDefault();
         if (!input.trim()) return;
-        sendMessage(decodedUsername, input);
+        if (!input.trim()) return;
+
+        // Optimistic
+        const tempMsg = {
+            id: Date.now(),
+            sender: 'currentUser',
+            text: input,
+            timestamp: new Date().toISOString()
+        };
+        setLocalMessages(prev => [...prev, tempMsg]);
+
+        sendMessage(decodedUsername, input); // Updates Context/API
         setInput("");
     };
 

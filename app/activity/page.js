@@ -11,6 +11,11 @@ export default function ActivityPage() {
     const { followedUsers, toggleFollow, activities } = usePosts();
     const router = useRouter();
 
+    useEffect(() => {
+        // Mark activity as read
+        fetch('/api/user/activity/read', { method: 'POST' }).catch(err => console.error(err));
+    }, []);
+
     // Long Press Logic State
     const timerRef = useRef(null);
     const isLongPress = useRef(false);

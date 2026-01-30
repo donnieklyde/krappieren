@@ -5,6 +5,9 @@ import { authOptions } from "../auth/[...nextauth]/route"; // We need to export 
 
 export async function GET() {
     try {
+        const session = await getServerSession(authOptions);
+        const currentUserId = session?.user?.id;
+
         const posts = await prisma.post.findMany({
             include: {
                 author: {
@@ -30,7 +33,9 @@ export async function GET() {
                 id: c.id,
                 text: c.text,
                 user: c.author.username || 'Anonymous'
-            }))
+            })),
+            likedByMe: currentUserId ? p.likes.some(l => l.userId === currentUserId) : false,
+            language: p.language
         }));
 
         return NextResponse.json(formattedPosts);

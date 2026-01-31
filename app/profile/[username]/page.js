@@ -1,5 +1,5 @@
 "use client";
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
 import styles from "../profile.module.css";
 import { usePosts } from "../../context/PostsContext";
 import { useUser } from "../../context/UserContext";
@@ -19,10 +19,32 @@ export default function UserProfile({ params }) {
 
     const isEnslaved = followedUsers.includes(decodedUsername);
 
-    // 1. Threads: Posts created by this user
-    const userPosts = posts.filter(post => post.username === decodedUsername);
+    // Local state for user posts
+    const [userPosts, setUserPosts] = useState([]);
+    const [loadingPosts, setLoadingPosts] = useState(true);
+
+    useEffect(() => {
+        if (decodedUsername) {
+            fetch(`/api/posts?username=${decodedUsername}`)
+                .then(res => res.json())
+                .then(data => {
+                    setUserPosts(data);
+                    setLoadingPosts(false);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch user posts", err);
+                    setLoadingPosts(false);
+                });
+        }
+    }, [decodedUsername]);
+
+    // 1. Threads: Use fetched posts
+    // Fallback? No, userPosts is authoritative for that user's profile.
+    const displayPosts = userPosts;
 
     // 2. Replies: Extract ACTUAL comments made by this user
+    // Same limitation as own profile: API only returns posts authored by user.
+    // For now, relying on global `posts` context for replies (inaccurate but safe fallback)
     const userReplies = posts.flatMap(post =>
         (post.comments || [])
             .filter(c => c.user === decodedUsername)

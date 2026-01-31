@@ -18,36 +18,54 @@ export default function Profile() {
     const fileInputRef = useRef(null);
 
 
-    // 1. Threads: Posts created by current user
-    const myPosts = posts.filter(post => post.username === user.username);
+    // Local state for user posts to ensure we get ALL of them, not just what's in Feed Context
+    const [userPosts, setUserPosts] = useState([]);
+    const [loadingPosts, setLoadingPosts] = useState(true);
 
-    // 2. Replies: Extract ACTUAL comments made by current user
+    useEffect(() => {
+        if (user.username) {
+            fetch(`/api/posts?username=${user.username}`)
+                .then(res => res.json())
+                .then(data => {
+                    setUserPosts(data);
+                    setLoadingPosts(false);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch user posts", err);
+                    setLoadingPosts(false);
+                });
+        }
+    }, [user.username]);
+
+    // 1. Threads: Use fetched posts
+    const myPosts = userPosts;
+
+    // 2. Replies: Extract ACTUAL comments made by current user from the fetched posts
+    // Note: The API currently returns posts where the user is the AUTHOR. 
+    // It does NOT return posts where the user only commented. 
+    // To support "Replied" tab properly, we'd need an endpoint like /api/user/replies or modify GET /api/posts to return posts where user commented.
+    // For now, we will stick to the previous logic but applied to the *context* posts or we need to accept that 'Replies' tab might be empty if we don't fetch them.
+    // The previous logic used `posts` from context. Let's keep using `posts` (Global Feed) for replies for now, 
+    // OR we can assume `userPosts` includes posts where I commented? No, `author` filter only returns my threads.
+    // If the user wants to see their replies, we essentially need to fetch "Posts I commented on".
+    // 
+    // Let's use `posts` (Context) for replies as a fallback for now to avoid breaking it completely, 
+    // but effectively "Works" tab is fixed.
     const myReplies = posts.flatMap(post =>
         (post.comments || [])
             .filter(c => c.user === user.username)
             .map(c => {
-                // Determine the parent. If c.replyTo exists, it's a comment. Else it's the post.
-                // We want "chain of interaction".
-                // Simple version: Parent is either the ReplyTarget (if comment) or Post (if top-level comment).
-
                 let parentContent = post.content;
                 let parentUsername = post.username;
                 let isCommentReply = false;
 
                 if (c.replyTo) {
-                    // It's a reply to a comment
-                    // We try to find the comment text? Or just use the info saved in c.replyTo
-                    // postsContext stores replyTo as full object { id, user } usually? 
-                    // No, my implementation in PostsContext was `replyTo // { id: 123, user: "somebody" }`
-                    // But I didn't store the TEXT of the parent comment.
-                    // Ideally we should find it.
                     const parentComment = post.comments.find(pc => pc.id === c.replyTo.id);
                     if (parentComment) {
                         parentContent = parentComment.text;
                         parentUsername = parentComment.user;
                         isCommentReply = true;
                     } else {
-                        // Fallback if not found (maybe deleted?)
                         parentUsername = c.replyTo.user;
                         parentContent = "[Original comment not found]";
                     }

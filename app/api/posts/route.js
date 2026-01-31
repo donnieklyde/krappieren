@@ -22,6 +22,15 @@ export async function GET(request) {
             }
         }
 
+        const username = searchParams.get('username');
+        if (username) {
+            where.author = { username: username };
+            // If filtering by user, we might want to ignore language filter? 
+            // Usually valid to see all posts from a user regardless of language settings if explicitly visiting profile.
+            // Let's remove language constraint if username is present.
+            delete where.language;
+        }
+
         const posts = await prisma.post.findMany({
             where,
             include: {

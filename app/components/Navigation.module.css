@@ -115,10 +115,10 @@
         justify-content: center;
         align-items: center;
         margin-bottom: 0;
-        margin-right: 5px;
-        width: 40px;
-        /* Smaller on mobile */
-        height: 40px;
+        margin-right: 0;
+        width: auto;
+        flex: 1;
+        height: 100%;
     }
 
     .link {

@@ -31,9 +31,12 @@ export function UserProvider({ children }) {
             localStorage.removeItem('krappieren_user');
         }
 
-        // Invalidate if stored data says "newuser" but claims to be onboarded (fix for stuck state)
+        // Fix for stuck state:
         if (stored && stored.username && stored.username.toLowerCase() === 'newuser') {
             stored.isOnboarded = false;
+        } else if (stored && stored.username && stored.username.toLowerCase() !== 'newuser') {
+            // If we have a stored valid username, we are onboarded.
+            stored.isOnboarded = true;
         }
 
         if (stored) {
@@ -58,18 +61,19 @@ export function UserProvider({ children }) {
             .then(data => {
                 if (data.username) {
                     setUser(prev => {
+                        // Stronger onboarding check:
+                        // 1. Explicit DB flag
+                        // 2. Or presence of a valid custom username
+                        const hasValidUsername = data.username && data.username.toLowerCase() !== 'newuser' && data.username.toLowerCase() !== 'currentuser';
+                        const isOnboarded = data.isOnboarded === true || hasValidUsername;
+
                         const updated = {
                             ...prev,
                             username: data.username,
                             avatar: data.avatar || prev.avatar,
-                            // Hydrate other fields from API
                             name: data.name || prev.name,
                             languages: data.languages || prev.languages,
-                            // Correctly handle onboarding state:
-                            // If API says false, it's false.
-                            // If username is "newuser" (default), it's false.
-                            // Otherwise default to true (optimistic).
-                            isOnboarded: (data.isOnboarded === false || data.username?.toLowerCase() === 'newuser') ? false : true,
+                            isOnboarded: isOnboarded,
                             bio: data.bio || prev.bio
                         };
                         localStorage.setItem('krappieren_user', JSON.stringify(updated));

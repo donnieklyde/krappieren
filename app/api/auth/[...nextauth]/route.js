@@ -70,7 +70,7 @@ export const authOptions = {
                             id: user.id,
                             name: user.name,
                             email: user.email,
-                            image: user.image,
+                            // image: user.image, // Optimization: Don't include image in token to save header size
                             isOnboarded: user.isOnboarded,
                             languages: user.languages,
                             username: user.username

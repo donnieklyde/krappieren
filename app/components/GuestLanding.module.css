@@ -1,77 +1,63 @@
 .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    /* Use full viewport height */
-    width: 100%;
-    padding: 20px;
-    background-color: var(--background);
-    position: fixed;
-    /* Fix to cover everything including potential nav gaps */
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    /* Ensure on top of everything if needed, though Nav hiding handles most */
+    z-index: 1000;
 }
 
-.postWrapper {
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 40px;
-    /* Remove click events on the post for guests to prevent navigation? 
-       User said "most recent post and nothing else". PostCard usually has interactive elements.
-       For now, let it be interactive but maybe disable links if desired. 
-       PostCard 'isGuest' prop can be used to disable interactions if needed. 
-    */
-    pointer-events: none;
-    /* Disable interaction with the post as it's just a showcase? */
-    /* Wait, checking user request: "start page... shall have the most recent post...". 
-       Usually implies read-only. I'll disable pointer events to keep it simple and strict "nothing else".
-       Or maybe users want to expand it? "Nothing else than buttons". 
-       I'll use pointer-events: none to be safe. */
-}
-
-.buttonContainer {
+.content {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-.loading {
-    color: var(--foreground);
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    gap: 40px;
+    animation: fadeIn 2s ease-out;
 }
 
-.empty {
-    color: var(--text-secondary);
-}
-
-.comeButton,
-.checkupButton {
-    padding: 15px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    border: 1px solid white;
-    background: transparent;
+.title {
     color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    flex: 1;
+    font-size: 24px;
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: normal;
+    text-align: center;
+    opacity: 0.8;
 }
 
-.comeButton:hover,
-.checkupButton:hover {
+.button {
     background: white;
     color: black;
+    border: none;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    text-transform: lowercase;
+    position: relative;
+    font-family: monospace;
 }
 
-/* Specific styling for checkup if different? */
-/* User just listed them. I'll keep them consistent style. */
+.button:hover {
+    box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -56,7 +56,13 @@ export default function ChatPage({ params }) {
         if (typeof window !== 'undefined' && window.visualViewport) {
             const handleResize = () => {
                 // Scroll to bottom when keyboard opens to keep latest messages visible
-                bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+                // Small delay to allow layout to settle
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+                }, 300);
             };
             window.visualViewport.addEventListener('resize', handleResize);
             return () => window.visualViewport.removeEventListener('resize', handleResize);

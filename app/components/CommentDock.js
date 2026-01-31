@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import styles from "./CommentDock.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
+import { sanitizeText } from "../utils/sanitizer";
 
 export default function CommentDock({ postId, replyTo, onCancelReply }) {
     const [comment, setComment] = useState("");
@@ -39,8 +40,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
 
     const handleInput = (e) => {
         const value = e.target.value;
-        // Prohibited characters: ;,:._-'#*+~`´?=()/&%$§"!²³{[]}\
-        let sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+        let sanitizedValue = sanitizeText(value);
 
         if (sanitizedValue.length > 100) {
             sanitizedValue = sanitizedValue.substring(0, 100);
@@ -92,7 +92,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                 <div className={styles.preview}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontSize: 12, color: '#aaa' }}>Replying to <b style={{ color: 'white' }}>@{replyTo.user}</b></span>
-                        <span style={{ color: '#ccc', fontStyle: 'italic', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 13 }}>"{replyTo.text}"</span>
+                        <span style={{ color: '#ccc', fontStyle: 'italic', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 13 }}>"{sanitizeText(replyTo.text)}"</span>
                     </div>
                     <button
                         onClick={(e) => { e.stopPropagation(); onCancelReply(); }}

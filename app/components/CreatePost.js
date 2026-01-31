@@ -4,7 +4,7 @@ import styles from "./CreatePost.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 
-import { detectLanguage } from "../utils/language";
+import { sanitizeText } from "../utils/sanitizer";
 
 export default function CreatePost() {
     const [content, setContent] = useState("");
@@ -17,8 +17,7 @@ export default function CreatePost() {
 
     const handleInput = (e) => {
         const value = e.target.value;
-        // Prohibited characters: ;,:._-'#*+~`´?=()/&%$§"!²³{[]}\
-        let sanitizedValue = value.replace(/[;,:._\-'#*+~`´?=\(\)/&%$§"!²³\{\[\]}\\]/g, "");
+        let sanitizedValue = sanitizeText(value);
 
         if (sanitizedValue.length > 100) {
             sanitizedValue = sanitizedValue.substring(0, 100);

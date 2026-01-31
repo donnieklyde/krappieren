@@ -5,6 +5,7 @@ import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { sanitizeText } from "../utils/sanitizer";
 
 const MoneyIcon = () => (
     <span style={{ fontSize: 32, fontWeight: 'bold', fontFamily: 'Bahnschrift' }}>$</span>
@@ -117,7 +118,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                     <span className={styles.time}>{time}</span>
                 </div>
 
-                <div className={styles.text}>{content}</div>
+                <div className={styles.text}>{sanitizeText(content)}</div>
 
                 {!isGuest && (user?.username !== username) && (
                     <div className={styles.splashContainer}>
@@ -242,7 +243,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 @{comment.user}
                                             </span>
                                             <span className={styles.commentText} style={{ color: isSelected ? 'black' : 'inherit' }}>
-                                                {formatText(comment.text)}
+                                                {formatText(sanitizeText(comment.text))}
                                             </span>
                                         </div>
                                         {/* Render Children */}

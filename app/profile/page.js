@@ -4,6 +4,7 @@ import styles from "./profile.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 import MinimalPost from "../components/MinimalPost";
+import { sanitizeText } from "../utils/sanitizer";
 
 export default function Profile() {
     const { posts } = usePosts();
@@ -147,7 +148,7 @@ export default function Profile() {
                         {isEditing ? (
                             <input
                                 value={user.username || ""}
-                                onChange={(e) => updateUser({ username: e.target.value.toUpperCase() })}
+                                onChange={(e) => updateUser({ username: sanitizeText(e.target.value).toUpperCase() })}
                                 style={{
                                     background: 'transparent',
                                     border: '1px solid #333',

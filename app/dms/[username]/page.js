@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect, use } from "react";
 import { useDMs } from "../../context/DMsContext";
 import styles from "../../components/CommentDock.module.css";
+import { sanitizeText } from "../../utils/sanitizer";
 // Reusing CommentDock styles for consistency, or I can define inline for speed if styling differs significantly.
 // Let's reuse basic structure but customize input.
 
@@ -209,7 +210,7 @@ export default function ChatPage({ params }) {
                             className={styles.input} // Reusing class for consistency (lowercase etc)
                             placeholder={`Message @${decodedUsername}...`}
                             value={input}
-                            onChange={(e) => setInput(e.target.value)}
+                            onChange={(e) => setInput(sanitizeText(e.target.value))}
                             onKeyDown={handleKeyDown}
                             rows={1}
                             style={{

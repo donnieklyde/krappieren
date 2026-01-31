@@ -6,6 +6,7 @@ import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 
 import { useRouter } from "next/navigation";
+import { sanitizeText } from "../utils/sanitizer";
 
 export default function MinimalPost({ id, username, content, time, isReply = false, parentId, parentContent = null, parentUsername = null, likes, likedByMe }) {
     const { toggleLike, followedUsers } = usePosts();
@@ -47,7 +48,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                         <span>Original Post</span>
                     </div>
                     <div className={styles.parentContent}>
-                        {parentContent}
+                        {sanitizeText(parentContent)}
                     </div>
                 </div>
             )}
@@ -61,7 +62,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                     </div>
 
                     <div className={`${styles.content} ${isReply ? styles.replyContent : styles.postContent}`}>
-                        {content}
+                        {sanitizeText(content)}
                     </div>
                 </div>
 

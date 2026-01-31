@@ -135,7 +135,7 @@ export default function Profile() {
                     <div className={styles.nameInfo}>
                         <h1>{user.name || user.username}</h1>
                         <div className={styles.username}>
-                            @{user.username} <span className={styles.chip}>threads.net</span>
+                            @{user.username}
                         </div>
                     </div>
                     <div className={styles.avatar} onClick={() => setIsAvatarModalOpen(true)}>

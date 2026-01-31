@@ -6,7 +6,7 @@ const UserContext = createContext();
 
 const INITIAL_USER = {
     username: "currentUser",
-    bio: "Building the future of social media. AI enthusiast.",
+    bio: "",
     avatar: "https://github.com/shadcn.png" // Placeholder
 };
 

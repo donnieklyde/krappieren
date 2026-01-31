@@ -70,16 +70,7 @@ export default function CreatePost() {
                 <div className={styles.header}>
                     <div style={{ fontWeight: 600, fontSize: 15 }}>{user.username}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        {content.length > 0 && (
-                            <span style={{
-                                fontSize: 12,
-                                fontWeight: 'bold',
-                                color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`, // Green (120) to Red (0)
-                                transition: 'color 0.2s'
-                            }}>
-                                {100 - content.length}
-                            </span>
-                        )}
+
                         {content && (
                             <button
                                 className={`${styles.postButton} ${isPostable ? styles.active : ""}`}
@@ -149,6 +140,16 @@ export default function CreatePost() {
                     <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
                         {/* Paperclip icon or similar could go here */}
                     </div>
+                    {content.length > 0 && (
+                        <span style={{
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`, // Green (120) to Red (0)
+                            transition: 'color 0.2s'
+                        }}>
+                            {100 - content.length}
+                        </span>
+                    )}
                 </div>
             </div>
         </div>

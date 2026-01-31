@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 import styles from "./PostCard.module.css";
 import { usePosts } from "../context/PostsContext";
+import { useUser } from "../context/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -13,6 +14,7 @@ const MoneyIcon = () => (
 
 export default function PostCard({ id, username, content, time, likes, likedByMe, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
     const { toggleLike, followedUsers, toggleFollow } = usePosts();
+    const { user } = useUser();
     const [moneyAnims, setMoneyAnims] = useState([]);
     const router = useRouter();
 
@@ -117,7 +119,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
 
                 <div className={styles.text}>{content}</div>
 
-                {!isGuest && (
+                {!isGuest && (user?.username !== username) && (
                     <div className={styles.splashContainer}>
                         <button
                             className={`${styles.splashBtn} ${likedByMe ? styles.active : ''}`}

@@ -174,7 +174,7 @@ export default function Profile() {
                         {isEditing ? (
                             <input
                                 value={user.username || ""}
-                                onChange={(e) => updateUser({ username: e.target.value })}
+                                onChange={(e) => updateUser({ username: e.target.value.toUpperCase() })}
                                 style={{
                                     background: 'transparent',
                                     border: '1px solid #333',

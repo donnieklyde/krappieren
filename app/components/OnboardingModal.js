@@ -57,9 +57,10 @@ export default function OnboardingModal({ onSave }) {
                             className={styles.input}
                             value={username}
                             onChange={(e) => {
-                                setUsername(e.target.value.replace(/[^a-zA-Z0-9]/g, ''));
+                                setUsername(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
                                 setError("");
                             }}
+                            style={{ textTransform: 'uppercase' }}
                             placeholder="username"
                             maxLength={20}
                         />

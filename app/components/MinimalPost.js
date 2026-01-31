@@ -3,9 +3,11 @@ import { useState } from "react";
 import styles from "./MinimalPost.module.css";
 import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
+import { useUser } from "../context/UserContext";
 
 export default function MinimalPost({ id, username, content, time, isReply = false, parentContent = null, parentUsername = null, likes, likedByMe }) {
     const { toggleLike, followedUsers } = usePosts();
+    const { user } = useUser();
     const [moneyAnims, setMoneyAnims] = useState([]);
 
     const handleMoney = (e) => {
@@ -52,7 +54,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                     </div>
                 </div>
 
-                {(likes !== undefined) && (
+                {(likes !== undefined && user?.username !== username) && (
                     <div
                         onClick={handleMoney}
                         style={{

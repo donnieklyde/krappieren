@@ -77,43 +77,26 @@ export default function UserProfile({ params }) {
 
                 </div>
 
-                <div className={styles.bio}>
-                    {isCurrentUser ? (
-                        user?.bio
-                    ) : (
-                        user?.bio
-                    )}
-                    {isCurrentUser && user?.link && (
-                        <div style={{ marginTop: 5 }}>
-                            <a href={user.link} target="_blank" rel="noreferrer" style={{ color: '#666' }}>🔗 {user.link}</a>
-                        </div>
-                    )}
                 </div>
 
-                <div className={styles.meta}>
-                    <span style={{ color: 'gold', fontWeight: 'bold' }}>${totalMoney} Net Worth</span>
-                    <span>{isEnslaved ? "1 slave" : "0 slaves"}</span>
-                </div>
-
-                <div className={styles.actions}>
-                    {isCurrentUser ? (
-                        <button className={styles.editButton} onClick={() => window.location.href = '/settings'}>Edit Profile</button>
-                    ) : (
+                {/* Minimal Design: Bio and Stats removed. Only Serve button remains for others. */}
+                {!isCurrentUser && (
+                    <div className={styles.actions}>
                         <button
                             className={styles.editButton}
                             onClick={() => toggleFollow(decodedUsername)}
                             style={{
                                 background: isEnslaved ? 'gold' : 'transparent',
                                 color: isEnslaved ? 'black' : 'white',
-                                borderColor: isEnslaved ? 'gold' : 'var(--border-color)'
+                                borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
+                                width: '100%', /* Full width for emphasis? Or keep style? Keeping existing style class but maybe full width looks better in minimal layout. Let's stick to default class first. */
+                                marginTop: 10
                             }}
                         >
                             {isEnslaved ? "Quit Boss" : "Serve"}
                         </button>
-                    )}
-                    <button className={styles.editButton}>Share profile</button>
-                    {!isCurrentUser && <button className={styles.editButton} onClick={() => window.location.href = `/dms/${decodedUsername}`}>DM</button>}
-                </div>
+                    </div>
+                )}
             </div>
 
             <div className={styles.tabs}>
@@ -121,7 +104,7 @@ export default function UserProfile({ params }) {
                     className={`${styles.tab} ${activeTab === 'threads' ? styles.activeTab : ''}`}
                     onClick={() => setActiveTab('threads')}
                 >
-                    Works
+                    Intel
                 </div>
                 <div
                     className={`${styles.tab} ${activeTab === 'replies' ? styles.activeTab : ''}`}
@@ -170,6 +153,6 @@ export default function UserProfile({ params }) {
                     )
                 )}
             </div>
-        </div>
+        </div >
     );
 }

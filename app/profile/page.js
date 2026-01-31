@@ -165,60 +165,10 @@ export default function Profile() {
                     </div>
 
                 </div>
-                <div className={styles.bio}>
-                    {isEditing ? (
-                        <div style={{ position: 'relative' }}>
-                            <textarea
-                                value={editBio}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val.length <= 100) setEditBio(val);
-                                }}
-                                className={styles.bioInput}
-                                style={{
-                                    width: '100%',
-                                    background: 'transparent',
-                                    border: '1px solid #333',
-                                    color: 'white',
-                                    padding: '10px 10px 24px 10px', // Extra bottom padding for counter
-                                    borderRadius: 8,
-                                    resize: 'none',
-                                    fontFamily: 'inherit'
-                                }}
-                                rows={3}
-                            />
-                            {editBio.length > 0 && (
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: 8,
-                                    right: 12,
-                                    fontSize: 12,
-                                    fontWeight: 'bold',
-                                    color: `hsl(${120 - ((editBio.length / 100) * 120)}, 100%, 50%)`,
-                                    pointerEvents: 'none'
-                                }}>
-                                    {100 - editBio.length}
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        user.bio
-                    )}
                 </div>
 
-                <div className={styles.meta}>
-                    <span style={{ color: 'gold', fontWeight: 'bold' }}>${stats.netWorth} Net Worth</span>
-                    <span>{stats.followers} slaves</span>
-                </div>
+                {/* Removed Bio, Meta, and Actions per request for minimal design */}
 
-                <div className={styles.actions}>
-                    {isEditing ? (
-                        <button className={styles.editButton} onClick={handleSaveProfile} style={{ background: 'white', color: 'black' }}>Save Profile</button>
-                    ) : (
-                        <button className={styles.editButton} onClick={() => setIsEditing(true)}>Edit profile</button>
-                    )}
-                    <button className={styles.editButton} onClick={handleShare}>Share profile</button>
-                </div>
             </div>
 
             <div className={styles.tabs}>
@@ -226,7 +176,7 @@ export default function Profile() {
                     className={`${styles.tab} ${activeTab === 'threads' ? styles.activeTab : ''}`}
                     onClick={() => setActiveTab('threads')}
                 >
-                    Works
+                    Intel
                 </div>
                 <div
                     className={`${styles.tab} ${activeTab === 'replies' ? styles.activeTab : ''}`}
@@ -276,7 +226,7 @@ export default function Profile() {
                 )}
             </div>
 
-            {/* Avatar Modal */}
+            {/* Avatar Modal */ }
 
         </div >
     );

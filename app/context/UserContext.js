@@ -59,7 +59,11 @@ export function UserProvider({ children }) {
                             // Hydrate other fields from API
                             name: data.name || prev.name,
                             languages: data.languages || prev.languages,
-                            isOnboarded: data.isOnboarded !== undefined ? data.isOnboarded : true, // Only overwrite if explicitly false
+                            // Correctly handle onboarding state:
+                            // If API says false, it's false.
+                            // If username is "newuser" (default), it's false.
+                            // Otherwise default to true (optimistic).
+                            isOnboarded: (data.isOnboarded === false || data.username?.toLowerCase() === 'newuser') ? false : true,
                             bio: data.bio || prev.bio
                         };
                         localStorage.setItem('krappieren_user', JSON.stringify(updated));
@@ -92,6 +96,7 @@ export function UserProvider({ children }) {
 
     const completeOnboarding = async (data) => {
         // Optimistic update
+        const previousUser = user; // backup
         setUser(prev => {
             const newUser = {
                 ...prev,
@@ -105,14 +110,26 @@ export function UserProvider({ children }) {
 
         // Persist to DB
         try {
-            await fetch('/api/user/update', {
+            const res = await fetch('/api/user/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            // We could reload session here if needed, but optimistic update is fine
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("Failed to save user data", errorData);
+                // Revert optimistic update? Or just warn?
+                // For onboarding, we should probably revert and show error.
+                setUser(previousUser);
+                localStorage.setItem('krappieren_user', JSON.stringify(previousUser));
+                return { success: false, error: errorData.error || 'Failed to update' };
+            }
+            return { success: true };
         } catch (err) {
             console.error("Failed to save user data", err);
+            setUser(previousUser);
+            return { success: false, error: 'Network error' };
         }
     };
 

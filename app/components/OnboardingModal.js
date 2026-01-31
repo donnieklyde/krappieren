@@ -39,7 +39,13 @@ export default function OnboardingModal({ onSave }) {
         }
 
         // Initialize with no specific languages set (will auto-learn)
-        onSave({ username, languages: null });
+        const result = await onSave({ username, languages: null });
+
+        if (result && !result.success) {
+            setError(result.error);
+        } else {
+            // Success - modal will close as parent re-renders or logic dictates
+        }
     };
 
     return (

@@ -33,6 +33,20 @@ export async function POST(req) {
             return NextResponse.json({ error: 'Bio must be under 100 characters' }, { status: 400 });
         }
 
+        // Check for uniqueness if username is changing
+        if (username) {
+            const existingUser = await prisma.user.findFirst({
+                where: {
+                    username: username,
+                    NOT: { email: session.user.email } // Exclude self
+                }
+            });
+
+            if (existingUser) {
+                return NextResponse.json({ error: 'Username is already taken' }, { status: 409 });
+            }
+        }
+
         // Construct update data dynamically
         const updateData = {};
         if (username) updateData.username = username;

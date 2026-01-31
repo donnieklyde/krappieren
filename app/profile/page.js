@@ -11,11 +11,11 @@ export default function Profile() {
     const [activeTab, setActiveTab] = useState("threads");
 
     const [isEditing, setIsEditing] = useState(false);
-    const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+
 
     // Edit State
     const [editBio, setEditBio] = useState(user.bio);
-    const fileInputRef = useRef(null);
+
 
 
     // Local state for user posts to ensure we get ALL of them, not just what's in Feed Context
@@ -132,52 +132,7 @@ export default function Profile() {
 
     // Avatar Upload
     // Avatar Upload with Compression
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (readerEvent) => {
-                const img = new Image();
-                img.onload = () => {
-                    // Resize to max 500x500
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 500;
-                    let width = img.width;
-                    let height = img.height;
 
-                    if (width > height) {
-                        if (width > MAX_SIZE) {
-                            height *= MAX_SIZE / width;
-                            width = MAX_SIZE;
-                        }
-                    } else {
-                        if (height > MAX_SIZE) {
-                            width *= MAX_SIZE / height;
-                            height = MAX_SIZE;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Compress to JPEG 0.7
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-                    try {
-                        updateUser({ avatar: dataUrl });
-                    } catch (err) {
-                        console.error("Storage limit reached even after compression", err);
-                        alert("Image is still too large. Please choose a smaller one.");
-                    }
-                };
-                img.src = readerEvent.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     // ...
 
@@ -208,35 +163,7 @@ export default function Profile() {
                             <h1>{user.username || user.name}</h1>
                         )}
                     </div>
-                    <div className={styles.avatar} onClick={() => isEditing ? fileInputRef.current?.click() : setIsAvatarModalOpen(true)}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={user.avatar || "https://github.com/shadcn.png"}
-                            alt="avatar"
-                        />
-                        {isEditing && (
-                            <div style={{
-                                position: 'absolute',
-                                inset: 0,
-                                background: 'rgba(0,0,0,0.5)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: '50%',
-                                fontSize: 10,
-                                fontWeight: 'bold'
-                            }}>
-                                EDIT
-                            </div>
-                        )}
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            accept="image/*"
-                            onChange={handleAvatarChange}
-                        />
-                    </div>
+
                 </div>
                 <div className={styles.bio}>
                     {isEditing ? (
@@ -350,20 +277,7 @@ export default function Profile() {
             </div>
 
             {/* Avatar Modal */}
-            {
-                isAvatarModalOpen && (
-                    <div className={styles.modalOverlay} onClick={() => setIsAvatarModalOpen(false)}>
-                        <div onClick={(e) => e.stopPropagation()}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={user.avatar}
-                                alt="Profile Full"
-                                className={styles.modalImage}
-                            />
-                        </div>
-                    </div>
-                )
-            }
+
         </div >
     );
 }

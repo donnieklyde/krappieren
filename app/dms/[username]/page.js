@@ -128,7 +128,7 @@ export default function ChatPage({ params }) {
             </div>
 
             {/* Chat Area */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', paddingBottom: 100, display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '20px', display: 'flex', flexDirection: 'column', gap: 15 }}>
                 {messages && messages.length > 0 ? messages.map(msg => {
                     const isMe = msg.sender === 'currentUser';
                     return (
@@ -159,8 +159,13 @@ export default function ChatPage({ params }) {
                 <div ref={bottomRef}></div>
             </div>
 
-            {/* Input Dock - Floating like CommentDock */}
-            <div className={styles.dock} style={{ position: 'sticky', bottom: 0 }}>
+            {/* Input Dock - Flex naturally at bottom */}
+            <div style={{
+                padding: '20px',
+                background: 'black',
+                borderTop: '2px solid white',
+                zIndex: 100
+            }}>
                 <form onSubmit={handleSend} className={styles.form}>
                     <textarea
                         ref={textareaRef}

@@ -113,12 +113,49 @@ export default function Profile() {
     };
 
     // Avatar Upload
+    // Avatar Upload with Compression
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                updateUser({ avatar: reader.result }); // Set base64 for now
+            reader.onload = (readerEvent) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Resize to max 500x500
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 500;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Compress to JPEG 0.7
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                    try {
+                        updateUser({ avatar: dataUrl });
+                    } catch (err) {
+                        console.error("Storage limit reached even after compression", err);
+                        alert("Image is still too large. Please choose a smaller one.");
+                    }
+                };
+                img.src = readerEvent.target.result;
             };
             reader.readAsDataURL(file);
         }

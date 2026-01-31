@@ -145,21 +145,33 @@
 }
 
 .comeButton {
-    position: fixed;
-    left: 0;
-    width: 100%;
-    bottom: 0px;
-    /* Desktop bottom */
-    padding: 15px 0;
-    background-color: white;
+    background: white;
     color: black;
-    font-weight: bold;
-    font-size: 16px;
     border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 900;
+    font-size: 12px;
     cursor: pointer;
-    z-index: 10000;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-transform: uppercase;
+    transition: transform 0.1s;
+    margin-top: auto;
+    /* Push to bottom in flex column */
+    margin-bottom: 20px;
+    width: 60px;
+    /* Fit in sidebar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comeButton:hover {
+    transform: scale(1.05);
+}
+
+.comeButton:active {
+    transform: scale(0.95);
 }
 
 .debugButton {
@@ -184,7 +196,11 @@
 
 @media (max-width: 1024px) {
     .comeButton {
-        bottom: 60px;
-        /* Above the 60px navbar */
+        margin: 0;
+        margin-right: 10px;
+        width: auto;
+        height: 40px;
+        position: static;
+        /* Reset fixed */
     }
 }

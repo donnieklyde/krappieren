@@ -170,7 +170,7 @@ function Navigation() {
                             onClick={handleRegister}
                             className={styles.comeButton}
                         >
-                            Get In
+                            COME
                         </button>
 
                     </>

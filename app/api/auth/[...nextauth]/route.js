@@ -108,11 +108,27 @@ export const authOptions = {
             return token;
         },
         async session({ session, token }) {
-            if (token) {
-                session.user.id = token.id;
-                // session.user.isOnboarded = token.isOnboarded; // Optimization: Fetch on client
-                // session.user.languages = token.languages; // Optimization: Fetch on client
-                // session.user.username = token.username; // Optimization: Fetch on client
+            if (token && token.id) {
+                // Determine user ID
+                const userId = token.id;
+                session.user.id = userId;
+
+                // Sync latest data from DB to avoid stale session state
+                // This is crucial for onboarding persistence
+                try {
+                    const dbUser = await prisma.user.findUnique({
+                        where: { id: userId },
+                        select: { username: true, isOnboarded: true, languages: true }
+                    });
+
+                    if (dbUser) {
+                        session.user.username = dbUser.username;
+                        session.user.isOnboarded = dbUser.isOnboarded;
+                        session.user.languages = dbUser.languages;
+                    }
+                } catch (e) {
+                    console.error("Session sync failed", e);
+                }
             }
             return session;
         },

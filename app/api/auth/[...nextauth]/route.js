@@ -62,7 +62,9 @@ export const authOptions = {
                                 email: email,
                                 name: name,
                                 image: image,
-                                username: name?.replace(/\s+/g, '').toUpperCase(), // Enforce Uppercase on auto-creation
+                                // username: name?.replace(/\s+/g, '').toUpperCase(), // REMOVED: Don't force username on creation, let them pick.
+                                username: null,
+                                isOnboarded: false
                             }
                         });
 

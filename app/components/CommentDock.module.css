@@ -14,8 +14,8 @@
     .dock {
         left: 0 !important;
         width: 100% !important;
-        bottom: 60px !important;
-        /* Sit above bottom navbar */
+        bottom: 120px !important;
+        /* Sit above bottom navbar (90px + 30px padding = 120px total height) */
         padding-bottom: 20px;
     }
 }

@@ -7,7 +7,6 @@ import { UserProvider } from "./context/UserContext";
 import AuthProvider from "./context/AuthProvider";
 import OnboardingWrapper from "./components/OnboardingWrapper";
 import GlobalListeners from "./components/GlobalListeners";
-import DebugOverlay from "./components/DebugOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +43,6 @@ export default function RootLayout({ children }) {
               <UserProvider>
                 <DMsProvider>
                   <GlobalListeners />
-                  <DebugOverlay />
                   <Navigation />
                   <main className="mainContent">
                     <OnboardingWrapper>

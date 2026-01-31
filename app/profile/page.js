@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./profile.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
@@ -93,6 +93,22 @@ export default function Profile() {
     const handleSaveProfile = () => {
         updateUser({ bio: editBio });
         setIsEditing(false);
+    };
+
+    const handleShare = async () => {
+        if (typeof navigator !== 'undefined' && navigator.share) {
+            try {
+                await navigator.share({
+                    title: `${user.username}'s Profile`,
+                    url: window.location.href
+                });
+            } catch (err) {
+                console.error("Error sharing:", err);
+            }
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Profile URL copied to clipboard!");
+        }
     };
 
     // Avatar Upload

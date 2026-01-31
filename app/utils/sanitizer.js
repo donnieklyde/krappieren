@@ -6,7 +6,10 @@
  * @param {string} text 
  * @returns {string} Sanitized text
  */
-export const sanitizeText = (text) => {
+export const sanitizeText = (text, strict = false) => {
     if (!text) return "";
+    if (strict) {
+        return text.replace(/[^a-zA-Z0-9\s]/g, '').toUpperCase();
+    }
     return text.replace(/[^a-zA-Z0-9\s.,!?]/g, '').toUpperCase();
 };

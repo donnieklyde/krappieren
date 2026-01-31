@@ -54,7 +54,7 @@ export default function CreatePage() {
     };
 
     const handleContentChange = (e) => {
-        let val = sanitizeText(e.target.value);
+        let val = sanitizeText(e.target.value, true); // Strict mode: No punctuation
         if (val.length > 100) val = val.substring(0, 100);
         setContent(val);
     };

@@ -72,7 +72,8 @@ export const authOptions = {
                             email: user.email,
                             image: user.image,
                             isOnboarded: user.isOnboarded,
-                            languages: user.languages
+                            languages: user.languages,
+                            username: user.username
                         };
 
                     } catch (e) {

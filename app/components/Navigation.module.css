@@ -95,10 +95,10 @@
         top: auto;
         bottom: 0;
         width: 100%;
-        height: 75px;
-        /* Increased height to accommodate padding */
-        padding-bottom: 15px;
-        /* Added padding at the bottom */
+        height: 120px;
+        /* Further increased height per request */
+        padding-bottom: 60px;
+        /* Significant bottom padding */
         flex-direction: row;
         justify-content: space-between;
         align-items: center;

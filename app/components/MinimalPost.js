@@ -5,9 +5,12 @@ import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 
-export default function MinimalPost({ id, username, content, time, isReply = false, parentContent = null, parentUsername = null, likes, likedByMe }) {
+import { useRouter } from "next/navigation";
+
+export default function MinimalPost({ id, username, content, time, isReply = false, parentId, parentContent = null, parentUsername = null, likes, likedByMe }) {
     const { toggleLike, followedUsers } = usePosts();
     const { user } = useUser();
+    const router = useRouter(); // Hook for navigation
     const [moneyAnims, setMoneyAnims] = useState([]);
 
     const handleMoney = (e) => {
@@ -25,13 +28,21 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
         }, 600);
     };
 
+    const handlePostClick = () => {
+        if (isReply && parentId) {
+            router.push(`/thread/${parentId}`);
+        } else if (id) {
+            router.push(`/thread/${id}`);
+        }
+    };
+
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={handlePostClick} style={{ cursor: 'pointer' }}>
             {isReply && parentContent && (
                 <div className={styles.parentContainer}>
                     <div className={styles.parentLine}></div>
                     <div className={styles.parentHeader}>
-                        <span className={styles.username} onContextMenu={(e) => e.preventDefault()}>@{parentUsername}</span>
+                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${parentUsername}`); }}>@{parentUsername}</span>
                         <span style={{ color: '#444' }}>•</span>
                         <span>Original Post</span>
                     </div>
@@ -44,7 +55,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
             <div className={styles.replyContainer} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div className={styles.header}>
-                        <span className={styles.username} onContextMenu={(e) => e.preventDefault()}>@{username}</span>
+                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${username}`); }}>@{username}</span>
                         <span style={{ color: '#444' }}>•</span>
                         <span>{time}</span>
                     </div>
@@ -58,7 +69,6 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                     <div
                         onClick={handleMoney}
                         style={{
-                            color: likedByMe ? 'gold' : 'rgba(255, 255, 255, 0.3)', // White but subtle, or just 'white' if they want it pop. User said "should be white". I'll use white.
                             color: likedByMe ? 'gold' : 'white',
                             fontWeight: 'bold',
                             fontSize: 20,

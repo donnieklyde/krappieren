@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 const config: CapacitorConfig = {
   appId: 'com.krappieren.app',
@@ -14,6 +15,9 @@ const config: CapacitorConfig = {
       scopes: ['profile', 'email'],
       serverClientId: '460311552143-tgeaqub4hj0cgevc0nivg1t3ghs2hgj6.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
+    },
+    Keyboard: {
+      resize: KeyboardResize.Native,
     },
   },
 };

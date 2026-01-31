@@ -14,6 +14,7 @@ export default function GlobalListeners() {
                         const { StatusBar } = await import('@capacitor/status-bar');
                         const { NavigationBar } = await import('@capgo/capacitor-navigation-bar');
                         const { App } = await import('@capacitor/app');
+                        const { Keyboard, KeyboardResize } = await import('@capacitor/keyboard');
 
                         // Listen for deep links (e.g. from auth redirect)
                         App.addListener('appUrlOpen', data => {
@@ -29,6 +30,9 @@ export default function GlobalListeners() {
 
                         // Set Navigation Bar Color (Remove white stripe)
                         await NavigationBar.setBackgroundColor({ color: '#000000' });
+
+                        // Force Native Resize Mode (Crucial for correct keyboard behavior)
+                        await Keyboard.setResizeMode({ mode: KeyboardResize.Native });
                     } catch (err) {
                         console.error("Capacitor UI Error:", err);
                     }

@@ -214,4 +214,5 @@
     color: var(--accent);
     font-weight: 700;
     margin-right: 8px;
+    text-transform: uppercase;
 }

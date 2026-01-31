@@ -5,10 +5,7 @@ import { getTakenUsernames } from "../data/mockData";
 
 export default function OnboardingModal({ onSave }) {
     const [username, setUsername] = useState("");
-    const [languages, setLanguages] = useState({
-        english: false,
-        german: false
-    });
+
     const [error, setError] = useState("");
 
     const handleSave = async () => {
@@ -41,12 +38,8 @@ export default function OnboardingModal({ onSave }) {
             console.error("Failed to check username", err);
         }
 
-        if (!languages.english && !languages.german) {
-            setError("Please select at least one language.");
-            return;
-        }
-
-        onSave({ username, languages });
+        // Initialize with no specific languages set (will auto-learn)
+        onSave({ username, languages: null });
     };
 
     return (
@@ -73,27 +66,7 @@ export default function OnboardingModal({ onSave }) {
                     </div>
                 </div>
 
-                <div className={styles.field}>
-                    <label className={styles.label}>Languages</label>
-                    <div className={styles.checkboxGroup}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={languages.english}
-                                onChange={(e) => setLanguages(prev => ({ ...prev, english: e.target.checked }))}
-                            />
-                            <span>English</span>
-                        </label>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={languages.german}
-                                onChange={(e) => setLanguages(prev => ({ ...prev, german: e.target.checked }))}
-                            />
-                            <span>German</span>
-                        </label>
-                    </div>
-                </div>
+
 
                 {error && <div className={styles.error}>{error}</div>}
 

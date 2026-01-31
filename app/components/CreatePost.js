@@ -9,7 +9,7 @@ import { detectLanguage } from "../utils/language";
 export default function CreatePost() {
     const [content, setContent] = useState("");
     const { addPost, followedUsers } = usePosts();
-    const { user } = useUser();
+    const { user, updateUser } = useUser();
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestionQuery, setSuggestionQuery] = useState("");
 
@@ -55,8 +55,22 @@ export default function CreatePost() {
 
     const handlePost = () => {
         if (!isPostable) return;
+
         const language = detectLanguage(content);
         addPost(content, user.username, language); // Pass actual username and detected language
+
+        // Auto-learn language from posts
+        // If user doesn't have this language enabled yet, enable it.
+        const currentLanguages = user.languages || {};
+        if (!currentLanguages[language]) {
+            // We update the user profile to include this language
+            const updatedLanguages = {
+                ...currentLanguages,
+                [language]: true
+            };
+            updateUser({ languages: updatedLanguages });
+        }
+
         setContent("");
         setShowSuggestions(false);
         // Reset height

@@ -98,8 +98,7 @@ export default function UserProfile({ params }) {
                     </button>
                 </div>
             )}
-        </div>
-            {/* End header */ }
+            {/* End header */}
 
             <div className={styles.tabs}>
                 <div

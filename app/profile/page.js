@@ -165,11 +165,9 @@ export default function Profile() {
                     </div>
 
                 </div>
-                </div>
-
-                {/* Removed Bio, Meta, and Actions per request for minimal design */}
-
             </div>
+
+            {/* Removed Bio, Meta, and Actions per request for minimal design */}
 
             <div className={styles.tabs}>
                 <div
@@ -226,7 +224,7 @@ export default function Profile() {
                 )}
             </div>
 
-            {/* Avatar Modal */ }
+            {/* Avatar Modal */}
 
         </div >
     );

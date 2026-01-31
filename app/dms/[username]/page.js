@@ -38,6 +38,7 @@ export default function ChatPage({ params }) {
     const textareaRef = useRef(null);
     const bottomRef = useRef(null);
     const [viewportHeight, setViewportHeight] = useState('100%');
+    const [isMobile, setIsMobile] = useState(false);
 
     // Auto-scroll to bottom
     useEffect(() => {
@@ -54,8 +55,21 @@ export default function ChatPage({ params }) {
 
     // Handle viewport resize (keyboard open/close)
     useEffect(() => {
-        if (typeof window !== 'undefined' && window.visualViewport) {
+        if (typeof window !== 'undefined') {
             const handleResize = () => {
+                const currentH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                const maxH = window.innerHeight;
+                const mobile = window.innerWidth < 768;
+                setIsMobile(mobile);
+
+                // Detect keyboard (approximate check: viewport significantly smaller than screen)
+                const isKeyboardOpen = currentH < maxH * 0.85;
+
+                if (mobile && !isKeyboardOpen) {
+                    setViewportHeight(`${maxH * 0.5}px`); // Half height when keyboard closed on mobile
+                } else {
+                    setViewportHeight(`${currentH}px`); // Full available space otherwise (keyboard open or desktop)
+                }
                 // Scroll to bottom when keyboard opens to keep latest messages visible
                 // Small delay to allow layout to settle
                 setTimeout(() => {
@@ -65,8 +79,17 @@ export default function ChatPage({ params }) {
                     bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
                 }, 300);
             };
-            window.visualViewport.addEventListener('resize', handleResize);
-            return () => window.visualViewport.removeEventListener('resize', handleResize);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', handleResize);
+            }
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                if (window.visualViewport) {
+                    window.visualViewport.removeEventListener('resize', handleResize);
+                }
+                window.removeEventListener('resize', handleResize);
+            };
         }
     }, []);
 
@@ -108,9 +131,9 @@ export default function ChatPage({ params }) {
             flexDirection: 'column',
             height: viewportHeight,
             // maxHeight: 'calc(100vh - 80px)', // removed fixed height restriction to let flex grow
-            flex: 1,
+            flex: isMobile ? 'none' : 1, // Don't grow on mobile if we set specific height
             overflow: 'hidden',
-            marginTop: 20,
+            marginTop: isMobile ? 'auto' : 20, // Push to bottom on mobile
             border: '1px solid #333',
             borderRadius: 15
         }}>

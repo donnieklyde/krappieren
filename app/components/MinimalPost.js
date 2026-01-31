@@ -1,6 +1,8 @@
 "use client";
+import { useState } from "react";
 import styles from "./MinimalPost.module.css";
 import Link from "next/link";
+import { usePosts } from "../context/PostsContext";
 
 export default function MinimalPost({ username, content, time, isReply = false, parentContent = null, parentUsername = null }) {
 

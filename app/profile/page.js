@@ -297,9 +297,12 @@ export default function Profile() {
                         myPosts.map(post => (
                             <MinimalPost
                                 key={post.id}
+                                id={post.id}
                                 username={post.username}
                                 content={post.content}
                                 time={post.time}
+                                likes={post.likes}
+                                likedByMe={post.likedByMe}
                             />
                         ))
                     ) : (

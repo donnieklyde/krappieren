@@ -71,7 +71,7 @@ export default function OnboardingModal({ onSave }) {
                 {error && <div className={styles.error}>{error}</div>}
 
                 <button className={styles.button} onClick={handleSave}>
-                    COMPLETE REGISTRATION
+                    COME
                 </button>
             </div>
         </div>

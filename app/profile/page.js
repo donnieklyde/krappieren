@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./profile.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
@@ -15,6 +15,7 @@ export default function Profile() {
 
     // Edit State
     const [editBio, setEditBio] = useState(user.bio);
+    const fileInputRef = useRef(null);
 
 
     // 1. Threads: Posts created by current user
@@ -134,15 +135,34 @@ export default function Profile() {
                 <div className={styles.topRow}>
                     <div className={styles.nameInfo}>
                         <h1>{user.name || user.username}</h1>
-                        <div className={styles.username}>
-                            @{user.username}
-                        </div>
                     </div>
-                    <div className={styles.avatar} onClick={() => setIsAvatarModalOpen(true)}>
+                    <div className={styles.avatar} onClick={() => isEditing ? fileInputRef.current?.click() : setIsAvatarModalOpen(true)}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={user.avatar || "https://github.com/shadcn.png"}
                             alt="avatar"
+                        />
+                        {isEditing && (
+                            <div style={{
+                                position: 'absolute',
+                                inset: 0,
+                                background: 'rgba(0,0,0,0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '50%',
+                                fontSize: 10,
+                                fontWeight: 'bold'
+                            }}>
+                                EDIT
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                            onChange={handleAvatarChange}
                         />
                     </div>
                 </div>

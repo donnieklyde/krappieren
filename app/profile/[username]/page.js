@@ -51,9 +51,6 @@ export default function UserProfile({ params }) {
                             {/* BOSS Status Indicator */}
                             {isEnslaved && <span style={{ color: 'gold', border: '1px solid gold', fontSize: 10, padding: '2px 6px' }}>MY BOSS</span>}
                         </div>
-                        <div className={styles.username}>
-                            @{decodedUsername}
-                        </div>
                     </div>
 
                 </div>

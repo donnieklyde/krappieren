@@ -96,6 +96,14 @@ export async function POST(req) {
     try {
         const { content, language } = await req.json();
 
+        if (!content || typeof content !== 'string' || content.trim().length === 0) {
+            return NextResponse.json({ error: 'Content cannot be empty' }, { status: 400 });
+        }
+
+        if (content.length > 280) { // Standard tweet limit, or 500? I'll stick to a reasonable max. User didn't specify, likely short.
+            return NextResponse.json({ error: 'Post too long (max 280 chars)' }, { status: 400 });
+        }
+
         const post = await prisma.post.create({
             data: {
                 content,

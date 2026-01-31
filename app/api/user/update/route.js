@@ -12,7 +12,27 @@ export async function POST(req) {
 
     try {
         const body = await req.json();
-        const { username, languages, bio, avatar } = body;
+        const body = await req.json();
+        let { username, languages, bio, avatar } = body;
+
+        // SERVER-SIDE VALIDATION
+        if (username) {
+            // Enforce Uppercase
+            username = username.toUpperCase();
+
+            // Length check
+            if (username.length < 3 || username.length > 20) {
+                return NextResponse.json({ error: 'Username must be 3-20 characters' }, { status: 400 });
+            }
+            // Format check (Alphanumeric only)
+            if (!/^[A-Z0-9]+$/.test(username)) {
+                return NextResponse.json({ error: 'Username must be alphanumeric' }, { status: 400 });
+            }
+        }
+
+        if (bio && bio.length > 100) {
+            return NextResponse.json({ error: 'Bio must be under 100 characters' }, { status: 400 });
+        }
 
         // Construct update data dynamically
         const updateData = {};

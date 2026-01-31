@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"; // Correct import for App Router
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 import { sanitizeText } from "../utils/sanitizer";
+import { detectLanguage } from "../utils/language";
 
 export default function CreatePage() {
     const [content, setContent] = useState("");

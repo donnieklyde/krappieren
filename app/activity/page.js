@@ -64,7 +64,7 @@ export default function ActivityPage() {
     };
 
     return (
-        <div style={{ padding: 20, maxWidth: 600, margin: '0 auto', color: 'white', minHeight: '100vh' }}>
+        <div style={{ padding: '0 20px', maxWidth: 600, margin: '0 auto', color: 'white', minHeight: '100vh' }}>
             <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 20 }}>INCOME STREAM</h1>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>

@@ -105,7 +105,7 @@ export default function SearchPage() {
 
 
     return (
-        <div style={{ padding: 40, maxWidth: 600, margin: '0 auto', color: 'white' }}>
+        <div style={{ padding: '0 20px', maxWidth: 600, margin: '0 auto', color: 'white' }}>
             <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
                 <Link href="/" style={{ fontSize: 24 }}>←</Link>
                 <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace' }}>FIND A BOSS</h1>

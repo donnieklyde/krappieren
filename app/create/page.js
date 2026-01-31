@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; // Correct import for App Router
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
-import { detectLanguage } from "../utils/language";
+import { sanitizeText } from "../utils/sanitizer";
 
 export default function CreatePage() {
     const [content, setContent] = useState("");
@@ -36,7 +36,7 @@ export default function CreatePage() {
     };
 
     const handleContentChange = (e) => {
-        let val = e.target.value;
+        let val = sanitizeText(e.target.value);
         if (val.length > 100) val = val.substring(0, 100);
         setContent(val);
     };

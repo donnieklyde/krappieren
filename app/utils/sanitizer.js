@@ -8,5 +8,5 @@
  */
 export const sanitizeText = (text) => {
     if (!text) return "";
-    return text.replace(/[^a-zA-Z0-9\s.,!?]/g, '');
+    return text.replace(/[^a-zA-Z0-9\s.,!?]/g, '').toUpperCase();
 };

@@ -90,9 +90,12 @@ export const authOptions = {
             // Initial sign in
             if (user) {
                 token.id = user.id;
-                token.isOnboarded = user.isOnboarded;
-                token.languages = user.languages;
-                token.username = user.username;
+
+                // CRITICAL OPTIMIZATION: Explicitly remove large fields that NextAuth adds by default
+                // If we don't delete these, the Base64 image stays in the token!
+                delete token.picture;
+                delete token.image;
+                delete token.name;
             }
 
             // Handle updates (e.g. after onboarding)
@@ -105,9 +108,9 @@ export const authOptions = {
         async session({ session, token }) {
             if (token) {
                 session.user.id = token.id;
-                session.user.isOnboarded = token.isOnboarded;
-                session.user.languages = token.languages;
-                session.user.username = token.username;
+                // session.user.isOnboarded = token.isOnboarded; // Optimization: Fetch on client
+                // session.user.languages = token.languages; // Optimization: Fetch on client
+                // session.user.username = token.username; // Optimization: Fetch on client
             }
             return session;
         },

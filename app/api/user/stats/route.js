@@ -21,7 +21,7 @@ export async function GET(req) {
                 where: { authorId: userId },
                 include: { likes: true }
             }),
-            prisma.user.findUnique({ where: { id: userId }, select: { username: true, avatar: true } })
+            prisma.user.findUnique({ where: { id: userId }, select: { username: true, avatar: true, name: true, languages: true, bio: true, isOnboarded: true } })
         ]);
 
         const totalLikes = posts.reduce((acc, output) => acc + output.likes.length, 0);
@@ -30,8 +30,13 @@ export async function GET(req) {
             followerCount,
             followingCount,
             netWorth: totalLikes,
+            // Full profile data for client-side hydration
             username: user?.username,
-            avatar: user?.avatar
+            avatar: user?.avatar,
+            name: user?.name,
+            bio: user?.bio,
+            languages: user?.languages,
+            isOnboarded: user?.isOnboarded
         });
 
     } catch (error) {

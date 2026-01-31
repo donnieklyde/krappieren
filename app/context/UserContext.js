@@ -55,16 +55,20 @@ export function UserProvider({ children }) {
                         const updated = {
                             ...prev,
                             username: data.username,
-                            avatar: data.avatar || prev.avatar
+                            avatar: data.avatar || prev.avatar,
+                            // Hydrate other fields from API
+                            name: data.name || prev.name,
+                            languages: data.languages || prev.languages,
+                            isOnboarded: data.isOnboarded, // Trust API for onboarding status
+                            bio: data.bio || prev.bio
                         };
                         localStorage.setItem('krappieren_user', JSON.stringify(updated));
                         return updated;
                     });
                 }
             })
-            .catch(err => console.error("Sync user failed", err));
-
-        setIsInitialized(true);
+            .catch(err => console.error("Sync user failed", err))
+            .finally(() => setIsInitialized(true));
     }, [session]);
 
     const updateUser = async (updates) => {

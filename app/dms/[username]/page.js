@@ -69,11 +69,12 @@ export default function ChatPage({ params }) {
                 const keyboardOpen = window.visualViewport ? (window.visualViewport.height < screenH * 0.75) : (window.innerHeight < screenH * 0.75);
                 setIsKeyboardOpen(keyboardOpen);
 
-                // Update precise viewport height
+                // Update precise viewport height with safety buffer
+                // Subtracting 20px to create a top margin/gap
                 if (window.visualViewport) {
-                    setViewportHeight(`${window.visualViewport.height}px`);
+                    setViewportHeight(`${window.visualViewport.height - 20}px`);
                 } else {
-                    setViewportHeight(`${window.innerHeight}px`);
+                    setViewportHeight(`${window.innerHeight - 20}px`);
                 }
 
                 // Scroll to bottom

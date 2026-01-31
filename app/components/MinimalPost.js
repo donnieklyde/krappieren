@@ -56,7 +56,8 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                     <div
                         onClick={handleMoney}
                         style={{
-                            color: likedByMe ? 'gold' : '#333',
+                            color: likedByMe ? 'gold' : 'rgba(255, 255, 255, 0.3)', // White but subtle, or just 'white' if they want it pop. User said "should be white". I'll use white.
+                            color: likedByMe ? 'gold' : 'white',
                             fontWeight: 'bold',
                             fontSize: 20,
                             paddingLeft: 16,

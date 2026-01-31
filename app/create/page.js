@@ -3,23 +3,42 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; // Correct import for App Router
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
+import { detectLanguage } from "../utils/language";
 
 export default function CreatePage() {
     const [content, setContent] = useState("");
     const { addPost } = usePosts();
-    const { user } = useUser();
+    const { user, updateUser } = useUser(); // Ensure updateUser is available
     const router = useRouter();
-
-    const [language, setLanguage] = useState("english"); // Default language
 
     const handleBroadcast = () => {
         if (!content.trim()) return;
+
+        const language = detectLanguage(content);
+
+        // Fix: Pass language as 3rd argument
         addPost(content, {
             username: user.username,
-            avatarUrl: user.avatar,
-            language // Pass selected language
-        });
-        router.push('/'); // Go back to feed
+            avatarUrl: user.avatar
+        }, language);
+
+        // Auto-learn language
+        const currentLanguages = user.languages || {};
+        if (!currentLanguages[language]) {
+            const updatedLanguages = {
+                ...currentLanguages,
+                [language]: true
+            };
+            updateUser({ languages: updatedLanguages });
+        }
+
+        router.push('/');
+    };
+
+    const handleContentChange = (e) => {
+        let val = e.target.value;
+        if (val.length > 100) val = val.substring(0, 100);
+        setContent(val);
     };
 
     return (
@@ -53,45 +72,43 @@ export default function CreatePage() {
                 </button>
             </div>
 
-            <textarea
-                placeholder="What is your command?"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                style={{
-                    flex: 1,
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'white',
-                    fontFamily: 'Bahnschrift, sans-serif',
-                    fontSize: 24,
-                    resize: 'none',
-                    outline: 'none',
-                    marginBottom: 20
-                }}
-                autoFocus
-            />
+            <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <textarea
+                    placeholder="What is your command?"
+                    value={content}
+                    onChange={handleContentChange}
+                    style={{
+                        flex: 1,
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'white',
+                        fontFamily: 'Bahnschrift, sans-serif',
+                        fontSize: 24,
+                        resize: 'none',
+                        outline: 'none',
+                        marginBottom: 20
+                    }}
+                    autoFocus
+                />
 
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                {['english', 'german'].map(lang => (
-                    <button
-                        key={lang}
-                        onClick={() => setLanguage(lang)}
-                        style={{
-                            background: language === lang ? 'white' : 'transparent',
-                            color: language === lang ? 'black' : '#666',
-                            border: '1px solid #333',
-                            padding: '6px 12px',
-                            borderRadius: 20,
-                            cursor: 'pointer',
-                            textTransform: 'uppercase',
-                            fontSize: 12,
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        {lang}
-                    </button>
-                ))}
+                {/* Character Counter */}
+                {content.length > 0 && (
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 150, // Adjust position as needed, or place relative to textarea
+                        right: 0,
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`,
+                        transition: 'color 0.2s',
+                        pointerEvents: 'none'
+                    }}>
+                        {100 - content.length}
+                    </div>
+                )}
             </div>
+
+            {/* Language buttons removed */}
         </div>
     );
 }

@@ -11,13 +11,13 @@ export default function CreatePage() {
     const { user, updateUser } = useUser(); // Ensure updateUser is available
     const router = useRouter();
 
-    const handleBroadcast = () => {
+    const handleBroadcast = async () => {
         if (!content.trim()) return;
 
         const language = detectLanguage(content);
 
         // Fix: Pass language as 3rd argument
-        addPost(content, {
+        await addPost(content, {
             username: user.username,
             avatarUrl: user.avatar
         }, language);

@@ -112,7 +112,8 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                         @{username}
                     </span>
                     <span style={{ margin: '0 8px' }}>•</span>
-                    <span className={styles.time}>{time}</span>
+                    <span style={{ margin: '0 8px' }}>•</span>
+                    <span className={styles.time} style={{ color: '#00ff00', fontWeight: 'bold', fontSize: 12 }}>● LIVE</span>
                 </div>
 
                 <div className={styles.text}>{content}</div>

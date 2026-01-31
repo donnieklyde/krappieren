@@ -1,59 +1,86 @@
 "use client";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import styles from "./GuestLanding.module.css";
 import { useRouter } from "next/navigation";
 
 export default function GuestLanding() {
     const router = useRouter();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = async () => {
-        if (typeof window !== 'undefined') {
-            try {
-                const { Capacitor } = await import('@capacitor/core');
-                if (Capacitor.isNativePlatform()) {
-                    const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
-                    await GoogleAuth.initialize();
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError("");
 
-                    // Force sign-out locally to ensure account picker
-                    await GoogleAuth.signOut();
-
-                    const user = await GoogleAuth.signIn();
-
-                    const result = await signIn('google-mobile', {
-                        idToken: user.authentication.idToken,
-                        email: user.email.toLowerCase(),
-                        name: user.name,
-                        image: user.imageUrl,
-                        redirect: false,
-                    });
-
-                    if (result?.ok) {
-                        router.push('/');
-                        router.refresh();
-                    }
-                } else {
-                    signIn("google", { callbackUrl: "/" });
-                }
-            } catch (error) {
-                console.error("Login failed:", error);
-                // Fallback if native fails for some reason?
-                signIn("google", { callbackUrl: "/" });
-            }
-        } else {
-            signIn("google", { callbackUrl: "/" });
+        if (!username || !password) {
+            setError("Please fill in both fields");
+            return;
         }
+
+        setLoading(true);
+
+        try {
+            const res = await signIn("credentials", {
+                username: username,
+                password: password,
+                redirect: false
+            });
+
+            if (res?.error) {
+                setError(res.error);
+                setLoading(false);
+            } else {
+                router.push('/');
+                router.refresh();
+            }
+        } catch (err) {
+            console.error("Login crashed", err);
+            setError("Something went wrong");
+            setLoading(false);
+        }
+    };
+
+    const handleUsernameChange = (e) => {
+        // Strict sanitization: A-Z 0-9 SPACE only
+        const val = e.target.value.toUpperCase().replace(/[^A-Z ]/g, '');
+        setUsername(val);
     };
 
     return (
         <div className={styles.container}>
             <div className={styles.content}>
                 <h1 className={styles.title}>every action is a mistake</h1>
-                <button
-                    className={styles.button}
-                    onClick={handleLogin}
-                >
-                    see the good
-                </button>
+
+                <form onSubmit={handleLogin} className={styles.form}>
+                    <input
+                        type="text"
+                        placeholder="USERNAME"
+                        className={styles.input}
+                        value={username}
+                        onChange={handleUsernameChange}
+                        autoCapitalize="none"
+                    />
+                    <input
+                        type="password"
+                        placeholder="PASSWORD"
+                        className={styles.input}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+
+                    {error && <div style={{ color: 'red', textAlign: 'center', fontFamily: 'monospace', fontSize: 12 }}>{error}</div>}
+
+                    <button
+                        type="submit"
+                        className={styles.button}
+                        disabled={loading}
+                    >
+                        {loading ? "..." : "COME"}
+                    </button>
+                </form>
             </div>
         </div>
     );

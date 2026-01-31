@@ -63,7 +63,7 @@ export default function OnboardingModal({ onSave }) {
                             className={styles.input}
                             value={username}
                             onChange={(e) => {
-                                setUsername(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
+                                setUsername(e.target.value.toUpperCase().replace(/[^A-Z ]/g, ''));
                                 setError("");
                             }}
                             style={{ textTransform: 'uppercase' }}

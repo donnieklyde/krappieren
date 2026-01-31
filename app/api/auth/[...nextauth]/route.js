@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "@/lib/prisma"
+import bcrypt from "bcryptjs"
 
 export const authOptions = {
     debug: true, // Enable debugging to see exact error in Vercel logs
@@ -12,78 +13,61 @@ export const authOptions = {
         strategy: "jwt",
     },
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || (() => { throw new Error("Missing GOOGLE_CLIENT_ID") })(),
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || (() => { throw new Error("Missing GOOGLE_CLIENT_SECRET") })(),
-            allowDangerousEmailAccountLinking: true, // Allow signing in with Google even if user exists
-        }),
         CredentialsProvider({
-            id: "google-mobile",
-            name: "Google Mobile",
+            name: "Credentials",
             credentials: {
-                idToken: { label: "ID Token", type: "text" },
-                // We rely on ID Token for security. Email/Name passed are trustworthy ONLY if ID Token is valid.
+                username: { label: "Username", type: "text" },
+                password: { label: "Password", type: "password" }
             },
-            async authorize(credentials, req) {
-                if (credentials.idToken) {
-                    try {
-                        // VERIFY ID TOKEN with Google
-                        const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credentials.idToken}`);
-                        if (!res.ok) {
-                            throw new Error("Invalid ID Token");
-                        }
-                        const payload = await res.json();
-
-                        // Use payload data for truth
-                        const email = payload.email.toLowerCase();
-                        const name = payload.name;
-                        const image = payload.picture;
-
-                        // Verify client ID matches (Prevent using tokens from other apps)
-                        const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-                        if (payload.aud !== GOOGLE_CLIENT_ID) {
-                            // throw new Error("Token audience mismatch"); 
-                            // Note: If using multiple client IDs (web/android), check against list. 
-                            // For now, assuming match or skip if strictness causes issues, but STRICT is better for "hack proof".
-                            // If user uses distinct android client ID, we should check that too.
-                            // Safeguard: Check if aud matches OR allow if user explicitly configured it. 
-                            // I'll skip strict audience check HERE to avoid breaking if Android Client ID differs from Web Client ID in env.
-                            // But verifying it is a valid Google Token implies it WAS signed by Google.
-                        }
-
-                        // Upsert user in DB
-                        const user = await prisma.user.upsert({
-                            where: { email: email },
-                            update: {
-                                name: name,
-                                image: image
-                            },
-                            create: {
-                                email: email,
-                                name: name,
-                                image: image,
-                                // username: name?.replace(/\s+/g, '').toUpperCase(), // REMOVED: Don't force username on creation, let them pick.
-                                username: null,
-                                isOnboarded: false
-                            }
-                        });
-
-                        return {
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                            // image: user.image, // Optimization: Don't include image in token to save header size
-                            isOnboarded: user.isOnboarded,
-                            languages: user.languages,
-                            username: user.username
-                        };
-
-                    } catch (e) {
-                        console.error("Google Mobile Auth Failed:", e);
-                        return null;
-                    }
+            async authorize(credentials) {
+                if (!credentials?.username || !credentials?.password) {
+                    throw new Error("Missing username or password");
                 }
-                return null;
+
+                const username = credentials.username.toUpperCase();
+
+                // 1. Find User
+                const user = await prisma.user.findUnique({
+                    where: { username: username }
+                });
+
+                // 2. If User Exists -> Check Password
+                if (user) {
+                    // If user was created via Google before (no password), we can't login this way unless we handle it.
+                    // But user said "no google authenticator", implying a fresh start or specific flow.
+                    // If no password set, we might default to error or allow setting it?
+                    // User Request: "if the username doesnt exist it shall create a new profile"
+                    // Implies if it DOES exist, it checks password.
+
+                    if (!user.password) {
+                        throw new Error("This account is not set up for password login.");
+                        // Or maybe we treat it as "wrong password"
+                    }
+
+                    const isValid = await bcrypt.compare(credentials.password, user.password);
+
+                    if (!isValid) {
+                        throw new Error("Invalid password");
+                    }
+
+                    return user;
+                } else {
+                    // 3. User Does Not Exist -> Create New
+                    const hashedPassword = await bcrypt.hash(credentials.password, 10);
+
+                    const newUser = await prisma.user.create({
+                        data: {
+                            username: username,
+                            password: hashedPassword,
+                            name: username, // Default name to username
+                            isOnboarded: true, // Assuming instant onboarding since they picked stats
+                            email: null, // No email in this flow
+                            image: `https://github.com/identicons/${username}.png` // Basic avatar
+                        }
+                    });
+
+                    return newUser;
+                }
             }
         })
     ],

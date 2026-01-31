@@ -30,19 +30,44 @@
     opacity: 0.8;
 }
 
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.input {
+    background: transparent;
+    border: 1px solid #333;
+    padding: 12px;
+    color: white;
+    font-family: monospace;
+    font-size: 16px;
+    outline: none;
+    text-align: center;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+.input:focus {
+    border-color: white;
+}
+
 .button {
     background: white;
     color: black;
     border: none;
-    padding: 15px 40px;
+    padding: 12px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     border-radius: 4px;
-    text-transform: lowercase;
-    position: relative;
+    text-transform: uppercase;
     font-family: monospace;
+    margin-top: 10px;
 }
 
 .button:hover {

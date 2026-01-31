@@ -14,7 +14,7 @@ export function UserProvider({ children }) {
     const [isInitialized, setIsInitialized] = useState(false);
     const [user, setUser] = useState({
         ...INITIAL_USER,
-        isOnboarded: false
+        isOnboarded: true // Optimistic: Assume onboarded to prevent blocking valid users if API fails
     });
 
     const { data: session } = useSession();
@@ -41,7 +41,7 @@ export function UserProvider({ children }) {
                 username: session.user.username || session.user.name?.replace(/\s+/g, '').toLowerCase() || "newuser",
                 email: session.user.email,
                 avatar: session.user.image || prev.avatar,
-                isOnboarded: session.user.isOnboarded === true, // Trust DB
+                isOnboarded: true, // Optimistic default
                 languages: session.user.languages || prev.languages
             }));
         }
@@ -59,7 +59,7 @@ export function UserProvider({ children }) {
                             // Hydrate other fields from API
                             name: data.name || prev.name,
                             languages: data.languages || prev.languages,
-                            isOnboarded: data.isOnboarded, // Trust API for onboarding status
+                            isOnboarded: data.isOnboarded !== undefined ? data.isOnboarded : true, // Only overwrite if explicitly false
                             bio: data.bio || prev.bio
                         };
                         localStorage.setItem('krappieren_user', JSON.stringify(updated));

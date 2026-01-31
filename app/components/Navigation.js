@@ -164,7 +164,7 @@ function Navigation() {
                             onClick={handleRegister}
                             className={styles.comeButton}
                         >
-                            register
+                            Get In
                         </button>
 
                     </>

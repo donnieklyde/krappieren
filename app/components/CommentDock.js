@@ -167,7 +167,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                 {comment.length > 0 && (
                     <div style={{
                         position: 'absolute',
-                        right: 80,
+                        right: 125,
                         top: '50%',
                         transform: 'translateY(-50%)',
                         fontSize: 10,

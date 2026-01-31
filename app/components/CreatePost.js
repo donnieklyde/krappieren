@@ -56,8 +56,6 @@ export default function CreatePost() {
     const handlePost = () => {
         if (!isPostable) return;
 
-        const language = detectLanguage(content);
-        const language = detectLanguage(content);
         addPost(content, { username: user.username, avatarUrl: user.avatar }, language); // Pass user object
 
         // Auto-learn language from posts

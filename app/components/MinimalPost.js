@@ -4,7 +4,23 @@ import styles from "./MinimalPost.module.css";
 import Link from "next/link";
 import { usePosts } from "../context/PostsContext";
 
-export default function MinimalPost({ username, content, time, isReply = false, parentContent = null, parentUsername = null }) {
+export default function MinimalPost({ id, username, content, time, isReply = false, parentContent = null, parentUsername = null, likes, likedByMe }) {
+    const { toggleLike, followedUsers } = usePosts();
+    const [moneyAnims, setMoneyAnims] = useState([]);
+
+    const handleMoney = (e) => {
+        e.stopPropagation();
+        if (id === undefined || likes === undefined) return;
+
+        const direction = likedByMe ? 'down' : 'up';
+        toggleLike(id);
+
+        const newAnim = { id: Date.now(), x: 0, direction };
+        setMoneyAnims(prev => [...prev, newAnim]);
+        setTimeout(() => {
+            setMoneyAnims(prev => prev.filter(a => a.id !== newAnim.id));
+        }, 600);
+    };
 
     return (
         <div className={styles.container} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -35,18 +51,43 @@ export default function MinimalPost({ username, content, time, isReply = false, 
                     </div>
                 </div>
             </div>
-            <div style={{
-                color: 'gold',
-                fontWeight: 'bold',
-                fontSize: 18,
-                paddingLeft: 12,
-                paddingTop: isReply && parentContent ? 40 : 0, // Adjust alignment if parent connection exists
-                display: 'flex',
-                alignItems: 'center',
-                height: '100%'
-            }}>
-                $
-            </div>
+
+            {(likes !== undefined) && (
+                <div
+                    onClick={handleMoney}
+                    style={{
+                        color: likedByMe ? 'gold' : '#333',
+                        fontWeight: 'bold',
+                        fontSize: 18,
+                        paddingLeft: 12,
+                        paddingTop: isReply && parentContent ? 40 : 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        height: '100%',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        userSelect: 'none'
+                    }}
+                >
+                    $
+                    {moneyAnims.map(a => (
+                        <div
+                            key={a.id}
+                            style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: 0,
+                                color: 'gold',
+                                pointerEvents: 'none',
+                                animation: a.direction === 'up' ? 'flyUp 0.6s ease-out forwards' : 'flyDown 0.6s ease-out forwards',
+                                opacity: 1
+                            }}
+                        >
+                            $
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

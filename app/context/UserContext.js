@@ -45,6 +45,25 @@ export function UserProvider({ children }) {
                 languages: session.user.languages || prev.languages
             }));
         }
+
+        // Sync with DB (username, etc.)
+        fetch('/api/user/stats')
+            .then(res => res.json())
+            .then(data => {
+                if (data.username) {
+                    setUser(prev => {
+                        const updated = {
+                            ...prev,
+                            username: data.username,
+                            avatar: data.avatar || prev.avatar
+                        };
+                        localStorage.setItem('krappieren_user', JSON.stringify(updated));
+                        return updated;
+                    });
+                }
+            })
+            .catch(err => console.error("Sync user failed", err));
+
         setIsInitialized(true);
     }, [session]);
 

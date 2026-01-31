@@ -14,13 +14,14 @@ export async function GET(req) {
     try {
         const userId = session.user.id;
 
-        const [followerCount, followingCount, posts] = await Promise.all([
+        const [followerCount, followingCount, posts, user] = await Promise.all([
             prisma.follow.count({ where: { followingId: userId } }),
             prisma.follow.count({ where: { followerId: userId } }),
             prisma.post.findMany({
                 where: { authorId: userId },
                 include: { likes: true }
-            })
+            }),
+            prisma.user.findUnique({ where: { id: userId }, select: { username: true, avatar: true } })
         ]);
 
         const totalLikes = posts.reduce((acc, output) => acc + output.likes.length, 0);
@@ -28,7 +29,9 @@ export async function GET(req) {
         return NextResponse.json({
             followerCount,
             followingCount,
-            netWorth: totalLikes
+            netWorth: totalLikes,
+            username: user?.username,
+            avatar: user?.avatar
         });
 
     } catch (error) {

@@ -52,7 +52,8 @@ export async function GET(req) {
                 amount: 1, // $1 per like for now
                 time: like.createdAt,
                 timestamp: new Date(like.createdAt).getTime(),
-                context: like.post?.content
+                context: like.post?.content,
+                postId: like.postId
             });
         });
 

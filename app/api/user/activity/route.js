@@ -21,7 +21,10 @@ export async function GET(req) {
         const postIds = myPosts.map(p => p.id);
 
         const incomeEvents = await prisma.like.findMany({
-            where: { postId: { in: postIds } },
+            where: {
+                postId: { in: postIds },
+                userId: { not: userId } // Exclude self-funding
+            },
             include: {
                 user: { select: { username: true } },
                 post: { select: { content: true } }

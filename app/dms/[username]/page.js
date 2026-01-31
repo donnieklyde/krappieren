@@ -51,6 +51,18 @@ export default function ChatPage({ params }) {
         }
     }, [input]);
 
+    // Handle viewport resize (keyboard open/close)
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.visualViewport) {
+            const handleResize = () => {
+                // Scroll to bottom when keyboard opens to keep latest messages visible
+                bottomRef.current?.scrollIntoView({ behavior: 'auto' });
+            };
+            window.visualViewport.addEventListener('resize', handleResize);
+            return () => window.visualViewport.removeEventListener('resize', handleResize);
+        }
+    }, []);
+
     const handleSend = (e) => {
         e.preventDefault();
         if (!input.trim()) return;

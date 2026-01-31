@@ -37,6 +37,7 @@ export default function ChatPage({ params }) {
     const [input, setInput] = useState("");
     const textareaRef = useRef(null);
     const bottomRef = useRef(null);
+    const [viewportHeight, setViewportHeight] = useState('100%');
     const [isMobile, setIsMobile] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
@@ -64,10 +65,16 @@ export default function ChatPage({ params }) {
                 const mobile = window.innerWidth < 768;
                 setIsMobile(mobile);
 
-                // Keyboard check (if height < 75% of screen height, keyboard is likely open)
-                // Using visualViewport height is more accurate for on-screen keyboards
+                // Keyboard check
                 const keyboardOpen = window.visualViewport ? (window.visualViewport.height < screenH * 0.75) : (window.innerHeight < screenH * 0.75);
                 setIsKeyboardOpen(keyboardOpen);
+
+                // Update precise viewport height
+                if (window.visualViewport) {
+                    setViewportHeight(`${window.visualViewport.height}px`);
+                } else {
+                    setViewportHeight(`${window.innerHeight}px`);
+                }
 
                 // Scroll to bottom
                 setTimeout(() => {
@@ -136,9 +143,9 @@ export default function ChatPage({ params }) {
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                // On mobile: 50vh if keyboard closed, 100% (of available space) if keyboard open
-                height: isMobile && !isKeyboardOpen ? '50vh' : '100%',
-                flex: isMobile && !isKeyboardOpen ? '0 0 auto' : 1, // Allow growing when keyboard open
+                // On mobile: 50vh if keyboard closed, explicit viewport height if keyboard open
+                height: isMobile && !isKeyboardOpen ? '50vh' : viewportHeight,
+                flex: isMobile && !isKeyboardOpen ? '0 0 auto' : '0 0 auto', // Always fix height to our calculated value
                 overflow: 'hidden',
                 marginTop: 20,
                 border: '1px solid #333',

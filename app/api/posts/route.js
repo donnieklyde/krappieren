@@ -24,7 +24,12 @@ export async function GET(request) {
 
         const username = searchParams.get('username');
         if (username) {
-            where.author = { username: username };
+            where.author = {
+                username: {
+                    equals: username,
+                    mode: 'insensitive'
+                }
+            };
             // If filtering by user, we might want to ignore language filter? 
             // Usually valid to see all posts from a user regardless of language settings if explicitly visiting profile.
             // Let's remove language constraint if username is present.

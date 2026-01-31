@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   appName: 'krappieren',
   webDir: 'public',
   server: {
-    url: 'https://krappieren-project.vercel.app',
+    url: 'https://krappieren.com',
     cleartext: true
   },
   backgroundColor: '#000000',

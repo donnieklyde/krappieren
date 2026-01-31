@@ -1,0 +1,77 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    /* Use full viewport height */
+    width: 100%;
+    padding: 20px;
+    background-color: var(--background);
+    position: fixed;
+    /* Fix to cover everything including potential nav gaps */
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    /* Ensure on top of everything if needed, though Nav hiding handles most */
+}
+
+.postWrapper {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    /* Remove click events on the post for guests to prevent navigation? 
+       User said "most recent post and nothing else". PostCard usually has interactive elements.
+       For now, let it be interactive but maybe disable links if desired. 
+       PostCard 'isGuest' prop can be used to disable interactions if needed. 
+    */
+    pointer-events: none;
+    /* Disable interaction with the post as it's just a showcase? */
+    /* Wait, checking user request: "start page... shall have the most recent post...". 
+       Usually implies read-only. I'll disable pointer events to keep it simple and strict "nothing else".
+       Or maybe users want to expand it? "Nothing else than buttons". 
+       I'll use pointer-events: none to be safe. */
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.loading {
+    color: var(--foreground);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.empty {
+    color: var(--text-secondary);
+}
+
+.comeButton,
+.checkupButton {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid white;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    flex: 1;
+}
+
+.comeButton:hover,
+.checkupButton:hover {
+    background: white;
+    color: black;
+}
+
+/* Specific styling for checkup if different? */
+/* User just listed them. I'll keep them consistent style. */

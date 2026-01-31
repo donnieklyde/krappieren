@@ -106,6 +106,9 @@ function Navigation() {
         signIn('credentials', { callbackUrl: '/' });
     };
 
+    // HIDDEN ON GUEST LANDING PAGE
+    if (!session && pathname === '/') return null;
+
     return (
         <>
             <div className={styles.mobileHeader}>

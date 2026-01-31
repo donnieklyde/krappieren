@@ -24,6 +24,7 @@
 .avatar {
     width: 84px;
     height: 84px;
+    position: relative;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;

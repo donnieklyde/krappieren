@@ -150,16 +150,8 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                     value={comment}
                     onChange={handleInput}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            if (e.ctrlKey) {
-                                // Ctrl+Enter: Submit
-                                e.preventDefault();
-                                handleSubmit(e);
-                            } else {
-                                // Enter only: Newline (Default behavior)
-                                // We allow default behavior, so no preventDefault
-                            }
-                        }
+                        // Allow default behavior (newline) for Enter key
+                        // No submission on Enter
                     }}
                     rows={1}
                     style={{ resize: 'none', height: 'auto', minHeight: '44px', paddingTop: '10px', overflow: 'hidden' }}

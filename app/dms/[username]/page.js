@@ -118,17 +118,9 @@ export default function ChatPage({ params }) {
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            if (e.ctrlKey) {
-                e.preventDefault();
-                const start = e.target.selectionStart;
-                const end = e.target.selectionEnd;
-                setInput(input.substring(0, start) + "\n" + input.substring(end));
-            } else {
-                e.preventDefault();
-                handleSend(e);
-            }
-        }
+        // User requested: Enter always does newline, never submits.
+        // So we strictly allow default behavior (which is newline in textarea)
+        // and do NOT call handleSend.
     };
 
     return (
@@ -138,7 +130,8 @@ export default function ChatPage({ params }) {
             flexDirection: 'column',
             flex: 1,
             height: '100%',
-            justifyContent: 'flex-end' // Anchors content to bottom
+            justifyContent: 'flex-end', // Anchors content to bottom
+            paddingBottom: isMobile ? '140px' : '0' // Fix navbar overlap: 120px navbar + 20px buffer
         }}>
             {/* Actual Chat Card */}
             <div style={{

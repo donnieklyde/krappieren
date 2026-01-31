@@ -12,27 +12,44 @@ export default function CreatePage() {
     const router = useRouter();
 
     const handleBroadcast = async () => {
-        if (!content.trim()) return;
-
-        const language = detectLanguage(content);
-
-        // Fix: Pass language as 3rd argument
-        await addPost(content, {
-            username: user.username,
-            avatarUrl: user.avatar
-        }, language);
-
-        // Auto-learn language
-        const currentLanguages = user.languages || {};
-        if (!currentLanguages[language]) {
-            const updatedLanguages = {
-                ...currentLanguages,
-                [language]: true
-            };
-            updateUser({ languages: updatedLanguages });
+        console.log("Broadcast initiated with content:", content);
+        if (!content.trim()) {
+            console.log("Broadcast cancelled: Content empty");
+            return;
         }
 
-        router.push('/');
+        if (!user || !user.username) {
+            console.error("Broadcast failed: User not ready", user);
+            alert("Please wait for your profile to load.");
+            return;
+        }
+
+        try {
+            const language = detectLanguage(content);
+            console.log("Detected language:", language);
+
+            await addPost(content, {
+                username: user.username,
+                avatarUrl: user.avatar || ""
+            }, language);
+
+            console.log("Post added successfully, navigating...");
+
+            // Auto-learn language
+            const currentLanguages = user.languages || {};
+            if (!currentLanguages[language]) {
+                const updatedLanguages = {
+                    ...currentLanguages,
+                    [language]: true
+                };
+                updateUser({ languages: updatedLanguages });
+            }
+
+            router.push('/');
+        } catch (error) {
+            console.error("Broadcast Execution Error:", error);
+            alert("Failed to broadcast. Please try again.");
+        }
     };
 
     const handleContentChange = (e) => {

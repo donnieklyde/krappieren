@@ -12,21 +12,27 @@ export async function POST(req) {
 
     try {
         const body = await req.json();
-        const { username, languages } = body;
+        const { username, languages, bio, avatar } = body;
 
-        // Basic validation
-        if (!username || !languages) {
-            return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+        // Construct update data dynamically
+        const updateData = {};
+        if (username) updateData.username = username;
+        if (languages) updateData.languages = languages;
+        if (bio !== undefined) updateData.bio = bio; // Allow empty string
+        if (avatar) updateData.image = avatar; // Map avatar to image field
+
+        // Always mark onboarded if we are updating? Or maybe keep it separate.
+        // If username is provided, likely we are onboarding or fixing profile.
+        if (username || languages) updateData.isOnboarded = true;
+
+        if (Object.keys(updateData).length === 0) {
+            return NextResponse.json({ message: 'No changes' });
         }
 
         // Update user in DB
         const updatedUser = await prisma.user.update({
             where: { email: session.user.email },
-            data: {
-                username,
-                languages,
-                isOnboarded: true
-            }
+            data: updateData
         });
 
         return NextResponse.json(updatedUser);

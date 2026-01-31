@@ -67,12 +67,23 @@ export function UserProvider({ children }) {
         setIsInitialized(true);
     }, [session]);
 
-    const updateUser = (updates) => {
+    const updateUser = async (updates) => {
         setUser(prev => {
             const newState = { ...prev, ...updates };
             localStorage.setItem('krappieren_user', JSON.stringify(newState));
             return newState;
         });
+
+        // Persist to DB
+        try {
+            await fetch('/api/user/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updates)
+            });
+        } catch (err) {
+            console.error("Failed to persist user updates", err);
+        }
     };
 
     const completeOnboarding = async (data) => {

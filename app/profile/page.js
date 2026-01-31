@@ -171,7 +171,24 @@ export default function Profile() {
             <div className={styles.header}>
                 <div className={styles.topRow}>
                     <div className={styles.nameInfo}>
-                        <h1>{user.name || user.username}</h1>
+                        {isEditing ? (
+                            <input
+                                value={user.username || ""}
+                                onChange={(e) => updateUser({ username: e.target.value })}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid #333',
+                                    color: 'white',
+                                    fontSize: 24,
+                                    fontWeight: 700,
+                                    width: '100%',
+                                    marginBottom: 4,
+                                    textTransform: 'uppercase'
+                                }}
+                            />
+                        ) : (
+                            <h1>{user.username || user.name}</h1>
+                        )}
                     </div>
                     <div className={styles.avatar} onClick={() => isEditing ? fileInputRef.current?.click() : setIsAvatarModalOpen(true)}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -117,15 +117,18 @@ function Navigation() {
                     <Logo />
                 </div>
 
+                {session && (
+                    <Link href="/activity" className={`${styles.link} ${pathname === '/activity' ? styles.active : ''}`}>
+                        <ActivityIcon hasNew={notifications.hasNewActivity} />
+                    </Link>
+                )}
+
                 <Link href="/" className={styles.link + (pathname === "/" ? " " + styles.active : "")}>
                     <HomeIcon />
                 </Link>
 
                 {session ? (
                     <>
-                        <Link href="/activity" className={`${styles.link} ${pathname === '/activity' ? styles.active : ''}`}>
-                            <ActivityIcon hasNew={notifications.hasNewActivity} />
-                        </Link>
                         <Link href="/search" className={styles.link + (pathname === "/search" ? " " + styles.active : "")}>
                             <SearchIcon />
                         </Link>

@@ -37,6 +37,7 @@ export default function ChatPage({ params }) {
     const [input, setInput] = useState("");
     const textareaRef = useRef(null);
     const bottomRef = useRef(null);
+    const [viewportHeight, setViewportHeight] = useState('100%');
 
     // Auto-scroll to bottom
     useEffect(() => {
@@ -105,7 +106,7 @@ export default function ChatPage({ params }) {
         <div style={{
             display: 'flex',
             flexDirection: 'column',
-            height: '100%',
+            height: viewportHeight,
             // maxHeight: 'calc(100vh - 80px)', // removed fixed height restriction to let flex grow
             flex: 1,
             overflow: 'hidden',

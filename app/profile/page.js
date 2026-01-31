@@ -131,7 +131,21 @@ export default function Profile() {
         <div className={styles.container}>
             {/* ... */}
             <div className={styles.header}>
-                {/* ... */}
+                <div className={styles.topRow}>
+                    <div className={styles.nameInfo}>
+                        <h1>{user.name || user.username}</h1>
+                        <div className={styles.username}>
+                            @{user.username} <span className={styles.chip}>threads.net</span>
+                        </div>
+                    </div>
+                    <div className={styles.avatar} onClick={() => setIsAvatarModalOpen(true)}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={user.avatar || "https://github.com/shadcn.png"}
+                            alt="avatar"
+                        />
+                    </div>
+                </div>
                 <div className={styles.bio}>
                     {user.bio}
                 </div>

@@ -23,7 +23,8 @@ export async function GET(req) {
         const incomeEvents = await prisma.like.findMany({
             where: { postId: { in: postIds } },
             include: {
-                user: { select: { username: true } }
+                user: { select: { username: true } },
+                post: { select: { content: true } }
             },
             orderBy: { createdAt: 'desc' },
             take: 20
@@ -50,7 +51,8 @@ export async function GET(req) {
                 user: like.user.username || 'Anonymous',
                 amount: 1, // $1 per like for now
                 time: like.createdAt,
-                timestamp: new Date(like.createdAt).getTime()
+                timestamp: new Date(like.createdAt).getTime(),
+                context: like.post?.content
             });
         });
 

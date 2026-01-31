@@ -147,7 +147,26 @@ export default function Profile() {
                     </div>
                 </div>
                 <div className={styles.bio}>
-                    {user.bio}
+                    {isEditing ? (
+                        <textarea
+                            value={editBio}
+                            onChange={(e) => setEditBio(e.target.value)}
+                            className={styles.bioInput}
+                            style={{
+                                width: '100%',
+                                background: 'transparent',
+                                border: '1px solid #333',
+                                color: 'white',
+                                padding: 10,
+                                borderRadius: 8,
+                                resize: 'none',
+                                fontFamily: 'inherit'
+                            }}
+                            rows={3}
+                        />
+                    ) : (
+                        user.bio
+                    )}
                 </div>
 
                 <div className={styles.meta}>
@@ -156,7 +175,11 @@ export default function Profile() {
                 </div>
 
                 <div className={styles.actions}>
-                    <button className={styles.editButton} onClick={() => setIsEditing(true)}>Edit profile</button>
+                    {isEditing ? (
+                        <button className={styles.editButton} onClick={handleSaveProfile} style={{ background: 'white', color: 'black' }}>Save Profile</button>
+                    ) : (
+                        <button className={styles.editButton} onClick={() => setIsEditing(true)}>Edit profile</button>
+                    )}
                     <button className={styles.editButton} onClick={handleShare}>Share profile</button>
                 </div>
             </div>

@@ -82,45 +82,51 @@ export default function ActivityPage() {
                         }}>
                             <div>
                                 {item.type === 'money' ? (
-                                    <span>
-                                        Received <span style={{ color: 'gold', fontWeight: 'bold' }}>${item.amount}</span> from <span
-                                            onMouseDown={(e) => startPress(e, item.user)}
-                                            onMouseUp={(e) => endPress(e, item.user)}
-                                            onMouseLeave={cancelPress}
-                                            onTouchStart={(e) => startPress(e, item.user)}
-                                            onTouchEnd={(e) => endPress(e, item.user)}
-                                            onContextMenu={(e) => e.preventDefault()}
-                                            style={{
-                                                fontWeight: 'bold',
-                                                color: isEnslaved ? 'gold' : 'white',
-                                                cursor: 'pointer',
-                                                textDecoration: 'none',
-                                                textTransform: 'uppercase'
-                                            }}
-                                        >
-                                            @{item.user}
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>
+                                            Received <span style={{ color: 'gold', fontWeight: 'bold' }}>${item.amount}</span> from <span
+                                                onMouseDown={(e) => startPress(e, item.user)}
+                                                onMouseUp={(e) => endPress(e, item.user)}
+                                                onMouseLeave={cancelPress}
+                                                onTouchStart={(e) => startPress(e, item.user)}
+                                                onTouchEnd={(e) => endPress(e, item.user)}
+                                                onContextMenu={(e) => e.preventDefault()}
+                                                style={{
+                                                    fontWeight: 'bold',
+                                                    color: isEnslaved ? 'gold' : 'white',
+                                                    cursor: 'pointer',
+                                                    textDecoration: 'none',
+                                                    textTransform: 'uppercase'
+                                                }}
+                                            >
+                                                @{item.user}
+                                            </span>
                                         </span>
-                                    </span>
+                                        {item.context && <span style={{ color: '#888', fontSize: 13, marginTop: 4 }}>"{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"</span>}
+                                    </div>
                                 ) : item.type === 'mention' ? (
-                                    <span>
-                                        Mentioned <span
-                                            onMouseDown={(e) => startPress(e, item.user)}
-                                            onMouseUp={(e) => endPress(e, item.user)}
-                                            onMouseLeave={cancelPress}
-                                            onTouchStart={(e) => startPress(e, item.user)}
-                                            onTouchEnd={(e) => endPress(e, item.user)}
-                                            onContextMenu={(e) => e.preventDefault()}
-                                            style={{
-                                                fontWeight: 'bold',
-                                                color: isEnslaved ? 'gold' : 'white',
-                                                cursor: 'pointer',
-                                                textDecoration: 'none',
-                                                textTransform: 'uppercase'
-                                            }}
-                                        >
-                                            @{item.user}
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>
+                                            Mentioned <span
+                                                onMouseDown={(e) => startPress(e, item.user)}
+                                                onMouseUp={(e) => endPress(e, item.user)}
+                                                onMouseLeave={cancelPress}
+                                                onTouchStart={(e) => startPress(e, item.user)}
+                                                onTouchEnd={(e) => endPress(e, item.user)}
+                                                onContextMenu={(e) => e.preventDefault()}
+                                                style={{
+                                                    fontWeight: 'bold',
+                                                    color: isEnslaved ? 'gold' : 'white',
+                                                    cursor: 'pointer',
+                                                    textDecoration: 'none',
+                                                    textTransform: 'uppercase'
+                                                }}
+                                            >
+                                                @{item.user}
+                                            </span>
                                         </span>
-                                    </span>
+                                        {item.context && <span style={{ color: '#888', fontSize: 13, marginTop: 4 }}>"{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"</span>}
+                                    </div>
                                 ) : (
                                     <span>
                                         New Slave: <span

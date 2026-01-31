@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route"; // We need to export authOptions from valid route
 
-export async function GET() {
+export async function GET(request) {
     try {
         const session = await getServerSession(authOptions);
         const currentUserId = session?.user?.id;
-        const { searchParams } = new URL(req.url);
+        const { searchParams } = new URL(request.url);
         const isSticky = searchParams.get('sticky') === 'true';
 
         let where = {};

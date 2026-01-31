@@ -33,6 +33,30 @@ export async function GET(req) {
             take: 20
         });
 
+        // Fetch Comments (on my posts or replies to my comments)
+        // 1. Get my comment IDs to check for replies
+        const myComments = await prisma.comment.findMany({
+            where: { authorId: userId },
+            select: { id: true }
+        });
+        const myCommentIds = myComments.map(c => c.id);
+
+        const incomingComments = await prisma.comment.findMany({
+            where: {
+                authorId: { not: userId }, // Exclude my own comments
+                OR: [
+                    { postId: { in: postIds } }, // Comments on my posts
+                    { replyToId: { in: myCommentIds } } // Replies to my comments
+                ]
+            },
+            include: {
+                author: { select: { username: true } },
+                post: { select: { content: true } }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 20
+        });
+
         // Fetch New Followers (Slaves)
         const newFollowers = await prisma.follow.findMany({
             where: { followingId: userId },
@@ -69,6 +93,20 @@ export async function GET(req) {
                 amount: 0,
                 time: follow.createdAt,
                 timestamp: new Date(follow.createdAt).getTime()
+            });
+        });
+
+        // Map Comments
+        incomingComments.forEach(comment => {
+            activities.push({
+                id: `comment-${comment.id}`,
+                type: 'comment',
+                user: comment.author.username || 'Anonymous',
+                amount: 0,
+                time: comment.createdAt,
+                timestamp: new Date(comment.createdAt).getTime(),
+                context: comment.text,
+                postId: comment.postId
             });
         });
 

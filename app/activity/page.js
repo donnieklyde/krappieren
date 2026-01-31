@@ -131,6 +131,33 @@ export default function ActivityPage() {
                                         </span>
                                         {item.context && <span style={{ color: '#888', fontSize: 13, marginTop: 4 }}>"{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"</span>}
                                     </div>
+                                ) : item.type === 'comment' ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>
+                                            Commented by <span
+                                                onMouseDown={(e) => startPress(e, item.user)}
+                                                onMouseUp={(e) => endPress(e, item.user)}
+                                                onMouseLeave={cancelPress}
+                                                onTouchStart={(e) => startPress(e, item.user)}
+                                                onTouchEnd={(e) => endPress(e, item.user)}
+                                                onContextMenu={(e) => e.preventDefault()}
+                                                style={{
+                                                    fontWeight: 'bold',
+                                                    color: isEnslaved ? 'gold' : 'white',
+                                                    cursor: 'pointer',
+                                                    textDecoration: 'none',
+                                                    textTransform: 'uppercase'
+                                                }}
+                                            >
+                                                @{item.user}
+                                            </span>
+                                        </span>
+                                        {item.context && (
+                                            <Link href={`/thread/${item.postId}`} style={{ color: '#888', fontSize: 13, marginTop: 4, textDecoration: 'none', display: 'block' }}>
+                                                "{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"
+                                            </Link>
+                                        )}
+                                    </div>
                                 ) : (
                                     <span>
                                         New Slave: <span

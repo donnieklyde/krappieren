@@ -154,7 +154,7 @@ export default function ActivityPage() {
                                     </span>
                                 )}
                             </div>
-                            <div style={{ fontSize: 12, color: '#00ff00', fontFamily: 'monospace', fontWeight: 'bold' }}>● LIVE</div>
+                            <div style={{ fontSize: 12, color: '#666', fontFamily: 'monospace' }}>{item.time}</div>
                         </div>
                     );
                 })}

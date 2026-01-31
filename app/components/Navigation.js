@@ -55,7 +55,7 @@ function Navigation() {
         };
 
         checkNotifications();
-        const interval = setInterval(checkNotifications, 10000); // Poll every 10s
+        const interval = setInterval(checkNotifications, 3000); // Poll every 3s
         return () => clearInterval(interval);
     }, []);
 

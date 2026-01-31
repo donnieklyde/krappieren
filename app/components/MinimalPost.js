@@ -24,7 +24,7 @@ export default function MinimalPost({ username, content, time, isReply = false, 
                 <div className={styles.header}>
                     <span className={styles.username} onContextMenu={(e) => e.preventDefault()}>@{username}</span>
                     <span style={{ color: '#444' }}>•</span>
-                    <span style={{ color: '#00ff00', fontWeight: 'bold', fontSize: 12 }}>● LIVE</span>
+                    <span>{time}</span>
                 </div>
 
                 <div className={`${styles.content} ${isReply ? styles.replyContent : styles.postContent}`}>

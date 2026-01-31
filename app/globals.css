@@ -52,7 +52,7 @@ a {
   max-width: 100%;
   margin: 0;
   display: flex;
-  height: 100dvh;
+  height: 100%;
   flex-direction: column;
   position: relative;
 }

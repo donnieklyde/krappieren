@@ -4,6 +4,8 @@ import styles from "./CreatePost.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
 
+import { detectLanguage } from "../utils/language";
+
 export default function CreatePost() {
     const [content, setContent] = useState("");
     const { addPost, followedUsers } = usePosts();
@@ -53,7 +55,8 @@ export default function CreatePost() {
 
     const handlePost = () => {
         if (!isPostable) return;
-        addPost(content, user.username); // Pass actual username
+        const language = detectLanguage(content);
+        addPost(content, user.username, language); // Pass actual username and detected language
         setContent("");
         setShowSuggestions(false);
         // Reset height

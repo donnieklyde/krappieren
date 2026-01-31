@@ -91,7 +91,7 @@ export function PostsProvider({ children }) {
         }
     };
 
-    const addPost = async (content, user = { username: "currentUser", avatarUrl: "" }) => {
+    const addPost = async (content, user = { username: "currentUser", avatarUrl: "" }, language = 'english') => {
         // Optimistic update
         const tempId = Date.now();
         const optimisticPost = {
@@ -102,7 +102,8 @@ export function PostsProvider({ children }) {
             likes: 0,
             replies: 0,
             avatarUrl: user.avatarUrl || "",
-            comments: []
+            comments: [],
+            language // Optimistic language
         };
         setPosts(prev => [optimisticPost, ...prev]);
 
@@ -110,7 +111,7 @@ export function PostsProvider({ children }) {
             const res = await fetch('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, language: 'english' }) // Default language
+                body: JSON.stringify({ content, language }) // Use detected language
             });
             if (res.ok) {
                 const realPost = await res.json();

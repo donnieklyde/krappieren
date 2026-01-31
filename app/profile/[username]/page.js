@@ -77,27 +77,29 @@ export default function UserProfile({ params }) {
 
                 </div>
 
-                </div>
-
-                {/* Minimal Design: Bio and Stats removed. Only Serve button remains for others. */}
-                {!isCurrentUser && (
-                    <div className={styles.actions}>
-                        <button
-                            className={styles.editButton}
-                            onClick={() => toggleFollow(decodedUsername)}
-                            style={{
-                                background: isEnslaved ? 'gold' : 'transparent',
-                                color: isEnslaved ? 'black' : 'white',
-                                borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
-                                width: '100%', /* Full width for emphasis? Or keep style? Keeping existing style class but maybe full width looks better in minimal layout. Let's stick to default class first. */
-                                marginTop: 10
-                            }}
-                        >
-                            {isEnslaved ? "Quit Boss" : "Serve"}
-                        </button>
-                    </div>
-                )}
             </div>
+            {/* End topRow */}
+
+            {/* Minimal Design: Bio and Stats removed. Only Serve button remains for others. */}
+            {!isCurrentUser && (
+                <div className={styles.actions}>
+                    <button
+                        className={styles.editButton}
+                        onClick={() => toggleFollow(decodedUsername)}
+                        style={{
+                            background: isEnslaved ? 'gold' : 'transparent',
+                            color: isEnslaved ? 'black' : 'white',
+                            borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
+                            width: '100%',
+                            marginTop: 10
+                        }}
+                    >
+                        {isEnslaved ? "Quit Boss" : "Serve"}
+                    </button>
+                </div>
+            )}
+        </div>
+            {/* End header */ }
 
             <div className={styles.tabs}>
                 <div

@@ -287,7 +287,7 @@ export default function Profile() {
                         ))
                     ) : (
                         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                            No threads yet.
+                            like a soul without god ... empty
                         </div>
                     )
                 ) : (

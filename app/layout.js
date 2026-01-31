@@ -43,11 +43,10 @@ export default function RootLayout({ children }) {
               <UserProvider>
                 <DMsProvider>
                   <GlobalListeners />
+                  <OnboardingWrapper />
                   <Navigation />
                   <main className="mainContent">
-                    <OnboardingWrapper>
-                      {children}
-                    </OnboardingWrapper>
+                    {children}
                   </main>
                 </DMsProvider>
               </UserProvider>

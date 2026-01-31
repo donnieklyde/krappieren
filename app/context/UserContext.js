@@ -31,6 +31,11 @@ export function UserProvider({ children }) {
             localStorage.removeItem('krappieren_user');
         }
 
+        // Invalidate if stored data says "newuser" but claims to be onboarded (fix for stuck state)
+        if (stored && stored.username && stored.username.toLowerCase() === 'newuser') {
+            stored.isOnboarded = false;
+        }
+
         if (stored) {
             setUser(stored);
         } else {
@@ -41,7 +46,8 @@ export function UserProvider({ children }) {
                 username: session.user.username || session.user.name?.replace(/\s+/g, '').toLowerCase() || "newuser",
                 email: session.user.email,
                 avatar: session.user.image || prev.avatar,
-                isOnboarded: true, // Optimistic default
+                // Only optimistic if we actually have a valid username
+                isOnboarded: (session.user.username && session.user.username.toLowerCase() !== 'newuser'),
                 languages: session.user.languages || prev.languages
             }));
         }

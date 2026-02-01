@@ -17,9 +17,58 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
     const { toggleLike, followedUsers, toggleFollow } = usePosts();
     const { user } = useUser();
     const [moneyAnims, setMoneyAnims] = useState([]);
+
+    // BAN HAMMER STATE
+    const [showBanModal, setShowBanModal] = useState(false);
+    const [banTarget, setBanTarget] = useState(null);
+    const [banReason, setBanReason] = useState("");
+    const [isBanning, setIsBanning] = useState(false);
+
     const router = useRouter();
 
     const isFollowed = followedUsers.includes(username);
+
+    // ...
+
+    // Execution
+    const executeBan = async () => {
+        if (!banTarget) return;
+        setIsBanning(true);
+        try {
+            const res = await fetch('/api/admin/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetUsername: banTarget, reason: banReason })
+            });
+            if (res.ok) {
+                alert(`EXECUTION COMPLETE. ${banTarget} has been erased.`);
+                setShowBanModal(false);
+                setBanTarget(null);
+                setBanReason("");
+                window.location.reload(); // Refresh to clear their existence from feed
+            } else {
+                const data = await res.json();
+                alert(`ERROR: ${data.error}`);
+            }
+        } catch (e) {
+            alert("EXECUTION FAILED.");
+        }
+        setIsBanning(false);
+    };
+
+    const handleDoubleClick = (e, targetUser) => {
+        // Only YAHWEH allows this
+        if (user?.username?.toLowerCase() !== 'yahweh') return;
+
+        // Cannot ban yahweh (backend checks too, but UI check)
+        if (targetUser.toLowerCase() === 'yahweh') return;
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        setBanTarget(targetUser);
+        setShowBanModal(true);
+    };
 
     // Long Press Logic State
     const timerRef = useRef(null);
@@ -106,6 +155,8 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                         onMouseDown={(e) => startPress(e, username)}
                         onMouseUp={(e) => endPress(e, username)}
                         onMouseLeave={cancelPress}
+
+                        onDoubleClick={(e) => handleDoubleClick(e, username)}
 
                         onTouchStart={(e) => startPress(e, username)}
                         onTouchEnd={(e) => {
@@ -239,6 +290,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 onMouseDown={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
                                                 onMouseUp={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
                                                 onMouseLeave={cancelPress}
+                                                onDoubleClick={(e) => handleDoubleClick(e, comment.user)}
                                                 onTouchStart={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
                                                 onTouchEnd={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
                                                 onContextMenu={(e) => e.preventDefault()}
@@ -276,6 +328,54 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                     </div>
                 )}
             </div>
+            {showBanModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.9)', zIndex: 99999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <div style={{
+                        background: '#220000', border: '2px solid red', padding: 20,
+                        width: '90%', maxWidth: 400, textAlign: 'center',
+                        display: 'flex', flexDirection: 'column', gap: 15
+                    }}>
+                        <h2 style={{ color: 'red', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+                            JUDGMENT DAY
+                        </h2>
+                        <p style={{ color: 'white', fontFamily: 'monospace' }}>
+                            DELETE <strong>@{banTarget}</strong> FOREVER?
+                        </p>
+                        <textarea
+                            placeholder="REASON FOR EXECUTION"
+                            value={banReason}
+                            onChange={(e) => setBanReason(e.target.value)}
+                            style={{
+                                background: 'black', color: 'red', border: '1px solid red',
+                                padding: 10, fontFamily: 'monospace', minHeight: 80
+                            }}
+                        />
+                        <button
+                            onClick={executeBan}
+                            disabled={isBanning}
+                            style={{
+                                background: 'red', color: 'black', fontWeight: 'bold',
+                                padding: 15, border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                            }}
+                        >
+                            {isBanning ? "OBLITERATING..." : "EXECUTE"}
+                        </button>
+                        <button
+                            onClick={() => { setShowBanModal(false); setBanTarget(null); }}
+                            style={{
+                                background: 'transparent', color: '#666',
+                                border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                            }}
+                        >
+                            MERCY (CANCEL)
+                        </button>
+                    </div>
+                </div>
+            )}
         </article>
     );
 }

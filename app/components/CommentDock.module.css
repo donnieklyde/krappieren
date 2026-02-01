@@ -17,7 +17,7 @@
     .dock {
         left: 0 !important;
         width: 100% !important;
-        bottom: 70px !important;
+        bottom: 120px !important;
         /* Updated from 120px to match new navbar height */
         padding-bottom: 20px;
     }

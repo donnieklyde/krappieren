@@ -140,7 +140,7 @@ export default function ChatPage({ params }) {
             flexDirection: 'column',
             background: 'black',
             paddingLeft: isMobile ? '0' : '56px', // Account for desktop navbar
-            paddingBottom: isMobile ? '70px' : '0' // Account for mobile navbar
+            paddingBottom: isMobile ? '120px' : '0' // Account for mobile navbar (120px)
         }}>
             {/* Actual Chat Card */}
             <div style={{

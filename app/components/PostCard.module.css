@@ -182,8 +182,9 @@
 }
 
 .golden {
-    color: gold !important;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    color: #FF00FF !important;
+    /* Pink/Magenta for Bosses */
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
     cursor: pointer;
 }
 

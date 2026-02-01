@@ -25,7 +25,7 @@ export async function POST(req) {
                 text,
                 postId,
                 authorId: session.user.id,
-                // replyTo logic if schema supports it, for now just text
+                replyToId: replyTo?.id || null, // Save the reply relationship
             },
             include: {
                 author: { select: { username: true } }

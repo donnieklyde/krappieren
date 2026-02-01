@@ -99,6 +99,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={styles.header}>
+                    <span style={{ color: '#888', marginRight: 1 }}>@</span>
                     <span
                         className={`${styles.username} ${isFollowed && !isYahweh(username) ? styles.golden : ''}`}
 
@@ -119,7 +120,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                             color: isYahweh(username) ? '#FFD700' : (isFollowed ? '#FF00FF' : undefined)
                         }}
                     >
-                        @{username}
+                        {username}
                     </span>
                     <span style={{ margin: '0 8px' }}>•</span>
                     <span className={styles.time}>{time}</span>
@@ -232,6 +233,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 borderLeft: depth > 0 ? '1px solid #444' : 'none'
                                             }}
                                         >
+                                            <span style={{ color: '#666', marginRight: 1 }}>@</span>
                                             <span
                                                 className={`${styles.commentUser} ${isCommentUserFollowed && !isCommentYahweh ? styles.golden : ''}`}
                                                 onMouseDown={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
@@ -249,7 +251,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                             (isCommentUserFollowed ? '#FF00FF' : 'var(--accent)'))
                                                 }}
                                             >
-                                                @{comment.user}
+                                                {comment.user}
                                             </span>
                                             <span className={styles.commentText} style={{ color: isSelected ? 'black' : 'inherit' }}>
                                                 {formatText(sanitizeText(comment.text))}

@@ -106,7 +106,30 @@ function Navigation() {
         signIn('credentials', { callbackUrl: '/' });
     };
 
-    // HIDDEN ON GUEST LANDING PAGE
+    const [isHidden, setIsHidden] = useState(false);
+
+    useEffect(() => {
+        // Default hidden on Home (Immersive)
+        if (pathname === '/') {
+            setIsHidden(true);
+        } else {
+            setIsHidden(false);
+        }
+    }, [pathname]);
+
+    useEffect(() => {
+        const handleToggle = (e) => {
+            if (e.detail?.visible !== undefined) {
+                setIsHidden(!e.detail.visible);
+            } else {
+                setIsHidden(prev => !prev);
+            }
+        };
+        window.addEventListener('toggle-nav', handleToggle);
+        return () => window.removeEventListener('toggle-nav', handleToggle);
+    }, []);
+
+    // HIDDEN ON GUEST LANDING PAGE (Logic preserved, but session check is effectively handled by parent or return null below)
     if (!session && pathname === '/') return null;
 
     return (
@@ -115,7 +138,7 @@ function Navigation() {
                 <Logo />
             </div>
 
-            <nav className={styles.nav}>
+            <nav className={`${styles.nav} ${isHidden ? styles.navHidden : ''}`}>
                 <div className={styles.logo}>
                     <Logo />
                 </div>

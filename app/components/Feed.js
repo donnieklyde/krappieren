@@ -90,21 +90,31 @@ export default function Feed() {
         const distanceY = touchStart.current.y - touchEnd.current.y;
         const isHorizontalSwipe = Math.abs(distanceX) > Math.abs(distanceY);
 
-        if (isHorizontalSwipe && Math.abs(distanceX) > minSwipeDistance) {
-            if (distanceX > 0) {
-                // Swiped Left -> Next
-                handleNext();
+        if (isHorizontalSwipe) {
+            if (Math.abs(distanceX) > minSwipeDistance) {
+                if (distanceX > 0) {
+                    // Swiped Left -> Next
+                    handleNext();
+                } else {
+                    // Swiped Right -> Prev
+                    handlePrev();
+                }
             } else {
-                // Swiped Right -> Prev
-                handlePrev();
+                // Tap fallback (small horizontal move)
+                // ...
             }
         } else {
-            // Tap fallback
-            if (Math.abs(distanceX) < 10 && Math.abs(distanceY) < 10) {
-                const width = window.innerWidth;
-                const x = touchStart.current.x;
-                if (x < width * 0.5) handlePrev();
-                else handleNext();
+            // Vertical Swipe
+            if (Math.abs(distanceY) > minSwipeDistance) {
+                if (distanceY > 0) {
+                    // Swiped UP (Finger moved up) -> Show Navbar
+                    window.dispatchEvent(new CustomEvent('toggle-nav', { detail: { visible: true } }));
+                } else {
+                    // Swiped DOWN (Finger moved down) -> Show Comment Textbox (Reply)
+                    // Also hide navbar for immersion?
+                    window.dispatchEvent(new CustomEvent('toggle-nav', { detail: { visible: false } }));
+                    setReplyTo(currentPost);
+                }
             }
         }
     };

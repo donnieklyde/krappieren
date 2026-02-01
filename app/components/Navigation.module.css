@@ -98,10 +98,10 @@
         top: auto;
         bottom: 0;
         width: 100%;
-        height: 70px;
-        /* Reduced from 120px */
-        padding-bottom: 20px;
-        /* Reduced from 60px */
+        height: 100px;
+        /* Increased for safety margin */
+        padding-bottom: 50px;
+        /* Much bigger margin to bottom */
         flex-direction: row;
         justify-content: space-between;
         align-items: center;

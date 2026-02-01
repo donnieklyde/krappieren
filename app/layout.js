@@ -5,7 +5,6 @@ import { PostsProvider } from "./context/PostsContext";
 import { DMsProvider } from "./context/DMsContext";
 import { UserProvider } from "./context/UserContext";
 import AuthProvider from "./context/AuthProvider";
-import OnboardingWrapper from "./components/OnboardingWrapper";
 import GlobalListeners from "./components/GlobalListeners";
 
 const geistSans = Geist({
@@ -43,7 +42,6 @@ export default function RootLayout({ children }) {
               <UserProvider>
                 <DMsProvider>
                   <GlobalListeners />
-                  <OnboardingWrapper />
                   <Navigation />
                   <main className="mainContent">
                     {children}

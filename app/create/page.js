@@ -71,23 +71,36 @@ export default function CreatePage() {
         }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
                 <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', margin: 0 }}>BROADCAST</h1>
-                <button
-                    onClick={handleBroadcast}
-                    disabled={!content.trim()}
-                    style={{
-                        background: content.trim() ? 'white' : '#333',
-                        color: content.trim() ? 'black' : '#666',
-                        border: 'none',
-                        padding: '10px 20px',
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        fontFamily: 'monospace',
-                        cursor: content.trim() ? 'pointer' : 'not-allowed',
-                        textTransform: 'uppercase'
-                    }}
-                >
-                    Broadcast
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {/* Character Counter */}
+                    {content.length > 0 && (
+                        <span style={{
+                            fontSize: 16,
+                            fontWeight: 'bold',
+                            color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`,
+                            transition: 'color 0.2s'
+                        }}>
+                            {100 - content.length}
+                        </span>
+                    )}
+                    <button
+                        onClick={handleBroadcast}
+                        disabled={!content.trim()}
+                        style={{
+                            background: content.trim() ? 'white' : '#333',
+                            color: content.trim() ? 'black' : '#666',
+                            border: 'none',
+                            padding: '10px 20px',
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            fontFamily: 'monospace',
+                            cursor: content.trim() ? 'pointer' : 'not-allowed',
+                            textTransform: 'uppercase'
+                        }}
+                    >
+                        Broadcast
+                    </button>
+                </div>
             </div>
 
             <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -109,21 +122,6 @@ export default function CreatePage() {
                     autoFocus
                 />
 
-                {/* Character Counter */}
-                {content.length > 0 && (
-                    <div style={{
-                        position: 'absolute',
-                        bottom: 150, // Adjust position as needed, or place relative to textarea
-                        right: 0,
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        color: `hsl(${120 - ((content.length / 100) * 120)}, 100%, 50%)`,
-                        transition: 'color 0.2s',
-                        pointerEvents: 'none'
-                    }}>
-                        {100 - content.length}
-                    </div>
-                )}
             </div>
 
             {/* Language buttons removed */}

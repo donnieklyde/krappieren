@@ -186,7 +186,7 @@ export default function ChatPage({ params }) {
                                     whiteSpace: 'pre-wrap'
                                 }}
                             >
-                                {msg.text}
+                                {msg.text.toLowerCase()}
                             </div>
                         );
                     }) : (
@@ -207,11 +207,17 @@ export default function ChatPage({ params }) {
                     <form onSubmit={handleSend} className={styles.form}>
                         <textarea
                             ref={textareaRef}
-                            className={styles.input} // Reusing class for consistency (lowercase etc)
+                            className={styles.input}
                             placeholder={`Message @${decodedUsername}...`}
                             value={input}
                             onChange={(e) => setInput(sanitizeText(e.target.value))}
                             onKeyDown={handleKeyDown}
+                            onFocus={() => {
+                                // Scroll to bottom when textbox is focused to ensure messages are visible
+                                setTimeout(() => {
+                                    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                }, 100);
+                            }}
                             rows={1}
                             style={{
                                 resize: 'none',
@@ -219,7 +225,7 @@ export default function ChatPage({ params }) {
                                 minHeight: '44px',
                                 paddingTop: '10px',
                                 overflow: 'hidden',
-                                textTransform: 'none',
+                                textTransform: 'lowercase',
                                 color: 'white',
                                 background: 'transparent'
                             }}

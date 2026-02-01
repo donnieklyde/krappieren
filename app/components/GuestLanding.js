@@ -12,7 +12,7 @@ export default function GuestLanding() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // State for inline registration flow
+    // State for modal registration flow
     const [isRegistering, setIsRegistering] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
 
@@ -25,41 +25,25 @@ export default function GuestLanding() {
             return;
         }
 
-        if (isRegistering) {
-            // Handle Registration Attempt
-            if (!inviteCode && !showPayment) {
-                setError("ENTER INVITE CODE OR PAY");
+        setLoading(true);
+
+        try {
+            // Check if username exists first
+            const checkRes = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
+            const checkData = await checkRes.json();
+
+            if (!checkData.taken) {
+                // Username doesn't exist - Show Registration Modal
+                setIsRegistering(true);
+                setLoading(false);
                 return;
             }
 
-            if (inviteCode === 'saints_and_angles') {
-                await handleCreateAccount();
-            } else {
-                setError("WRONG CODE.");
-                setShowPayment(true);
-            }
-        } else {
-            // Handle Login / Check Attempt
-            setLoading(true);
-            try {
-                // Check if username exists first
-                const checkRes = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
-                const checkData = await checkRes.json();
-
-                if (!checkData.taken) {
-                    // Username doesn't exist - Switch to Inline Registration Mode
-                    setIsRegistering(true);
-                    setLoading(false);
-                    setError("UNKNOWN USER. ENTER CODE TO JOIN.");
-                    return;
-                }
-
-                // Username exists - Login
-                await attemptLogin();
-            } catch (err) {
-                // Fallback
-                await attemptLogin();
-            }
+            // Username exists - Login
+            await attemptLogin();
+        } catch (err) {
+            // If check fails, try logging in anyway
+            await attemptLogin();
         }
     };
 
@@ -86,7 +70,7 @@ export default function GuestLanding() {
     };
 
     const handleCreateAccount = async () => {
-        setLoading(true);
+        // Keep loading true
         setError("");
 
         try {
@@ -116,11 +100,7 @@ export default function GuestLanding() {
         // Strict sanitization: A-Z SPACE only
         const val = e.target.value.toUpperCase().replace(/[^A-Z ]/g, '');
         setUsername(val);
-        // Reset registration state if username changes
-        setIsRegistering(false);
-        setShowPayment(false);
         setError("");
-        setInviteCode("");
     };
 
     return (
@@ -146,24 +126,6 @@ export default function GuestLanding() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
 
-                    {/* Inline Invite Code Field - Only shows when registering */}
-                    {isRegistering && (
-                        <div style={{ width: '100%', animation: 'fadeIn 0.3s ease' }}>
-                            <input
-                                type="text"
-                                placeholder="INVITATION CODE"
-                                className={styles.input}
-                                value={inviteCode}
-                                onChange={(e) => setInviteCode(e.target.value)}
-                                autoComplete="off"
-                                style={{
-                                    border: '1px solid #FFD700',
-                                    color: '#FFD700'
-                                }}
-                            />
-                        </div>
-                    )}
-
                     {error && <div style={{ color: 'red', textAlign: 'center', fontFamily: 'monospace', fontSize: 12 }}>{error}</div>}
 
                     <button
@@ -171,59 +133,96 @@ export default function GuestLanding() {
                         className={styles.button}
                         disabled={loading}
                     >
-                        {loading ? "..." : (isRegistering ? "JOIIN" : "COME")}
+                        {loading ? "..." : "COME"}
                     </button>
+                </form>
+            </div>
 
-                    {/* Inline Payment Button - Shows if code fails */}
-                    {showPayment && (
+            {/* Registration Modal */}
+            {isRegistering && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.95)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: '#1a1a1a', border: '2px solid white',
+                        padding: '30px', width: '90%', maxWidth: '400px',
+                        display: 'flex', flexDirection: 'column', gap: 20,
+                        textAlign: 'center'
+                    }}>
+                        <h2 style={{ color: 'white', fontFamily: 'monospace', margin: 0, fontSize: 18 }}>
+                            OFFER A SACRIFICE
+                        </h2>
+
+                        <div style={{ color: '#888', fontFamily: 'monospace', fontSize: 14 }}>
+                            @{username} attempts to join...
+                        </div>
+
+                        <input
+                            type="text"
+                            placeholder="INVITATION CODE"
+                            value={inviteCode}
+                            onChange={(e) => setInviteCode(e.target.value)}
+                            style={{
+                                background: 'black', border: '1px solid #333',
+                                color: 'white', padding: '12px', textAlign: 'center',
+                                fontFamily: 'monospace', outline: 'none'
+                            }}
+                            autoComplete="off"
+                        />
+
                         <button
-                            type="button"
                             onClick={() => {
-                                if (confirm("Confirm payment of 10€?")) {
+                                if (inviteCode === 'saints_and_angles') {
                                     handleCreateAccount();
+                                } else {
+                                    alert("WRONG CODE. PAY THE TOLL.");
+                                    setShowPayment(true);
                                 }
                             }}
                             style={{
-                                background: '#FFD700',
-                                color: 'black',
-                                border: 'none',
-                                padding: '15px',
-                                fontFamily: 'monospace',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                marginTop: 10,
-                                width: '100%'
+                                background: 'white', color: 'black', border: 'none',
+                                padding: '12px', fontFamily: 'monospace', fontWeight: 'bold',
+                                cursor: 'pointer'
                             }}
                         >
-                            PAY 10€
+                            USE CODE
                         </button>
-                    )}
 
-                    {isRegistering && (
+                        {showPayment && (
+                            <button
+                                onClick={() => {
+                                    if (confirm("Offering 10€... Confirm?")) handleCreateAccount();
+                                }}
+                                style={{
+                                    background: '#FFD700', color: 'black', border: 'none',
+                                    padding: '12px', fontFamily: 'monospace', fontWeight: 'bold',
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10
+                                }}
+                            >
+                                PAY 10€ 🪙
+                            </button>
+                        )}
+
                         <button
-                            type="button"
                             onClick={() => {
                                 setIsRegistering(false);
                                 setShowPayment(false);
                                 setInviteCode("");
-                                setError("");
+                                setLoading(false);
                             }}
                             style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#555',
-                                marginTop: 5,
-                                fontSize: 10,
-                                cursor: 'pointer',
-                                fontFamily: 'monospace'
+                                background: 'transparent', color: '#666', border: 'none',
+                                padding: '10px', fontFamily: 'monospace', cursor: 'pointer', fontSize: 12
                             }}
                         >
-                            CANCEL
+                            RETREAT
                         </button>
-                    )}
-
-                </form>
-            </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

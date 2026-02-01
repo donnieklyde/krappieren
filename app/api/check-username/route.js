@@ -10,8 +10,16 @@ export async function GET(req) {
     }
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { username: username }
+        // Enforce uppercase check
+        const normalizedUsername = username.toUpperCase();
+
+        const user = await prisma.user.findFirst({
+            where: {
+                username: {
+                    equals: normalizedUsername,
+                    mode: 'insensitive'
+                }
+            }
         });
 
         // Return true if taken, false if available

@@ -22,8 +22,14 @@ export async function POST(req) {
         }
 
         // Check if username already exists
-        const existingUser = await prisma.user.findUnique({
-            where: { username: normalizedUsername }
+        // Check if username already exists (case-insensitive)
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                username: {
+                    equals: normalizedUsername,
+                    mode: 'insensitive'
+                }
+            }
         });
 
         if (existingUser) {

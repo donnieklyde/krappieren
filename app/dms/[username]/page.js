@@ -161,7 +161,7 @@ export default function ChatPage({ params }) {
 
                     <div style={{
                         fontWeight: 'bold',
-                        color: decodedUsername.toLowerCase() === 'yahweh' ? '#FF0000' : (isFollowed ? '#FF00FF' : 'white')
+                        color: decodedUsername.toLowerCase() === 'yahweh' ? '#FFD700' : (isFollowed ? '#FF00FF' : 'white')
                     }}>
                         @{decodedUsername}
                     </div>

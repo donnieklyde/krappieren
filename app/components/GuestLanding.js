@@ -140,7 +140,7 @@ export default function GuestLanding() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'rgba(0, 0, 0, 0.85)',
+                    background: 'rgba(0, 0, 0, 0.95)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -152,56 +152,117 @@ export default function GuestLanding() {
                         padding: '30px',
                         borderRadius: '8px',
                         maxWidth: '400px',
-                        textAlign: 'center'
+                        width: '90%',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 20
                     }}>
                         <h2 style={{
                             color: 'white',
                             fontFamily: 'monospace',
                             fontSize: 18,
-                            marginBottom: 20
+                            marginBottom: 0
                         }}>
-                            USERNAME NOT FOUND
+                            REGISTER NEW ACCOUNT
                         </h2>
-                        <p style={{
-                            color: '#ccc',
-                            fontFamily: 'monospace',
-                            fontSize: 14,
-                            marginBottom: 30
-                        }}>
-                            Create a new account for "{username}"?
-                        </p>
-                        <div style={{ display: 'flex', gap: 15, justifyContent: 'center' }}>
+
+                        <div style={{ fontFamily: 'monospace', color: '#888', fontSize: 14 }}>
+                            @{username}
+                        </div>
+
+                        {/* Invite Code Input */}
+                        <div style={{ width: '100%', marginTop: 10 }}>
+                            <input
+                                type="text"
+                                placeholder="INVITATION CODE"
+                                style={{
+                                    width: '100%',
+                                    background: 'black',
+                                    border: '1px solid #333',
+                                    color: 'white',
+                                    padding: '12px',
+                                    textAlign: 'center',
+                                    fontFamily: 'monospace',
+                                    marginBottom: 10,
+                                    outline: 'none'
+                                }}
+                                id="inviteCode"
+                                autoComplete="off"
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 15, width: '100%' }}>
+                            {/* Option 1: Enter with Code */}
+                            <button
+                                onClick={() => {
+                                    const code = document.getElementById('inviteCode').value;
+                                    if (code === 'saints_and_angles') {
+                                        handleCreateAccount();
+                                    } else {
+                                        const btn = document.getElementById('payBtn');
+                                        if (btn) btn.style.display = 'flex';
+                                        alert("WRONG CODE. PAY 10€ TO ENTER.");
+                                    }
+                                }}
+                                style={{
+                                    background: 'white',
+                                    color: 'black',
+                                    border: 'none',
+                                    padding: '12px',
+                                    fontFamily: 'monospace',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    width: '100%'
+                                }}
+                            >
+                                USE CODE
+                            </button>
+
+                            {/* Option 2: Pay (Hidden initially or shown if code fails) */}
+                            <button
+                                id="payBtn"
+                                onClick={() => {
+                                    // Mock Payment Flow
+                                    if (confirm("Confirm payment of 10€?")) {
+                                        handleCreateAccount();
+                                    }
+                                }}
+                                style={{
+                                    background: '#FFD700', // Gold for payment
+                                    color: 'black',
+                                    border: 'none',
+                                    padding: '12px',
+                                    fontFamily: 'monospace',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold',
+                                    width: '100%',
+                                    display: 'none', // Hidden until code fails or user wants to pay
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: 10
+                                }}
+                            >
+                                PAY 10€
+                            </button>
+
                             <button
                                 onClick={() => {
                                     setShowModal(false);
                                     setLoading(false);
                                 }}
                                 style={{
-                                    background: '#333',
-                                    color: 'white',
-                                    border: '1px solid #555',
-                                    padding: '10px 20px',
+                                    background: 'transparent',
+                                    color: '#666',
+                                    border: 'none',
+                                    padding: '10px',
                                     fontFamily: 'monospace',
                                     cursor: 'pointer',
-                                    fontSize: 14
+                                    fontSize: 12
                                 }}
                             >
                                 CANCEL
-                            </button>
-                            <button
-                                onClick={handleCreateAccount}
-                                style={{
-                                    background: 'white',
-                                    color: 'black',
-                                    border: 'none',
-                                    padding: '10px 20px',
-                                    fontFamily: 'monospace',
-                                    cursor: 'pointer',
-                                    fontSize: 14,
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                CREATE ACCOUNT
                             </button>
                         </div>
                     </div>

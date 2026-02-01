@@ -98,10 +98,11 @@
         top: auto;
         bottom: 0;
         width: 100%;
-        height: 100px;
-        /* Increased for safety margin */
-        padding-bottom: 50px;
-        /* Much bigger margin to bottom */
+        height: auto;
+        min-height: 100px;
+        /* Dynamic height for safe areas */
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        /* Respect system safe area */
         flex-direction: row;
         justify-content: space-between;
         align-items: center;

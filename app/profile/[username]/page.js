@@ -83,19 +83,32 @@ export default function UserProfile({ params }) {
             {/* Minimal Design: Bio and Stats removed. Only Serve button remains for others. */}
             {!isCurrentUser && (
                 <div className={styles.actions}>
-                    <button
-                        className={styles.editButton}
-                        onClick={() => toggleFollow(decodedUsername)}
-                        style={{
-                            background: isEnslaved ? 'gold' : 'transparent',
-                            color: isEnslaved ? 'black' : 'white',
-                            borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
-                            width: '100%',
-                            marginTop: 10
-                        }}
-                    >
-                        {isEnslaved ? "Quit Boss" : "Serve"}
-                    </button>
+                    <div style={{ display: 'flex', gap: 10, width: '100%', marginTop: 10 }}>
+                        <button
+                            className={styles.editButton}
+                            onClick={() => toggleFollow(decodedUsername)}
+                            style={{
+                                background: isEnslaved ? 'gold' : 'transparent',
+                                color: isEnslaved ? 'black' : 'white',
+                                borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
+                                flex: 1
+                            }}
+                        >
+                            {isEnslaved ? "Quit Boss" : "Serve"}
+                        </button>
+                        <button
+                            className={styles.editButton}
+                            onClick={() => window.location.href = `/dms/${decodedUsername}`}
+                            style={{
+                                background: 'transparent',
+                                color: 'white',
+                                borderColor: 'var(--border-color)',
+                                flex: 1
+                            }}
+                        >
+                            DM
+                        </button>
+                    </div>
                 </div>
             )}
             {/* End header */}

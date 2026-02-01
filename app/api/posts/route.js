@@ -44,7 +44,10 @@ export async function GET(request) {
                     select: { name: true, username: true, image: true }
                 },
                 comments: {
-                    include: { author: { select: { username: true } } }
+                    include: {
+                        author: { select: { username: true } },
+                        likes: { include: { user: { select: { id: true } } } }
+                    }
                 },
                 likes: true
             },
@@ -52,8 +55,7 @@ export async function GET(request) {
             take: 50
         });
 
-        // Sticky Logic: Latest post from 'donnieklyde' always first
-        // Only apply if requested (e.g. initial load)
+        // Sticky Logic
         let finalPosts = [...posts];
 
         if (isSticky) {
@@ -67,7 +69,12 @@ export async function GET(request) {
                     where: { author: { username: 'donnieklyde' }, ...where },
                     include: {
                         author: { select: { name: true, username: true, image: true } },
-                        comments: { include: { author: { select: { username: true } } } },
+                        comments: {
+                            include: {
+                                author: { select: { username: true } },
+                                likes: { include: { user: { select: { id: true } } } } // Include comment likes
+                            }
+                        },
                         likes: true
                     },
                     orderBy: { createdAt: 'desc' }
@@ -90,7 +97,8 @@ export async function GET(request) {
                 id: c.id,
                 text: c.text,
                 user: c.author.username || 'Anonymous',
-                replyTo: c.replyToId ? { id: c.replyToId } : null
+                replyTo: c.replyToId ? { id: c.replyToId } : null,
+                likedByMe: currentUserId ? c.likes.some(l => l.userId === currentUserId) : false
             })),
             likedByMe: currentUserId ? p.likes.some(l => l.userId === currentUserId) : false,
             language: p.language

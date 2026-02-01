@@ -1,5 +1,6 @@
 "use client";
 import { useState, use, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "../profile.module.css";
 import { usePosts } from "../../context/PostsContext";
 import { useUser } from "../../context/UserContext";
@@ -8,6 +9,7 @@ import MinimalPost from "../../components/MinimalPost";
 export default function UserProfile({ params }) {
     const { username } = use(params);
     const decodedUsername = decodeURIComponent(username);
+    const router = useRouter();
 
     const { posts, followedUsers, toggleFollow } = usePosts();
     const { user } = useUser();
@@ -98,7 +100,7 @@ export default function UserProfile({ params }) {
                         </button>
                         <button
                             className={styles.editButton}
-                            onClick={() => window.location.href = `/dms/${decodedUsername}`}
+                            onClick={() => router.push(`/dms/${decodedUsername}`)}
                             style={{
                                 background: 'transparent',
                                 color: 'white',

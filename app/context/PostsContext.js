@@ -206,15 +206,41 @@ export function PostsProvider({ children }) {
         } catch (error) {
             console.error("Failed to toggle follow API", error);
         }
-    };
+        const toggleCommentLike = async (commentId, postId) => {
+            // Optimistic update
+            setPosts(prevPosts => prevPosts.map(post => {
+                if (post.id === postId) {
+                    return {
+                        ...post,
+                        comments: post.comments.map(c => {
+                            if (c.id === commentId) {
+                                return { ...c, likedByMe: !c.likedByMe };
+                            }
+                            return c;
+                        })
+                    };
+                }
+                return post;
+            }));
 
-    return (
-        <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, followedUsers, toggleFollow, activities }}>
-            {children}
-        </PostsContext.Provider>
-    );
-}
+            try {
+                await fetch('/api/posts/comment/like', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ commentId })
+                });
+            } catch (error) {
+                console.error("Failed to toggle comment like", error);
+            }
+        };
 
-export function usePosts() {
-    return useContext(PostsContext);
-}
+        return (
+            <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, followedUsers, toggleFollow, activities, toggleCommentLike }}>
+                {children}
+            </PostsContext.Provider>
+        );
+    }
+
+    export function usePosts() {
+        return useContext(PostsContext);
+    }

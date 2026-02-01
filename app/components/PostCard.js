@@ -14,7 +14,7 @@ const MoneyIcon = () => (
 // ... imports
 
 export default function PostCard({ id, username, content, time, likes, likedByMe, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
-    const { toggleLike, followedUsers, toggleFollow } = usePosts();
+    const { toggleLike, followedUsers, toggleFollow, toggleCommentLike } = usePosts();
     const { user } = useUser();
     const [moneyAnims, setMoneyAnims] = useState([]);
 
@@ -316,25 +316,22 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    // Visual Toggle
-                                                    const btn = e.currentTarget;
-                                                    const isActive = btn.getAttribute('data-active') === 'true';
-                                                    btn.setAttribute('data-active', !isActive);
-                                                    btn.style.color = !isActive ? '#FFD700' : '#888';
-                                                    btn.style.borderColor = !isActive ? '#FFD700' : 'transparent';
+                                                    // Persistent Toggle
+                                                    toggleCommentLike(comment.id, post.id);
                                                     if (navigator.vibrate) navigator.vibrate(50);
                                                 }}
-                                                data-active="false"
                                                 style={{
                                                     background: 'transparent',
                                                     border: '1px solid transparent',
                                                     borderRadius: '50%',
                                                     width: 30, height: 30,
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    color: '#888',
+                                                    color: comment.likedByMe ? '#FFD700' : '#888',
                                                     cursor: 'pointer',
                                                     marginLeft: 10,
-                                                    flexShrink: 0
+                                                    borderColor: comment.likedByMe ? '#FFD700' : 'transparent',
+                                                    flexShrink: 0,
+                                                    transition: 'all 0.2s'
                                                 }}
                                             >
                                                 <span style={{ fontFamily: 'Bahnschrift', fontWeight: 'bold', fontSize: 16 }}>$</span>

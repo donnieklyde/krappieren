@@ -23,6 +23,7 @@ model User {
   following     Follow[]  @relation("follower")
   followers     Follow[]  @relation("following")
   likes         Like[]
+  commentLikes  CommentLike[]
   posts         Post[]
   sessions      Session[]
   sentMessages     Message[] @relation("sentMessages")
@@ -64,6 +65,18 @@ model Comment {
   replyToId Int?
   author    User     @relation(fields: [authorId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
+  likes     CommentLike[]
+}
+
+model CommentLike {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    String
+  commentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
 }
 
 model Like {

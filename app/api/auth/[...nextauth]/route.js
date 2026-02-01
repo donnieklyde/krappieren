@@ -28,11 +28,14 @@ export const authOptions = {
                     throw new Error("Missing username or password");
                 }
 
-                const username = credentials.username.toUpperCase();
-
-                // 1. Find User
-                const user = await prisma.user.findUnique({
-                    where: { username: username }
+                // 1. Find User (Case Insensitive)
+                const user = await prisma.user.findFirst({
+                    where: {
+                        username: {
+                            equals: credentials.username,
+                            mode: 'insensitive'
+                        }
+                    }
                 });
 
                 // 2. If User Exists -> Check Password

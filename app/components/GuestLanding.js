@@ -60,8 +60,8 @@ export default function GuestLanding() {
                 setError(res.error);
                 setLoading(false);
             } else {
-                router.push('/');
-                router.refresh();
+                // Force hard redirect to ensure session is picked up
+                window.location.href = '/';
             }
         } catch (err) {
             setError("Something went wrong");

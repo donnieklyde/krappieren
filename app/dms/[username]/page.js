@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, use } from "react";
 import { useDMs } from "../../context/DMsContext";
+import { usePosts } from "../../context/PostsContext";
 import styles from "../../components/CommentDock.module.css";
 import { sanitizeText } from "../../utils/sanitizer";
 // Reusing CommentDock styles for consistency, or I can define inline for speed if styling differs significantly.
@@ -10,6 +11,8 @@ export default function ChatPage({ params }) {
     const { username } = use(params);
     const decodedUsername = decodeURIComponent(username);
     const { getConversation, sendMessage } = useDMs();
+    const { followedUsers } = usePosts();
+    const isFollowed = followedUsers.includes(decodedUsername);
 
     // Safety check just in case, though getConversation handles default
     const conversation = getConversation(decodedUsername);

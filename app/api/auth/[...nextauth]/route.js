@@ -11,6 +11,10 @@ export const authOptions = {
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
+    jwt: {
+        maxAge: 30 * 24 * 60 * 60, // 30 days
     },
     providers: [
         CredentialsProvider({
@@ -61,21 +65,8 @@ export const authOptions = {
 
                     return user;
                 } else {
-                    // 3. User Does Not Exist -> Create New
-                    const hashedPassword = await bcrypt.hash(credentials.password, 10);
-
-                    const newUser = await prisma.user.create({
-                        data: {
-                            username: username,
-                            password: hashedPassword,
-                            name: username, // Default name to username
-                            isOnboarded: true, // Assuming instant onboarding since they picked stats
-                            email: null, // No email in this flow
-                            image: `https://github.com/identicons/${username}.png` // Basic avatar
-                        }
-                    });
-
-                    return newUser;
+                    // User does not exist - return error instead of auto-creating
+                    throw new Error("Username not found. Please create an account first.");
                 }
             }
         })

@@ -201,12 +201,13 @@
     margin-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     padding-top: 20px;
-    padding-bottom: 40px;
-    /* Add bottom padding for mobile scrolling */
+    padding-bottom: 250px;
+    /* Increased for better scroll clearance */
     flex: 0 1 auto;
     /* Allow shrinking to fit */
     min-height: 0;
 }
+
 
 
 .comment {

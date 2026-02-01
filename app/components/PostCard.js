@@ -236,7 +236,6 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 style={{
                                                     cursor: 'pointer',
                                                     userSelect: 'none',
-                                                    // Restore Accent Color (Red) unless selected
                                                     color: isSelected ? 'black' : (isCommentUserFollowed ? 'gold' : 'var(--accent)')
                                                 }}
                                             >

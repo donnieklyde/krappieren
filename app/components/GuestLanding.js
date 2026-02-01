@@ -153,11 +153,11 @@ export default function GuestLanding() {
                         textAlign: 'center'
                     }}>
                         <h2 style={{ color: 'white', fontFamily: 'monospace', margin: 0, fontSize: 18 }}>
-                            WANT TO CREATE PROFILE?
+                            NEW USERNAME
                         </h2>
 
                         <div style={{ color: '#888', fontFamily: 'monospace', fontSize: 14 }}>
-                            @{username} attempts to join...
+                            WANT NEW PROFILE?
                         </div>
 
                         <input

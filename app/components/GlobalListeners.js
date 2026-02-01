@@ -28,8 +28,9 @@ export default function GlobalListeners() {
                         // Hide Status Bar (Fullscreen)
                         await StatusBar.hide();
 
-                        // Set Navigation Bar Color (Remove white stripe)
-                        await NavigationBar.setBackgroundColor({ color: '#000000' });
+                        // Hide Navigation Bar (Immersive)
+                        await NavigationBar.hide();
+                        // await NavigationBar.setBackgroundColor({ color: '#000000' }); // Fallback if hide fails? Hide is better.
 
                         // Force Native Resize Mode (Crucial for correct keyboard behavior)
                         await Keyboard.setResizeMode({ mode: KeyboardResize.Native });

@@ -38,6 +38,7 @@ export default function ChatPage({ params }) {
     const [input, setInput] = useState("");
     const textareaRef = useRef(null);
     const bottomRef = useRef(null);
+    const chatAreaRef = useRef(null); // Added ref for chat area
     const [viewportHeight, setViewportHeight] = useState('100%');
     const [isMobile, setIsMobile] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
@@ -166,7 +167,7 @@ export default function ChatPage({ params }) {
                 </div>
 
                 {/* Chat Area */}
-                <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '20px', display: 'flex', flexDirection: 'column', gap: 15 }}>
+                <div ref={chatAreaRef} style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '20px', display: 'flex', flexDirection: 'column', gap: 15 }}>
                     {messages && messages.length > 0 ? messages.map(msg => {
                         const isMe = msg.sender === 'currentUser';
                         return (
@@ -213,10 +214,12 @@ export default function ChatPage({ params }) {
                             onChange={(e) => setInput(sanitizeText(e.target.value))}
                             onKeyDown={handleKeyDown}
                             onFocus={() => {
-                                // Scroll to bottom when textbox is focused to ensure messages are visible
+                                // Scroll chat area to bottom when textbox is focused
                                 setTimeout(() => {
-                                    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                                }, 100);
+                                    if (chatAreaRef.current) {
+                                        chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+                                    }
+                                }, 300); // Longer delay for mobile keyboard
                             }}
                             rows={1}
                             style={{

@@ -1,10 +1,10 @@
 .dock {
     position: fixed;
     bottom: 0;
-    left: 0;
-    /* Changed from 76px to sit over navbar */
-    width: 100%;
-    /* Full width */
+    left: 56px;
+    /* Offset for sidebar */
+    width: calc(100% - 56px);
+    /* Full width minus sidebar */
     padding: 20px;
     background: black;
     border-top: 2px solid white;

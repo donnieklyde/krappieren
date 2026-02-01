@@ -10,35 +10,35 @@ async function createYahwehAccount() {
 
         // Check if YAHWEH already exists
         const existingUser = await prisma.user.findUnique({
-            where: { username: 'YAHWEH' }
+            where: { username: 'yahweh' }
         });
 
         if (existingUser) {
-            console.log('YAHWEH account already exists. Updating password...');
+            console.log('yahweh account already exists. Updating password...');
             await prisma.user.update({
-                where: { username: 'YAHWEH' },
+                where: { username: 'yahweh' },
                 data: {
                     password: hashedPassword,
                     isOnboarded: true
                 }
             });
-            console.log('✅ YAHWEH password updated successfully!');
+            console.log('✅ yahweh password updated successfully!');
         } else {
-            console.log('Creating new YAHWEH account...');
+            console.log('Creating new yahweh account...');
             await prisma.user.create({
                 data: {
-                    username: 'YAHWEH',
+                    username: 'yahweh',
                     password: hashedPassword,
-                    name: 'YAHWEH',
+                    name: 'yahweh',
                     isOnboarded: true,
                     email: 'yahweh@krappieren.app' // Optional email
                 }
             });
-            console.log('✅ YAHWEH account created successfully!');
+            console.log('✅ yahweh account created successfully!');
         }
 
         console.log('\nAccount Details:');
-        console.log('Username: YAHWEH');
+        console.log('Username: yahweh');
         console.log('Password: Songoku777');
         console.log('\nYou can now log in with these credentials.');
 

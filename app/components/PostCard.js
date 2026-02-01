@@ -110,7 +110,11 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                         onContextMenu={(e) => e.preventDefault()}
 
                         title={isFollowed ? "Hold to Quit Boss / Tap for Profile" : "Hold to Serve / Tap for Profile"}
-                        style={{ cursor: isGuest ? 'default' : 'pointer', userSelect: 'none' }}
+                        style={{
+                            cursor: isGuest ? 'default' : 'pointer',
+                            userSelect: 'none',
+                            color: username.toLowerCase() === 'yahweh' ? '#FF00FF' : undefined
+                        }}
                     >
                         @{username}
                     </span>
@@ -236,7 +240,9 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 style={{
                                                     cursor: 'pointer',
                                                     userSelect: 'none',
-                                                    color: isSelected ? 'black' : (isCommentUserFollowed ? 'gold' : 'var(--accent)')
+                                                    color: isSelected ? 'black' :
+                                                        (comment.user.toLowerCase() === 'yahweh' ? '#FF00FF' :
+                                                            (isCommentUserFollowed ? 'gold' : 'var(--accent)'))
                                                 }}
                                             >
                                                 @{comment.user}

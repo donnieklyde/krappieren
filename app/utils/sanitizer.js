@@ -8,8 +8,7 @@
  */
 export const sanitizeText = (text, strict = false) => {
     if (!text) return "";
-    if (strict) {
-        return text.replace(/[^a-zA-Z0-9\s]/g, '').toUpperCase();
-    }
-    return text.replace(/[^a-zA-Z0-9\s.,!?]/g, '').toUpperCase();
+    // Remove all special characters, keep only: letters, numbers, spaces, and @
+    return text.replace(/[^a-zA-Z0-9\s@]/g, '').toUpperCase();
 };
+

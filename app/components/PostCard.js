@@ -317,7 +317,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     // Persistent Toggle
-                                                    toggleCommentLike(comment.id, post.id);
+                                                    toggleCommentLike(comment.id, id);
                                                     if (navigator.vibrate) navigator.vibrate(50);
                                                 }}
                                                 style={{

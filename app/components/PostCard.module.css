@@ -5,31 +5,38 @@
     overflow: hidden;
     background-color: #000000;
     /* Pitch black */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
 
 .contentBox {
     position: relative;
     z-index: 2;
     background: transparent;
     /* No box, just float in void */
-    padding: 40px 30px;
+    padding: 40px 30px 80px 30px;
+    /* Extra bottom padding for scrolling */
     width: 100%;
     max-width: 600px;
-    margin: 0 auto;
-    top: 50%;
-    transform: translateY(-50%);
+    margin: auto;
+    /* Center horizontally and vertically in flex parent */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     max-height: 100vh;
     overflow-y: auto;
-    /* Changed from hidden to auto for scrolling */
+    /* Enable scrolling */
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
     /* Smooth scrolling on mobile */
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
 
 

@@ -113,7 +113,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                         style={{
                             cursor: isGuest ? 'default' : 'pointer',
                             userSelect: 'none',
-                            color: username.toLowerCase() === 'yahweh' ? '#FF00FF' : undefined
+                            color: username.toLowerCase() === 'yahweh' ? '#FFD700' : (isFollowed ? '#FF00FF' : undefined)
                         }}
                     >
                         @{username}
@@ -241,8 +241,8 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                     cursor: 'pointer',
                                                     userSelect: 'none',
                                                     color: isSelected ? 'black' :
-                                                        (comment.user.toLowerCase() === 'yahweh' ? '#FF00FF' :
-                                                            (isCommentUserFollowed ? 'gold' : 'var(--accent)'))
+                                                        (comment.user.toLowerCase() === 'yahweh' ? '#FFD700' :
+                                                            (isCommentUserFollowed ? '#FF00FF' : 'var(--accent)'))
                                                 }}
                                             >
                                                 @{comment.user}

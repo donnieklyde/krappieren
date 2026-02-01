@@ -159,7 +159,12 @@ export default function ChatPage({ params }) {
                     zIndex: 10
                 }}>
 
-                    <div style={{ fontWeight: 'bold' }}>@{decodedUsername}</div>
+                    <div style={{
+                        fontWeight: 'bold',
+                        color: decodedUsername.toLowerCase() === 'yahweh' ? '#FFD700' : (isFollowed ? '#FF00FF' : 'white')
+                    }}>
+                        @{decodedUsername}
+                    </div>
                 </div>
 
                 {/* Chat Area */}

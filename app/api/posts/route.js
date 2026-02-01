@@ -89,7 +89,8 @@ export async function GET(request) {
             comments: p.comments.map(c => ({
                 id: c.id,
                 text: c.text,
-                user: c.author.username || 'Anonymous'
+                user: c.author.username || 'Anonymous',
+                replyTo: c.replyToId ? { id: c.replyToId } : null
             })),
             likedByMe: currentUserId ? p.likes.some(l => l.userId === currentUserId) : false,
             language: p.language

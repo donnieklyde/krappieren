@@ -11,7 +11,7 @@
     padding: 30px 0 10px 0;
     /* Reduced padding */
     background-color: var(--background);
-    z-index: 99999;
+    z-index: 9999;
     border-right: 1px solid var(--border-color);
     transition: transform 0.3s ease;
 }

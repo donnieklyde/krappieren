@@ -7,7 +7,7 @@ export default function DMs() {
 
     return (
         <div style={{ maxWidth: 600, margin: '0 auto', paddingBottom: 60 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', marginBottom: 20, padding: '0 20px', color: 'white' }}>DIRECT MESSAGES</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'monospace', margin: '20px 0', padding: '0 20px', color: 'white' }}>DIRECT MESSAGES</h1>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {conversations.length > 0 ? (

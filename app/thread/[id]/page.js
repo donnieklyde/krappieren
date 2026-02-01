@@ -27,7 +27,7 @@ export default function ThreadPage() {
     }
 
     return (
-        <div style={{ maxWidth: "600px", margin: "0 auto", paddingBottom: "80px" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", paddingBottom: "200px" }}>
             <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: 10, marginBottom: 10 }}>
                 <Link href="/" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>← Back</Link>
             </div>

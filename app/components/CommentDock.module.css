@@ -1,21 +1,24 @@
 .dock {
     position: fixed;
     bottom: 0;
-    left: 76px;
-    /* Offset for sidebar */
-    width: calc(100% - 76px);
+    left: 0;
+    /* Changed from 76px to sit over navbar */
+    width: 100%;
+    /* Full width */
     padding: 20px;
     background: black;
     border-top: 2px solid white;
-    z-index: 1000;
+    z-index: 10001;
+    /* Above navbar (9999) */
 }
+
 
 @media (max-width: 1024px) {
     .dock {
         left: 0 !important;
         width: 100% !important;
-        bottom: 120px !important;
-        /* Sit above bottom navbar (90px + 30px padding = 120px total height) */
+        bottom: 70px !important;
+        /* Updated from 120px to match new navbar height */
         padding-bottom: 20px;
     }
 }

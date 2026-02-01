@@ -12,6 +12,14 @@ export async function POST(req) {
     try {
         const { postId, text, replyTo } = await req.json();
 
+        if (!text || typeof text !== 'string' || text.trim().length === 0) {
+            return NextResponse.json({ error: 'Comment cannot be empty' }, { status: 400 });
+        }
+
+        if (text.length > 280) {
+            return NextResponse.json({ error: 'Comment too long (max 280 chars)' }, { status: 400 });
+        }
+
         const comment = await prisma.comment.create({
             data: {
                 text,
@@ -31,7 +39,7 @@ export async function POST(req) {
             replyTo // Pass back for frontend context
         });
     } catch (error) {
-        console.error("Create Comment Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
     }
 }

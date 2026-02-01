@@ -1,7 +1,8 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route"; // We need to export authOptions from valid route
+import { authOptions } from "../auth/[...nextauth]/route";
+import { rateLimit } from '@/lib/rateLimit';
 
 export async function GET(request) {
     try {
@@ -96,7 +97,7 @@ export async function GET(request) {
 
         return NextResponse.json(formattedPosts);
     } catch (error) {
-        console.error(error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
     }
 }
@@ -105,6 +106,11 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     if (!session) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 10 posts per minute
+    if (!rateLimit(session.user.id, 10, 60000)) {
+        return NextResponse.json({ error: 'Too many posts. Please wait before posting again.' }, { status: 429 });
     }
 
     try {
@@ -147,7 +153,7 @@ export async function POST(req) {
 
         return NextResponse.json(formattedPost);
     } catch (error) {
-        console.error("Create Post Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
     }
 }

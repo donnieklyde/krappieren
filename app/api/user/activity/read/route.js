@@ -19,7 +19,7 @@ export async function POST(req) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("Mark Read Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }

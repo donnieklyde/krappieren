@@ -50,7 +50,7 @@ export async function POST(req) {
             return NextResponse.json({ following: true });
         }
     } catch (error) {
-        console.error("Follow API Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to toggle follow' }, { status: 500 });
     }
 }

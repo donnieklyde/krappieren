@@ -40,7 +40,7 @@ export async function GET(req) {
         });
 
     } catch (error) {
-        console.error("Stats Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
     }
 }

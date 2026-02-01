@@ -70,7 +70,7 @@ export async function POST(req) {
 
         return NextResponse.json(updatedUser);
     } catch (error) {
-        console.error("Update user error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
     }
 }

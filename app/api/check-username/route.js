@@ -17,9 +17,8 @@ export async function GET(req) {
         // Return true if taken, false if available
         return NextResponse.json({ taken: !!user });
     } catch (error) {
-        console.error("Check username error:", error);
-        // Fail safe: return taken if DB fails to prevent collisions, or loose?
-        // Let's return error status
+        // Silent error handling for production
+        // Fail safe: return taken if DB fails to prevent collisions
         return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
 }

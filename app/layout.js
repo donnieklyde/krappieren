@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "krappieren",
-  description: "A Threads clone",
+  description: "they called it shizophrenia",
 };
 
 export const viewport = {

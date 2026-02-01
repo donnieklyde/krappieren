@@ -40,7 +40,7 @@ export async function POST(req) {
         });
 
     } catch (error) {
-        console.error("Send Message Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
     }
 }

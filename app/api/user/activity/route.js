@@ -116,7 +116,7 @@ export async function GET(req) {
         return NextResponse.json(activities);
 
     } catch (error) {
-        console.error("Fetch Activity Error:", error);
+        // Silent error handling for production
         return NextResponse.json([], { status: 500 });
     }
 }

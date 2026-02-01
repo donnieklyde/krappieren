@@ -69,7 +69,7 @@ export async function GET(req) {
 
         return NextResponse.json({ users: safeUsers });
     } catch (error) {
-        console.error("Fetch Users Error:", error);
+        // Silent error handling for production
         return NextResponse.json([], { status: 500 });
     }
 }

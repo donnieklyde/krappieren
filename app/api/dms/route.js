@@ -70,7 +70,7 @@ export async function GET(req) {
         return NextResponse.json(conversations);
 
     } catch (error) {
-        console.error("Fetch DMs Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to fetch DMs' }, { status: 500 });
     }
 }

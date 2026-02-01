@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
 export const authOptions = {
-    debug: true, // Enable debugging to see exact error in Vercel logs
+    debug: false, // Disabled for production security
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
@@ -39,10 +39,19 @@ export const authOptions = {
                     // User Request: "if the username doesnt exist it shall create a new profile"
                     // Implies if it DOES exist, it checks password.
 
+
                     if (!user.password) {
-                        throw new Error("This account is not set up for password login.");
-                        // Or maybe we treat it as "wrong password"
+                        // Allow setting password for existing accounts without one
+                        const hashedPassword = await bcrypt.hash(credentials.password, 10);
+
+                        const updatedUser = await prisma.user.update({
+                            where: { id: user.id },
+                            data: { password: hashedPassword }
+                        });
+
+                        return updatedUser;
                     }
+
 
                     const isValid = await bcrypt.compare(credentials.password, user.password);
 

@@ -59,7 +59,7 @@ export async function GET(req) {
         });
 
     } catch (error) {
-        console.error("Notifications Error:", error);
+        // Silent error handling for production
         // Fail gracefully
         return NextResponse.json({ hasUnreadDMs: false, hasNewActivity: false });
     }

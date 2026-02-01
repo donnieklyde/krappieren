@@ -57,7 +57,7 @@ export async function GET(req, { params }) {
 
         return NextResponse.json(formatted);
     } catch (error) {
-        console.error("Fetch History Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }

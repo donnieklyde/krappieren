@@ -20,7 +20,7 @@ export async function GET(req) {
         const usernames = following.map(f => f.following.username);
         return NextResponse.json(usernames);
     } catch (error) {
-        console.error("Fetch Following Error:", error);
+        // Silent error handling for production
         return NextResponse.json([], { status: 500 });
     }
 }

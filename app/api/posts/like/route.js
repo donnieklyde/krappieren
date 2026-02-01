@@ -37,7 +37,7 @@ export async function POST(req) {
             return NextResponse.json({ liked: true });
         }
     } catch (error) {
-        console.error("Like API Error:", error);
+        // Silent error handling for production
         return NextResponse.json({ error: 'Failed to toggle like' }, { status: 500 });
     }
 }

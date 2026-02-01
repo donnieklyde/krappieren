@@ -68,7 +68,21 @@ export const authOptions = {
 
                     return user;
                 } else {
-                    // User does not exist - return error instead of auto-creating
+                    // User does not exist - CHECK IF BANNED
+                    const banned = await prisma.bannedUser.findFirst({
+                        where: {
+                            username: {
+                                equals: credentials.username,
+                                mode: 'insensitive'
+                            }
+                        }
+                    });
+
+                    if (banned) {
+                        throw new Error(`PERMANENTLY BANNED: ${banned.reason}`);
+                    }
+
+                    // User does not exist and not banned
                     throw new Error("Username not found. Please create an account first.");
                 }
             }

@@ -23,6 +23,21 @@ export async function POST(req) {
 
         // Check if username already exists
         // Check if username already exists (case-insensitive)
+        // Check if banned
+        const banned = await prisma.bannedUser.findFirst({
+            where: {
+                username: {
+                    equals: normalizedUsername,
+                    mode: 'insensitive' // Match 'yahweh' or 'YAHWEH'
+                }
+            }
+        });
+
+        if (banned) {
+            return NextResponse.json({ error: `YOU ARE BANNED: ${banned.reason}` }, { status: 403 });
+        }
+
+        // Check existing user
         const existingUser = await prisma.user.findFirst({
             where: {
                 username: {

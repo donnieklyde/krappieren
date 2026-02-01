@@ -89,6 +89,9 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
         isLongPress.current = false;
     };
 
+    // Helper for YAHWEH check
+    const isYahweh = (name) => name.toLowerCase() === 'yahweh';
+
     return (
         <article className={styles.card} style={isStatic ? { height: 'auto', background: 'transparent' } : {}}>
             <div
@@ -97,7 +100,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
             >
                 <div className={styles.header}>
                     <span
-                        className={`${styles.username} ${isFollowed ? styles.golden : ''}`}
+                        className={`${styles.username} ${isFollowed && !isYahweh(username) ? styles.golden : ''}`}
 
                         onMouseDown={(e) => startPress(e, username)}
                         onMouseUp={(e) => endPress(e, username)}
@@ -113,7 +116,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                         style={{
                             cursor: isGuest ? 'default' : 'pointer',
                             userSelect: 'none',
-                            color: username.toLowerCase() === 'yahweh' ? '#FFD700 !important' : (isFollowed ? '#FF00FF' : undefined)
+                            color: isYahweh(username) ? '#FFD700' : (isFollowed ? '#FF00FF' : undefined)
                         }}
                     >
                         @{username}
@@ -178,6 +181,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                             const CommentNode = ({ comment, depth }) => {
                                 const isCommentUserFollowed = followedUsers.includes(comment.user);
                                 const isSelected = activeReplyId === comment.id;
+                                const isCommentYahweh = isYahweh(comment.user);
 
                                 // Parse text to highlight mentions (words starting with @)
                                 const formatText = (text) => {
@@ -229,7 +233,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                             }}
                                         >
                                             <span
-                                                className={`${styles.commentUser} ${isCommentUserFollowed ? styles.golden : ''}`}
+                                                className={`${styles.commentUser} ${isCommentUserFollowed && !isCommentYahweh ? styles.golden : ''}`}
                                                 onMouseDown={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
                                                 onMouseUp={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
                                                 onMouseLeave={cancelPress}
@@ -241,7 +245,7 @@ export default function PostCard({ id, username, content, time, likes, likedByMe
                                                     cursor: 'pointer',
                                                     userSelect: 'none',
                                                     color: isSelected ? 'black' :
-                                                        (comment.user.toLowerCase() === 'yahweh' ? '#FFD700 !important' :
+                                                        (isCommentYahweh ? '#FFD700' :
                                                             (isCommentUserFollowed ? '#FF00FF' : 'var(--accent)'))
                                                 }}
                                             >

@@ -48,7 +48,6 @@
 
 .header {
     margin-bottom: 20px;
-    text-transform: uppercase;
     letter-spacing: 2px;
     font-family: var(--font-mono, monospace);
     color: #fff;
@@ -63,7 +62,6 @@
     color: var(--accent);
     user-select: none;
     -webkit-user-select: none;
-    text-transform: uppercase;
 }
 
 .text {
@@ -230,5 +228,6 @@
     color: var(--accent);
     font-weight: 700;
     margin-right: 8px;
-    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: 8px;
 }

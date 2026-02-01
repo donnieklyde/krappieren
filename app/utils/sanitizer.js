@@ -6,9 +6,10 @@
  * @param {string} text 
  * @returns {string} Sanitized text
  */
-export const sanitizeText = (text, strict = false) => {
+export const sanitizeText = (text, strict = false, skipUpperCase = false) => {
     if (!text) return "";
     // Remove all special characters, keep only: letters, numbers, spaces, and @
-    return text.replace(/[^a-zA-Z0-9\s@]/g, '').toUpperCase();
+    const clean = text.replace(/[^a-zA-Z0-9\s@]/g, '');
+    return skipUpperCase ? clean : clean.toUpperCase();
 };
 

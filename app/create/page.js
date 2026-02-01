@@ -29,7 +29,7 @@ export default function CreatePage() {
             const language = detectLanguage(content);
             console.log("Detected language:", language);
 
-            await addPost(content, {
+            await addPost(content.toUpperCase(), {
                 username: user.username,
                 avatarUrl: user.avatar || ""
             }, language);
@@ -54,7 +54,7 @@ export default function CreatePage() {
     };
 
     const handleContentChange = (e) => {
-        let val = sanitizeText(e.target.value, true); // Strict mode: No punctuation
+        let val = sanitizeText(e.target.value, true, true); // Strict, SkipUpperCase
         if (val.length > 100) val = val.substring(0, 100);
         setContent(val);
     };
@@ -117,7 +117,8 @@ export default function CreatePage() {
                         fontSize: 24,
                         resize: 'none',
                         outline: 'none',
-                        marginBottom: 20
+                        marginBottom: 20,
+                        textTransform: 'uppercase'
                     }}
                     autoFocus
                 />

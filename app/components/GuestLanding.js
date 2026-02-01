@@ -175,7 +175,7 @@ export default function GuestLanding() {
 
                         <button
                             onClick={() => {
-                                if (inviteCode === 'saints_and_angles') {
+                                if (inviteCode === 'ANGLE') {
                                     handleCreateAccount();
                                 } else {
                                     alert("WRONG CODE. PAY THE TOLL.");

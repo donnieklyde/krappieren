@@ -126,31 +126,27 @@ export default function ChatPage({ params }) {
     };
 
     return (
-        // Outer Wrapper for Bottom Alignment
+        // Outer Wrapper - Fullscreen container
         <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             display: 'flex',
             flexDirection: 'column',
-            flex: 1,
-            height: '100%',
-            justifyContent: 'flex-end', // Anchors content to bottom
-            paddingBottom: isMobile ? '140px' : '0' // Fix navbar overlap: 120px navbar + 20px buffer
+            background: 'black',
+            paddingLeft: isMobile ? '0' : '56px', // Account for desktop navbar
+            paddingBottom: isMobile ? '70px' : '0' // Account for mobile navbar
         }}>
             {/* Actual Chat Card */}
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                // On mobile: 50vh if keyboard closed, explicit viewport height if keyboard open
-                height: isMobile && !isKeyboardOpen ? '50vh' : viewportHeight,
-                flex: isMobile && !isKeyboardOpen ? '0 0 auto' : '0 0 auto', // Always fix height to our calculated value
+                height: '100%',
+                flex: 1,
                 overflow: 'hidden',
-                marginTop: 20,
-                border: '1px solid #333',
-                borderBottom: 'none', // Remove bottom border so it blends with keyboard/screen edge
-                borderTopLeftRadius: 15,
-                borderTopRightRadius: 15,
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                background: 'black' // Ensure opaque background
+                background: 'black'
             }}>
                 {/* Header */}
                 <div style={{

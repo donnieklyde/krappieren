@@ -68,9 +68,7 @@ function Navigation() {
         router.push('/');
     };
 
-    const handleMockLogin = () => {
-        signIn('credentials', { callbackUrl: '/' });
-    };
+
 
     // HIDDEN ON GUEST LANDING PAGE (Logic preserved)
     if (!session && pathname === '/') return null;

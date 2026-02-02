@@ -1,195 +1,304 @@
 "use client";
 import { useState, useRef } from "react";
 import styles from "./PostCard.module.css";
-import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
+export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
+    const { user } = useUser();
+    const router = useRouter();
+    const [showBanModal, setShowBanModal] = useState(false);
+    const [banTarget, setBanTarget] = useState(null);
+    const [banReason, setBanReason] = useState("");
+    const [isBanning, setIsBanning] = useState(false);
 
+    // Long Press Logic State
+    const timerRef = useRef(null);
+    const isLongPress = useRef(false);
 
-export default function PostCard({ id, username, content, time, likes, likedByMe, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
-    <div className={styles.text}>{sanitizeText(content)}</div>
+    // Helper function to check if user is Yahweh
+    const isYahweh = (targetUser) => {
+        return targetUser?.toLowerCase() === 'donnieklyde';
+    };
 
-    {
-        !isGuest && (
-            <div className={styles.commentsSection}>
-                {comments && comments.length > 0 ? (() => {
-                    // 1. Organize comments into a tree
-                    const organizeComments = (rawComments) => {
-                        const map = {};
-                        const roots = [];
+    // ----- Interaction Handlers -----
+    const startPress = (e, targetUser) => {
+        if (isGuest) return;
+        e.stopPropagation();
+        if (e.type === 'click' && e.button !== 0) return;
 
-                        // Create separate copies to avoid mutation issues
-                        const nodes = rawComments.map(c => ({ ...c, children: [] }));
-                        nodes.forEach(n => map[n.id] = n);
+        isLongPress.current = false;
+        timerRef.current = setTimeout(() => {
+            isLongPress.current = true;
+            // Ban modal trigger for Yahweh
+            if (user?.username?.toLowerCase() === 'donnieklyde' && !isYahweh(targetUser)) {
+                setBanTarget(targetUser);
+                setShowBanModal(true);
+            }
+            if (window.navigator && window.navigator.vibrate) {
+                try {
+                    window.navigator.vibrate(50);
+                } catch (err) {
+                    console.error("Vibration failed", err);
+                }
+            }
+        }, 600);
+    };
 
-                        nodes.forEach(n => {
-                            if (n.replyTo && map[n.replyTo.id]) {
-                                map[n.replyTo.id].children.push(n);
-                            } else {
-                                roots.push(n);
-                            }
-                        });
-                        return roots;
-                    };
+    const endPress = (e, targetUser) => {
+        if (isGuest) return;
+        e.stopPropagation();
 
-                    const commentRoots = organizeComments(comments);
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
 
+        // If it WASN'T a long press, treat as Short Click
+        if (!isLongPress.current) {
+            if (targetUser === user?.username) {
+                router.push('/profile');
+            } else {
+                router.push(`/profile/${targetUser}`);
+            }
+        }
 
-                    // 2. Recursive Render Component
-                    const CommentNode = ({ comment, depth }) => {
-                        const isSelected = activeReplyId === comment.id;
-                        const isCommentYahweh = isYahweh(comment.user);
+        isLongPress.current = false;
+    };
 
-                        // Parse text to highlight mentions (words starting with @)
-                        const formatText = (text) => {
-                            const parts = text.split(/(@\w+)/g);
-                            return parts.map((part, index) => {
-                                if (part.match(/^@\w+/)) {
-                                    return (
-                                        <span
-                                            key={index}
-                                            style={{
-                                                color: isSelected ? '#000' : '#fff', // White in dark mode, Black in selected
-                                                fontWeight: 'bold'
+    const cancelPress = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+        isLongPress.current = false;
+    };
+
+    const handleDoubleClick = (e, targetUser) => {
+        e.stopPropagation();
+        cancelPress();
+        router.push(`/profile/${targetUser}`);
+    };
+
+    const executeBan = async () => {
+        setIsBanning(true);
+        try {
+            const res = await fetch('/api/admin/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: banTarget, reason: banReason })
+            });
+            if (res.ok) {
+                alert(`${banTarget} has been OBLITERATED.`);
+                setShowBanModal(false);
+                setBanTarget(null);
+                setBanReason("");
+                router.refresh();
+            }
+        } catch (err) {
+            alert("Failed to execute");
+        } finally {
+            setIsBanning(false);
+        }
+    };
+
+    return (
+        <article className={styles.card} style={isStatic ? { height: 'auto', background: 'transparent' } : {}}>
+            <div
+                className={`${styles.contentBox} ${isStatic ? styles.staticBox : ''}`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className={styles.header}>
+                    <span
+                        className={styles.username}
+                        onMouseDown={(e) => startPress(e, username)}
+                        onMouseUp={(e) => endPress(e, username)}
+                        onMouseLeave={cancelPress}
+                        onDoubleClick={(e) => handleDoubleClick(e, username)}
+                        onTouchStart={(e) => startPress(e, username)}
+                        onTouchEnd={(e) => endPress(e, username)}
+                        onContextMenu={(e) => e.preventDefault()}
+                        style={{
+                            cursor: 'pointer',
+                            userSelect: 'none',
+                            color: isYahweh(username) ? '#FFD700' : 'var(--accent)'
+                        }}
+                    >
+                        @{username}
+                    </span>
+                    <span style={{ color: '#444' }}>•</span>
+                    <span>{time}</span>
+                </div>
+
+                <div className={styles.text}>{sanitizeText(content)}</div>
+
+                {!isGuest && (
+                    <div className={styles.commentsSection}>
+                        {comments && comments.length > 0 ? (() => {
+                            // 1. Organize comments into a tree
+                            const organizeComments = (rawComments) => {
+                                const map = {};
+                                const roots = [];
+
+                                const nodes = rawComments.map(c => ({ ...c, children: [] }));
+                                nodes.forEach(n => map[n.id] = n);
+
+                                nodes.forEach(n => {
+                                    if (n.replyTo && map[n.replyTo.id]) {
+                                        map[n.replyTo.id].children.push(n);
+                                    } else {
+                                        roots.push(n);
+                                    }
+                                });
+                                return roots;
+                            };
+
+                            const commentRoots = organizeComments(comments);
+
+                            // 2. Recursive Render Component
+                            const CommentNode = ({ comment, depth }) => {
+                                const isSelected = activeReplyId === comment.id;
+                                const isCommentYahweh = isYahweh(comment.user);
+
+                                const formatText = (text) => {
+                                    const parts = text.split(/(@\w+)/g);
+                                    return parts.map((part, index) => {
+                                        if (part.match(/^@\w+/)) {
+                                            return (
+                                                <span
+                                                    key={index}
+                                                    style={{
+                                                        color: isSelected ? '#000' : '#fff',
+                                                        fontWeight: 'bold'
+                                                    }}
+                                                >
+                                                    {part}
+                                                </span>
+                                            );
+                                        }
+                                        return part;
+                                    });
+                                };
+
+                                return (
+                                    <>
+                                        <div
+                                            key={comment.id}
+                                            className={styles.comment}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (onReply) onReply(comment);
                                             }}
-                                        >
-                                            {part}
-                                        </span>
-                                    );
-                                }
-                                return part;
-                            });
-                        };
-
-                        return (
-                            <>
-                                <div
-                                    key={comment.id}
-                                    className={styles.comment}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // Set reply target
-                                        if (onReply) onReply(comment);
-                                    }}
-                                    onTouchStart={(e) => e.stopPropagation()}
-                                    onTouchEnd={(e) => e.stopPropagation()}
-                                    onMouseDown={(e) => e.stopPropagation()}
-                                    onMouseUp={(e) => e.stopPropagation()}
-                                    title="Click to reply"
-                                    style={isSelected ? {
-                                        background: '#ffffff',
-                                        color: '#000000',
-                                        borderRadius: '5px',
-                                        marginLeft: depth * 20,
-                                        padding: '15px',
-                                        borderLeft: depth > 0 ? '1px solid #444' : 'none'
-                                    } : {
-                                        marginLeft: depth * 20,
-                                        padding: '15px',
-                                        borderLeft: depth > 0 ? '1px solid #444' : 'none',
-                                        position: 'relative' // For absolute button
-                                    }}
-                                >
-                                    <div style={{ flex: 1 }}>
-                                        <span style={{ color: '#666', marginRight: 1 }}>@</span>
-                                        <span
-                                            className={styles.commentUser}
-                                            onMouseDown={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
-                                            onMouseUp={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
-                                            onMouseLeave={cancelPress}
-                                            onDoubleClick={(e) => handleDoubleClick(e, comment.user)}
-                                            onTouchStart={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
-                                            onTouchEnd={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
-                                            onContextMenu={(e) => e.preventDefault()}
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onTouchEnd={(e) => e.stopPropagation()}
+                                            onMouseDown={(e) => e.stopPropagation()}
+                                            onMouseUp={(e) => e.stopPropagation()}
                                             title="Click to reply"
-                                            style={{
-                                                cursor: 'pointer',
-                                                userSelect: 'none',
-                                                color: isSelected ? 'black' : (isCommentYahweh ? '#FFD700' : 'var(--accent)')
+                                            style={isSelected ? {
+                                                background: '#ffffff',
+                                                color: '#000000',
+                                                borderRadius: '5px',
+                                                marginLeft: depth * 20,
+                                                padding: '15px',
+                                                borderLeft: depth > 0 ? '1px solid #444' : 'none'
+                                            } : {
+                                                marginLeft: depth * 20,
+                                                padding: '15px',
+                                                borderLeft: depth > 0 ? '1px solid #444' : 'none',
+                                                position: 'relative'
                                             }}
                                         >
-                                            {comment.user}
-                                        </span>
-                                        <span className={styles.commentText} style={{ color: isSelected ? 'black' : 'inherit' }}>
-                                            {formatText(sanitizeText(comment.text))}
-                                        </span>
-                                    </div>
-                                </div >
-                                {/* Render Children */}
-                                {
-                                    comment.children.length > 0 && comment.children.map(child => (
-                                        <CommentNode key={child.id} comment={child} depth={depth + 1} />
-                                    ))
-                                }
-                            </>
-                        );
-                    };
+                                            <div style={{ flex: 1 }}>
+                                                <span style={{ color: '#666', marginRight: 1 }}>@</span>
+                                                <span
+                                                    className={styles.commentUser}
+                                                    onMouseDown={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
+                                                    onMouseUp={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
+                                                    onMouseLeave={cancelPress}
+                                                    onDoubleClick={(e) => handleDoubleClick(e, comment.user)}
+                                                    onTouchStart={(e) => { e.stopPropagation(); startPress(e, comment.user); }}
+                                                    onTouchEnd={(e) => { e.stopPropagation(); endPress(e, comment.user); }}
+                                                    onContextMenu={(e) => e.preventDefault()}
+                                                    title="Click to reply"
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                        userSelect: 'none',
+                                                        color: isSelected ? 'black' : (isCommentYahweh ? '#FFD700' : 'var(--accent)')
+                                                    }}
+                                                >
+                                                    {comment.user}
+                                                </span>
+                                                <span className={styles.commentText} style={{ color: isSelected ? 'black' : 'inherit' }}>
+                                                    {formatText(sanitizeText(comment.text))}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {comment.children.length > 0 && comment.children.map(child => (
+                                            <CommentNode key={child.id} comment={child} depth={depth + 1} />
+                                        ))}
+                                    </>
+                                );
+                            };
 
-
-
-                    return commentRoots.map(root => (
-                        <CommentNode key={root.id} comment={root} depth={0} />
-                    ));
-                })() : (
-                    <div className={styles.comment} style={{ fontStyle: 'italic', opacity: 0.5 }}>No comments yet.</div>
+                            return commentRoots.map(root => (
+                                <CommentNode key={root.id} comment={root} depth={0} />
+                            ));
+                        })() : (
+                            <div className={styles.comment} style={{ fontStyle: 'italic', opacity: 0.5 }}>No comments yet.</div>
+                        )}
+                    </div>
                 )}
             </div>
-        )
-    }
-            </div >
-    {
-        showBanModal && (
-            <div style={{
-                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                background: 'rgba(0,0,0,0.9)', zIndex: 99999,
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }} onClick={(e) => e.stopPropagation()}>
+
+            {showBanModal && (
                 <div style={{
-                    background: '#220000', border: '2px solid red', padding: 20,
-                    width: '90%', maxWidth: 400, textAlign: 'center',
-                    display: 'flex', flexDirection: 'column', gap: 15
-                }}>
-                    <h2 style={{ color: 'red', fontFamily: 'monospace', textTransform: 'uppercase' }}>
-                        JUDGMENT DAY
-                    </h2>
-                    <p style={{ color: 'white', fontFamily: 'monospace' }}>
-                        DELETE <strong>@{banTarget}</strong> FOREVER?
-                    </p>
-                    <textarea
-                        placeholder="REASON FOR EXECUTION"
-                        value={banReason}
-                        onChange={(e) => setBanReason(e.target.value)}
-                        style={{
-                            background: 'black', color: 'red', border: '1px solid red',
-                            padding: 10, fontFamily: 'monospace', minHeight: 80
-                        }}
-                    />
-                    <button
-                        onClick={executeBan}
-                        disabled={isBanning}
-                        style={{
-                            background: 'red', color: 'black', fontWeight: 'bold',
-                            padding: 15, border: 'none', cursor: 'pointer', fontFamily: 'monospace'
-                        }}
-                    >
-                        {isBanning ? "OBLITERATING..." : "EXECUTE"}
-                    </button>
-                    <button
-                        onClick={() => { setShowBanModal(false); setBanTarget(null); }}
-                        style={{
-                            background: 'transparent', color: '#666',
-                            border: 'none', cursor: 'pointer', fontFamily: 'monospace'
-                        }}
-                    >
-                        MERCY (CANCEL)
-                    </button>
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.9)', zIndex: 99999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }} onClick={(e) => e.stopPropagation()}>
+                    <div style={{
+                        background: '#220000', border: '2px solid red', padding: 20,
+                        width: '90%', maxWidth: 400, textAlign: 'center',
+                        display: 'flex', flexDirection: 'column', gap: 15
+                    }}>
+                        <h2 style={{ color: 'red', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+                            JUDGMENT DAY
+                        </h2>
+                        <p style={{ color: 'white', fontFamily: 'monospace' }}>
+                            DELETE <strong>@{banTarget}</strong> FOREVER?
+                        </p>
+                        <textarea
+                            placeholder="REASON FOR EXECUTION"
+                            value={banReason}
+                            onChange={(e) => setBanReason(e.target.value)}
+                            style={{
+                                background: 'black', color: 'red', border: '1px solid red',
+                                padding: 10, fontFamily: 'monospace', minHeight: 80
+                            }}
+                        />
+                        <button
+                            onClick={executeBan}
+                            disabled={isBanning}
+                            style={{
+                                background: 'red', color: 'black', fontWeight: 'bold',
+                                padding: 15, border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                            }}
+                        >
+                            {isBanning ? "OBLITERATING..." : "EXECUTE"}
+                        </button>
+                        <button
+                            onClick={() => { setShowBanModal(false); setBanTarget(null); }}
+                            style={{
+                                background: 'transparent', color: '#666',
+                                border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                            }}
+                        >
+                            MERCY (CANCEL)
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )
-}
-        </article >
+            )}
+        </article>
     );
 }

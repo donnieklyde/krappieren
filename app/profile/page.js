@@ -195,8 +195,6 @@ export default function Profile() {
                                 username={post.username}
                                 content={post.content}
                                 time={post.time}
-                                likes={post.likes}
-                                likedByMe={post.likedByMe}
                             />
                         ))
                     ) : (

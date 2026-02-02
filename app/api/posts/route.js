@@ -97,10 +97,8 @@ export async function GET(request) {
                 id: c.id,
                 text: c.text,
                 user: c.author.username || 'Anonymous',
-                replyTo: c.replyToId ? { id: c.replyToId } : null,
-                likedByMe: currentUserId ? c.likes.some(l => l.userId === currentUserId) : false
+                replyTo: c.replyToId ? { id: c.replyToId } : null
             })),
-            likedByMe: currentUserId ? p.likes.some(l => l.userId === currentUserId) : false,
             language: p.language
         }));
 
@@ -156,7 +154,6 @@ export async function POST(req) {
             likes: 0,
             replies: 0,
             comments: [],
-            likedByMe: false,
             language: post.language
         };
 

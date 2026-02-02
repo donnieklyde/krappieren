@@ -7,11 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
-const MoneyIcon = () => (
-    <span style={{ fontSize: 32, fontWeight: 'bold', fontFamily: 'Bahnschrift' }}>$</span>
-);
 
-// ... imports
 
 export default function PostCard({ id, username, content, time, likes, likedByMe, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
     <div className={styles.text}>{sanitizeText(content)}</div>

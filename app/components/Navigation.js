@@ -63,43 +63,9 @@ function Navigation() {
     const router = useRouter();
     const { data: session } = useSession();
 
-    // Register Button (Login)
-    const handleRegister = async () => {
-        if (typeof window !== 'undefined') {
-            const { Capacitor } = await import('@capacitor/core');
-            if (Capacitor.isNativePlatform()) {
-                try {
-                    const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
-                    // Initialize if needed, though usually auto-init works with config
-                    await GoogleAuth.initialize();
-
-                    // Force sign-out locally to ensure the user sees the account picker every time
-                    await GoogleAuth.signOut();
-
-                    const user = await GoogleAuth.signIn();
-
-                    // Sign in with the custom credentials provider
-                    const result = await signIn('google-mobile', {
-                        idToken: user.authentication.idToken,
-                        email: user.email.toLowerCase(), // Normalize email
-                        name: user.name, // or user.displayName
-                        image: user.imageUrl,
-                        redirect: false,
-                    });
-
-                    if (result?.ok) {
-                        router.push('/');
-                        router.refresh();
-                    }
-                } catch (error) {
-                    console.error("Native Google Login failed:", error);
-                }
-            } else {
-                signIn('google', { callbackUrl: '/' });
-            }
-        } else {
-            signIn('google', { callbackUrl: '/' });
-        }
+    // Register Button - Redirect to home for login
+    const handleRegister = () => {
+        router.push('/');
     };
 
     const handleMockLogin = () => {
@@ -112,13 +78,13 @@ function Navigation() {
     return (
         <>
             <div className={styles.mobileHeader}>
-                <Logo />
+                {/* <Logo /> */}
             </div>
 
             <nav className={styles.nav}>
-                <div className={styles.logo}>
+                {/* <div className={styles.logo}>
                     <Logo />
-                </div>
+                </div> */}
 
                 {session && (
                     <Link href="/activity" className={`${styles.link} ${pathname === '/activity' ? styles.active : ''}`}>

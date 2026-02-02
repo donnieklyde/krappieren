@@ -145,66 +145,14 @@ export function PostsProvider({ children }) {
         checkMentions(text);
     };
 
-    const toggleLike = async (id) => {
-        // Optimistic update
-        setPosts(prevPosts => prevPosts.map(post => {
-            if (post.id === id) {
-                const likedByMe = post.likedByMe || false; // default false
-                return {
-                    ...post,
-                    likes: likedByMe ? post.likes - 1 : post.likes + 1,
-                    likedByMe: !likedByMe
-                };
-            }
-            return post;
-        }));
-
-        // API Call
-        try {
-            await fetch('/api/posts/like', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ postId: id })
-            });
-            // Could re-fetch posts here to ensure sync, or just trust optimistic update
-        } catch (error) {
-            console.error("Failed to toggle like API", error);
-            // Revert on error (optional, but good practice. skipped for brevity in this step)
-        }
-    };
 
 
 
-    const toggleCommentLike = async (commentId, postId) => {
-        // Optimistic update
-        setPosts(prevPosts => prevPosts.map(post => {
-            if (post.id === postId) {
-                return {
-                    ...post,
-                    comments: post.comments.map(c => {
-                        if (c.id === commentId) {
-                            return { ...c, likedByMe: !c.likedByMe };
-                        }
-                        return c;
-                    })
-                };
-            }
-            return post;
-        }));
 
-        try {
-            await fetch('/api/posts/comment/like', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ commentId })
-            });
-        } catch (error) {
-            console.error("Failed to toggle comment like", error);
-        }
-    };
+
 
     return (
-        <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, activities, toggleCommentLike }}>
+        <PostsContext.Provider value={{ posts, loading, addPost, addComment, activities }}>
             {children}
         </PostsContext.Provider>
     );

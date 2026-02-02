@@ -8,13 +8,13 @@ export default function GuestLanding() {
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [inviteCode, setInviteCode] = useState("");
+
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     // State for modal registration flow
     const [isRegistering, setIsRegistering] = useState(false);
-    const [showPayment, setShowPayment] = useState(false);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -160,57 +160,20 @@ export default function GuestLanding() {
                             WANT NEW PROFILE?
                         </div>
 
-                        <input
-                            type="text"
-                            placeholder="INVITATION CODE"
-                            value={inviteCode}
-                            onChange={(e) => setInviteCode(e.target.value)}
-                            style={{
-                                background: 'black', border: '1px solid #333',
-                                color: 'white', padding: '12px', textAlign: 'center',
-                                fontFamily: 'monospace', outline: 'none'
-                            }}
-                            autoComplete="off"
-                        />
-
                         <button
-                            onClick={() => {
-                                if (inviteCode === 'ANGLE') {
-                                    handleCreateAccount();
-                                } else {
-                                    alert("WRONG CODE. PAY THE TOLL.");
-                                    setShowPayment(true);
-                                }
-                            }}
+                            onClick={handleCreateAccount}
                             style={{
                                 background: 'white', color: 'black', border: 'none',
                                 padding: '12px', fontFamily: 'monospace', fontWeight: 'bold',
                                 cursor: 'pointer'
                             }}
                         >
-                            USE CODE
+                            CREATE PROFILE
                         </button>
-
-                        {showPayment && (
-                            <button
-                                onClick={() => {
-                                    if (confirm("Offering 10€... Confirm?")) handleCreateAccount();
-                                }}
-                                style={{
-                                    background: '#FFD700', color: 'black', border: 'none',
-                                    padding: '12px', fontFamily: 'monospace', fontWeight: 'bold',
-                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10
-                                }}
-                            >
-                                PAY 10€ 🪙
-                            </button>
-                        )}
 
                         <button
                             onClick={() => {
                                 setIsRegistering(false);
-                                setShowPayment(false);
-                                setInviteCode("");
                                 setLoading(false);
                             }}
                             style={{

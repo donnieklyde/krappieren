@@ -11,7 +11,7 @@ export default function UserProfile({ params }) {
     const decodedUsername = decodeURIComponent(username);
     const router = useRouter();
 
-    const { posts, followedUsers, toggleFollow } = usePosts();
+    const { posts } = usePosts();
     const { user } = useUser();
     const [activeTab, setActiveTab] = useState("threads");
 
@@ -19,7 +19,7 @@ export default function UserProfile({ params }) {
     // Optional: normalize both to lower case for safety
     const isCurrentUser = user && user.username && user.username.toLowerCase() === decodedUsername.toLowerCase();
 
-    const isEnslaved = followedUsers.includes(decodedUsername);
+
 
     // Local state for user posts
     const [userPosts, setUserPosts] = useState([]);
@@ -70,11 +70,7 @@ export default function UserProfile({ params }) {
             <div className={styles.header}>
                 <div className={styles.topRow}>
                     <div className={styles.nameInfo}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <h1>{decodedUsername}</h1>
-                            {/* BOSS Status Indicator */}
-                            {isEnslaved && <span style={{ color: 'gold', border: '1px solid gold', fontSize: 10, padding: '2px 6px' }}>MY BOSS</span>}
-                        </div>
+                        <h1>{decodedUsername}</h1>
                     </div>
 
                 </div>

@@ -7,7 +7,6 @@ const PostsContext = createContext();
 export function PostsProvider({ children }) {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [followedUsers, setFollowedUsers] = useState([]);
     const [activities, setActivities] = useState([]);
 
     useEffect(() => {
@@ -28,17 +27,7 @@ export function PostsProvider({ children }) {
             }
         };
 
-        const fetchFollowing = async () => {
-            try {
-                const res = await fetch('/api/user/following');
-                if (res.ok) {
-                    const data = await res.json();
-                    setFollowedUsers(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch following:", error);
-            }
-        };
+
 
         const fetchActivity = async () => {
             try {
@@ -60,14 +49,11 @@ export function PostsProvider({ children }) {
         };
 
         fetchPosts(true); // Initial load: Sticky
-        fetchFollowing();
         fetchActivity();
 
         // Poll for updates every 5 seconds (No Sticky)
         const interval = setInterval(() => {
-            fetchPosts(false);
             fetchActivity();
-            fetchFollowing();
         }, 5000);
 
         return () => clearInterval(interval);
@@ -187,26 +173,7 @@ export function PostsProvider({ children }) {
         }
     };
 
-    const toggleFollow = async (username) => {
-        // Optimistic update
-        const isFollowing = followedUsers.includes(username);
-        if (isFollowing) {
-            setFollowedUsers(followedUsers.filter(u => u !== username));
-        } else {
-            setFollowedUsers([...followedUsers, username]);
-        }
 
-        // API Call
-        try {
-            await fetch('/api/user/follow', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ targetUsername: username })
-            });
-        } catch (error) {
-            console.error("Failed to toggle follow API", error);
-        }
-    };
 
     const toggleCommentLike = async (commentId, postId) => {
         // Optimistic update
@@ -237,7 +204,7 @@ export function PostsProvider({ children }) {
     };
 
     return (
-        <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, followedUsers, toggleFollow, activities, toggleCommentLike }}>
+        <PostsContext.Provider value={{ posts, loading, addPost, toggleLike, addComment, activities, toggleCommentLike }}>
             {children}
         </PostsContext.Provider>
     );

@@ -9,7 +9,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
     const [comment, setComment] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestionQuery, setSuggestionQuery] = useState("");
-    const { addComment, followedUsers } = usePosts(); // followedUsers needed
+    const { addComment } = usePosts();
     const { user } = useUser();
     const textareaRef = useRef(null);
 
@@ -76,7 +76,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
         if (onCancelReply) onCancelReply();
     };
 
-    const filteredBosses = followedUsers ? followedUsers.filter(u => u.toLowerCase().includes(suggestionQuery)) : [];
+
 
     return (
         <div
@@ -103,38 +103,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                 </div>
             )}
 
-            {showSuggestions && filteredBosses.length > 0 && (
-                <div style={{
-                    position: 'absolute',
-                    bottom: '100%',
-                    left: 20,
-                    right: 20,
-                    marginBottom: 10,
-                    background: '#1a1a1a',
-                    border: '1px solid #333',
-                    borderRadius: 8,
-                    padding: 5,
-                    zIndex: 1000,
-                    maxHeight: 200,
-                    overflowY: 'auto'
-                }}>
-                    {filteredBosses.map(boss => (
-                        <div
-                            key={boss}
-                            onClick={() => handleSelectUser(boss)}
-                            style={{
-                                padding: '12px',
-                                cursor: 'pointer',
-                                color: 'white',
-                                borderBottom: '1px solid #333',
-                                fontSize: 16
-                            }}
-                        >
-                            @{boss}
-                        </div>
-                    ))}
-                </div>
-            )}
+
 
             <form
                 className={styles.form}

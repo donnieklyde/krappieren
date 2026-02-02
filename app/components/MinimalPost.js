@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
 export default function MinimalPost({ id, username, content, time, isReply = false, parentId, parentContent = null, parentUsername = null, likes, likedByMe }) {
-    const { toggleLike, followedUsers } = usePosts();
+    const { toggleLike } = usePosts();
     const { user } = useUser();
     const router = useRouter(); // Hook for navigation
     const [moneyAnims, setMoneyAnims] = useState([]);

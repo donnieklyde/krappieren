@@ -59,7 +59,7 @@ function Navigation() {
         return () => clearInterval(interval);
     }, []);
 
-    const searchIsActive = pathname === '/search' || pathname === '/bosses';
+    const searchIsActive = pathname === '/search';
     const router = useRouter();
     const { data: session } = useSession();
 
@@ -134,9 +134,6 @@ function Navigation() {
                     <>
                         <Link href="/search" className={styles.link + (pathname === "/search" ? " " + styles.active : "")}>
                             <SearchIcon />
-                        </Link>
-                        <Link href="/bosses" className={styles.link + (pathname === "/bosses" ? " " + styles.active : "")}>
-                            <BriefcaseIcon />
                         </Link>
                         <Link href="/create" className={styles.link + (pathname === "/create" ? " " + styles.active : "")}>
                             <WriteIcon />

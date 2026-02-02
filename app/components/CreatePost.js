@@ -8,7 +8,7 @@ import { sanitizeText } from "../utils/sanitizer";
 
 export default function CreatePost() {
     const [content, setContent] = useState("");
-    const { addPost, followedUsers } = usePosts();
+    const { addPost } = usePosts();
     const { user, updateUser } = useUser();
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestionQuery, setSuggestionQuery] = useState("");
@@ -76,7 +76,7 @@ export default function CreatePost() {
         if (textarea) textarea.style.height = 'auto';
     };
 
-    const filteredBosses = followedUsers.filter(u => u.toLowerCase().includes(suggestionQuery));
+
 
     return (
         <div className={styles.container}>
@@ -121,34 +121,7 @@ export default function CreatePost() {
                     rows={1}
                 />
 
-                {showSuggestions && filteredBosses.length > 0 && (
-                    <div style={{
-                        position: 'absolute',
-                        bottom: '100%',
-                        left: 0,
-                        background: '#1a1a1a',
-                        border: '1px solid #333',
-                        borderRadius: 8,
-                        padding: 5,
-                        zIndex: 1000,
-                        minWidth: 150
-                    }}>
-                        {filteredBosses.map(boss => (
-                            <div
-                                key={boss}
-                                onClick={() => handleSelectUser(boss)}
-                                style={{
-                                    padding: '8px 12px',
-                                    cursor: 'pointer',
-                                    color: 'white',
-                                    borderBottom: '1px solid #333'
-                                }}
-                            >
-                                @{boss}
-                            </div>
-                        ))}
-                    </div>
-                )}
+
 
 
                 <div className={styles.footer}>

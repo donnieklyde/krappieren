@@ -166,26 +166,6 @@ export default function Profile() {
                     </div>
 
                 </div>
-                <div style={{ marginLeft: 20 }}>
-                    <button
-                        onClick={(e) => {
-                            const btn = e.currentTarget;
-                            const isActive = btn.getAttribute('data-active') === 'true';
-                            btn.setAttribute('data-active', !isActive);
-                            btn.style.color = !isActive ? '#FFD700' : 'white';
-                            btn.style.borderColor = !isActive ? '#FFD700' : 'white';
-                            if (navigator.vibrate) navigator.vibrate(50);
-                        }}
-                        style={{
-                            width: 40, height: 40, borderRadius: '50%',
-                            background: 'transparent', border: '2px solid white',
-                            color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            cursor: 'pointer', transition: 'all 0.2s'
-                        }}
-                    >
-                        <span style={{ fontFamily: 'Bahnschrift', fontWeight: 'bold', fontSize: 20 }}>$</span>
-                    </button>
-                </div>
             </div>
 
             {/* Removed Bio, Meta, and Actions per request for minimal design */}

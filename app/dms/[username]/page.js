@@ -11,8 +11,7 @@ export default function ChatPage({ params }) {
     const { username } = use(params);
     const decodedUsername = decodeURIComponent(username);
     const { getConversation, sendMessage } = useDMs();
-    const { followedUsers } = usePosts();
-    const isFollowed = followedUsers.includes(decodedUsername);
+
 
     // Safety check just in case, though getConversation handles default
     const conversation = getConversation(decodedUsername);
@@ -164,7 +163,7 @@ export default function ChatPage({ params }) {
 
                     <div style={{
                         fontWeight: 'bold',
-                        color: decodedUsername.toLowerCase() === 'yahweh' ? '#FFD700' : (isFollowed ? '#FF00FF' : 'white')
+                        color: decodedUsername.toLowerCase() === 'yahweh' ? '#FFD700' : 'white'
                     }}>
                         @{decodedUsername}
                     </div>

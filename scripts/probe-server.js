@@ -1,12 +1,5 @@
 const { Client } = require('ssh2');
 
-const config = {
-    host: 'krappiert.online',
-    port: 21098,
-    username: 'krapdyhb',
-    password: '!Songoku_88',
-};
-
 const commands = [
     'node -v',
     'npm -v',

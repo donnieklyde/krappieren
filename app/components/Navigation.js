@@ -135,8 +135,11 @@ function Navigation() {
                         <Link href="/search" className={styles.link + (pathname === "/search" ? " " + styles.active : "")}>
                             <SearchIcon />
                         </Link>
-                        <Link href="/create" className={styles.link + (pathname === "/create" ? " " + styles.active : "")}>
+                        <Link href="/bosses" className={styles.link + (pathname === "/bosses" ? " " + styles.active : "")}>
                             <BriefcaseIcon />
+                        </Link>
+                        <Link href="/create" className={styles.link + (pathname === "/create" ? " " + styles.active : "")}>
+                            <WriteIcon />
                         </Link>
                         <Link href="/dms" className={`${styles.link} ${pathname === '/dms' ? styles.active : ''}`} onClick={() => setNotifications(prev => ({ ...prev, hasUnreadDMs: false }))}>
                             <DMsIcon hasUnread={notifications.hasUnreadDMs} />

@@ -88,18 +88,6 @@ export default function UserProfile({ params }) {
                     <div style={{ display: 'flex', gap: 10, width: '100%', marginTop: 10 }}>
                         <button
                             className={styles.editButton}
-                            onClick={() => toggleFollow(decodedUsername)}
-                            style={{
-                                background: isEnslaved ? 'gold' : 'transparent',
-                                color: isEnslaved ? 'black' : 'white',
-                                borderColor: isEnslaved ? 'gold' : 'var(--border-color)',
-                                flex: 1
-                            }}
-                        >
-                            {isEnslaved ? "Quit Boss" : "Serve"}
-                        </button>
-                        <button
-                            className={styles.editButton}
                             onClick={() => router.push(`/dms/${decodedUsername}`)}
                             style={{
                                 background: 'transparent',

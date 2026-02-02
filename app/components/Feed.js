@@ -37,7 +37,7 @@ export default function Feed() {
     // But handlers are fine too.
 
     const handleNext = () => {
-        if (currentIndex < posts.length - 1) {
+        if (currentIndex < filteredPosts.length - 1) {
             setCurrentIndex(prev => prev + 1);
             setReplyTo(null);
         } else {
@@ -163,7 +163,7 @@ export default function Feed() {
             {/* Progress Bar (optional but good for deck view) */}
             <div style={{
                 position: 'absolute', top: 0, left: 0,
-                width: `${((currentIndex + 1) / posts.length) * 100}%`,
+                width: `${((currentIndex + 1) / filteredPosts.length) * 100}%`,
                 height: 4, background: 'var(--accent)', transition: 'width 0.3s'
             }} />
 

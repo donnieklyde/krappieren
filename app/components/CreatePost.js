@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "./CreatePost.module.css";
 import { usePosts } from "../context/PostsContext";
 import { useUser } from "../context/UserContext";
@@ -12,11 +12,13 @@ export default function CreatePost() {
     const { user, updateUser } = useUser();
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestionQuery, setSuggestionQuery] = useState("");
+    const textareaRef = useRef(null);
 
     const isPostable = content.trim().length > 0;
 
     const handleInput = (e) => {
         const value = e.target.value;
+        const cursorPosition = e.target.selectionStart; // Save cursor position
         let sanitizedValue = sanitizeText(value);
 
         if (sanitizedValue.length > 100) {
@@ -24,8 +26,15 @@ export default function CreatePost() {
         }
 
         setContent(sanitizedValue);
-        e.target.style.height = 'auto';
-        e.target.style.height = `${e.target.scrollHeight}px`;
+
+        // Restore cursor position after state update
+        requestAnimationFrame(() => {
+            if (textareaRef.current) {
+                textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+                textareaRef.current.style.height = 'auto';
+                textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+            }
+        });
 
         // Check for @
         const lastWord = sanitizedValue.split(/[\s\n]+/).pop();
@@ -97,6 +106,7 @@ export default function CreatePost() {
                     </div>
                 </div>
                 <textarea
+                    ref={textareaRef}
                     className={styles.input}
                     placeholder="Start a thread... (max 100 chars)"
                     maxLength={100}

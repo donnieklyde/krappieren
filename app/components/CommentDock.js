@@ -40,6 +40,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
 
     const handleInput = (e) => {
         const value = e.target.value;
+        const cursorPosition = e.target.selectionStart; // Save cursor position
         let sanitizedValue = sanitizeText(value);
 
         if (sanitizedValue.length > 100) {
@@ -47,6 +48,13 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
         }
 
         setComment(sanitizedValue);
+
+        // Restore cursor position after state update
+        requestAnimationFrame(() => {
+            if (textareaRef.current) {
+                textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+            }
+        });
 
         // Check for @
         const lastWord = sanitizedValue.split(/[\s\n]+/).pop();

@@ -28,10 +28,6 @@ export default function ThreadPage() {
 
     return (
         <div style={{ maxWidth: "600px", margin: "0 auto", paddingBottom: "300px" }}>
-            <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: 10, marginBottom: 10 }}>
-                <Link href="/" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>← Back</Link>
-            </div>
-
             {/* Main Post - Reusing PostCard but could be more detailed */}
             <PostCard {...post} onReply={setReplyTo} activeReplyId={replyTo?.id} />
 

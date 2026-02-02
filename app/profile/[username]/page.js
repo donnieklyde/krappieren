@@ -70,7 +70,7 @@ export default function UserProfile({ params }) {
             <div className={styles.header}>
                 <div className={styles.topRow}>
                     <div className={styles.nameInfo}>
-                        <h1>{decodedUsername}</h1>
+                        <h1 style={{ color: decodedUsername?.toLowerCase() === 'donnieklyde' ? '#FFD700' : undefined }}>{decodedUsername}</h1>
                     </div>
 
                 </div>

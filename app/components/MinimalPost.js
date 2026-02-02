@@ -6,6 +6,11 @@ import { sanitizeText } from "../utils/sanitizer";
 export default function MinimalPost({ id, username, content, time, isReply = false, parentId, parentContent = null, parentUsername = null }) {
     const router = useRouter();
 
+    // Helper function to check if user is Yahweh
+    const isYahweh = (user) => {
+        return user?.toLowerCase() === 'donnieklyde';
+    };
+
     const handlePostClick = () => {
         if (isReply && parentId) {
             router.push(`/thread/${parentId}`);
@@ -20,7 +25,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
                 <div className={styles.parentContainer}>
                     <div className={styles.parentLine}></div>
                     <div className={styles.parentHeader}>
-                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${parentUsername}`); }}>@{parentUsername}</span>
+                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${parentUsername}`); }} style={{ color: isYahweh(parentUsername) ? '#FFD700' : undefined }}>@{parentUsername}</span>
                         <span style={{ color: '#444' }}>•</span>
                         <span>Original Post</span>
                     </div>
@@ -33,7 +38,7 @@ export default function MinimalPost({ id, username, content, time, isReply = fal
             <div className={styles.replyContainer}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div className={styles.header}>
-                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${username}`); }}>@{username}</span>
+                        <span className={styles.username} onClick={(e) => { e.stopPropagation(); router.push(`/profile/${username}`); }} style={{ color: isYahweh(username) ? '#FFD700' : undefined }}>@{username}</span>
                         <span style={{ color: '#444' }}>•</span>
                         <span>{time}</span>
                     </div>

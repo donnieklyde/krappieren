@@ -161,7 +161,7 @@ export default function Profile() {
                                 }}
                             />
                         ) : (
-                            <h1>{user.username || user.name}</h1>
+                            <h1 style={{ color: user.username?.toLowerCase() === 'donnieklyde' ? '#FFD700' : undefined }}>{user.username || user.name}</h1>
                         )}
                     </div>
 

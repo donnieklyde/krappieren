@@ -78,25 +78,7 @@ export default function UserProfile({ params }) {
             </div>
             {/* End topRow */}
 
-            {/* Minimal Design: Bio and Stats removed. Only Serve button remains for others. */}
-            {!isCurrentUser && (
-                <div className={styles.actions}>
-                    <div style={{ display: 'flex', gap: 10, width: '100%', marginTop: 10 }}>
-                        <button
-                            className={styles.editButton}
-                            onClick={() => router.push(`/dms/${decodedUsername}`)}
-                            style={{
-                                background: 'transparent',
-                                color: 'white',
-                                borderColor: 'var(--border-color)',
-                                flex: 1
-                            }}
-                        >
-                            DM
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* Minimal Design: Bio and Stats removed. DM removed. */}
             {/* End header */}
 
             <div className={styles.tabs}>

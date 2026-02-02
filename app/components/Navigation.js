@@ -102,8 +102,8 @@ function Navigation() {
                         <Link href="/create" className={styles.link + (pathname === "/create" ? " " + styles.active : "")}>
                             <WriteIcon />
                         </Link>
-                        <Link href="/dms" className={`${styles.link} ${pathname === '/dms' ? styles.active : ''}`} onClick={() => setNotifications(prev => ({ ...prev, hasUnreadDMs: false }))}>
-                            <DMsIcon hasUnread={notifications.hasUnreadDMs} />
+                        <Link href="/activity" className={`${styles.link} ${pathname === '/activity' ? styles.active : ''}`}>
+                            <ActivityIcon hasNew={notifications.hasNewActivity} />
                         </Link>
                         <Link href="/profile" className={styles.link + (pathname === "/profile" ? " " + styles.active : "")}>
                             <UserIcon />

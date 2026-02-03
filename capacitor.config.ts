@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   webDir: 'public',
   server: {
     url: 'https://krappieren.com',
-    cleartext: true
+    cleartext: false
   },
   backgroundColor: '#000000',
   plugins: {

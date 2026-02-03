@@ -51,7 +51,7 @@ export default function ActivityPage() {
                                         </span>
                                         {item.context && (
                                             <Link href={`/thread/${item.postId}`} style={{ color: '#888', fontSize: 13, marginTop: 4, textDecoration: 'none', display: 'block' }}>
-                                                "{item.context.substring(0, 20)}..."
+                                                &quot;{item.context.substring(0, 20)}...&quot;
                                             </Link>
                                         )}
                                     </div>
@@ -73,7 +73,7 @@ export default function ActivityPage() {
                                         </span>
                                         {item.context && (
                                             <Link href={`/thread/${item.postId}`} style={{ color: '#888', fontSize: 13, marginTop: 4, textDecoration: 'none', display: 'block' }}>
-                                                "{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"
+                                                &quot;{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}&quot;
                                             </Link>
                                         )}
                                     </div>
@@ -95,7 +95,7 @@ export default function ActivityPage() {
                                         </span>
                                         {item.context && (
                                             <Link href={`/thread/${item.postId}`} style={{ color: '#888', fontSize: 13, marginTop: 4, textDecoration: 'none', display: 'block' }}>
-                                                "{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}"
+                                                &quot;{item.context.substring(0, 50)}{item.context.length > 50 ? '...' : ''}&quot;
                                             </Link>
                                         )}
                                     </div>

@@ -5,13 +5,19 @@ import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
-export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
+export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false, likeCount = 0, initialLiked = false }) {
     const { user } = useUser();
     const router = useRouter();
     const [showBanModal, setShowBanModal] = useState(false);
     const [banTarget, setBanTarget] = useState(null);
     const [banReason, setBanReason] = useState("");
     const [isBanning, setIsBanning] = useState(false);
+
+    // Stats State
+    const [likes, setLikes] = useState(likeCount);
+    const [liked, setLiked] = useState(initialLiked);
+    const [isFollowing, setIsFollowing] = useState(false); // Optimistic, ideally passed as prop
+
 
     // Long Press Logic State
     const timerRef = useRef(null);
@@ -31,10 +37,13 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
         isLongPress.current = false;
         timerRef.current = setTimeout(() => {
             isLongPress.current = true;
-            // Ban modal trigger for Yahweh
             if (user?.username?.toLowerCase() === 'donnieklyde' && !isYahweh(targetUser)) {
                 setBanTarget(targetUser);
                 setShowBanModal(true);
+            } else if (user?.username !== targetUser) {
+                // Determine functionality based on target
+                // If not Yahweh banning, then it's BOSS functionality (Follow)
+                toggleFollow(targetUser);
             }
             if (window.navigator && window.navigator.vibrate) {
                 try {
@@ -103,6 +112,57 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
         }
     };
 
+    const toggleFollow = async (targetUser) => {
+        if (!user) return router.push('/');
+
+        // Optimistic toggle (though we don't have visual state for follow in card yet, maybe toast?)
+        // The user request: "reimplement boss(following) functionality when longtap the name"
+        // And "shall all be noted in income flow" (handled by backend usually)
+
+        try {
+            const res = await fetch('/api/user/follow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ targetUsername: targetUser })
+            });
+            const data = await res.json();
+            if (data.following) {
+                alert(`You are now the BOSS of ${targetUser}`);
+            } else {
+                alert(`You fired ${targetUser}`);
+            }
+        } catch (err) {
+            console.error("Follow failed", err);
+        }
+    };
+
+    const toggleLike = async (e) => {
+        e.stopPropagation();
+        if (!user) return router.push('/');
+
+        const newLiked = !liked;
+        setLiked(newLiked);
+        setLikes(prev => newLiked ? prev + 1 : prev - 1);
+
+        try {
+            const endpoint = activeReplyId ? '/api/posts/comment/like' : '/api/posts/like'; // Need to distinguish comment vs post
+            // The prop 'id' is for Post. Comments are rendered recursively. 
+            // Wait, this PostCard handles the POST itself. The comments are children.
+            // If I click '$' on the main post:
+
+            await fetch('/api/posts/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId: id })
+            });
+        } catch (err) {
+            console.error("Like failed", err);
+            // Revert
+            setLiked(!newLiked);
+            setLikes(prev => !newLiked ? prev + 1 : prev - 1);
+        }
+    };
+
     return (
         <article className={styles.card} style={isStatic ? { height: 'auto', background: 'transparent' } : {}}>
             <div
@@ -127,13 +187,40 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
                     >
                         @{username}
                     </span>
-                    <span style={{ color: '#444' }}>•</span>
-                    <span>{time}</span>
                 </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: '#666', fontSize: 13 }}>{time}</span>
+                    {!isGuest && (
+                        <button
+                            onClick={toggleLike}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid #333',
+                                borderRadius: '50%',
+                                width: 24,
+                                height: 24,
+                                color: liked ? 'gold' : '#666',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 12,
+                                fontWeight: 'bold',
+                                transition: 'color 0.2s'
+                            }}
+                        >
+                            $
+                        </button>
+                    )}
+                    {likes > 0 && <span style={{ color: 'gold', fontSize: 12 }}>${likes}</span>}
+                </div>
+            </div>
 
-                <div className={styles.text}>{sanitizeText(content)}</div>
 
-                {!isGuest && (
+            <div className={styles.text}>{sanitizeText(content)}</div>
+
+            {
+                !isGuest && (
                     <div className={styles.commentsSection}>
                         {comments && comments.length > 0 ? (() => {
                             // 1. Organize comments into a tree
@@ -248,57 +335,60 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
                             <div className={styles.comment} style={{ fontStyle: 'italic', opacity: 0.5 }}>No comments yet.</div>
                         )}
                     </div>
-                )}
-            </div>
+                )
+            }
 
-            {showBanModal && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.9)', zIndex: 99999,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }} onClick={(e) => e.stopPropagation()}>
+            {
+                showBanModal && (
                     <div style={{
-                        background: '#220000', border: '2px solid red', padding: 20,
-                        width: '90%', maxWidth: 400, textAlign: 'center',
-                        display: 'flex', flexDirection: 'column', gap: 15
-                    }}>
-                        <h2 style={{ color: 'red', fontFamily: 'monospace', textTransform: 'uppercase' }}>
-                            JUDGMENT DAY
-                        </h2>
-                        <p style={{ color: 'white', fontFamily: 'monospace' }}>
-                            DELETE <strong>@{banTarget}</strong> FOREVER?
-                        </p>
-                        <textarea
-                            placeholder="REASON FOR EXECUTION"
-                            value={banReason}
-                            onChange={(e) => setBanReason(e.target.value)}
-                            style={{
-                                background: 'black', color: 'red', border: '1px solid red',
-                                padding: 10, fontFamily: 'monospace', minHeight: 80
-                            }}
-                        />
-                        <button
-                            onClick={executeBan}
-                            disabled={isBanning}
-                            style={{
-                                background: 'red', color: 'black', fontWeight: 'bold',
-                                padding: 15, border: 'none', cursor: 'pointer', fontFamily: 'monospace'
-                            }}
-                        >
-                            {isBanning ? "OBLITERATING..." : "EXECUTE"}
-                        </button>
-                        <button
-                            onClick={() => { setShowBanModal(false); setBanTarget(null); }}
-                            style={{
-                                background: 'transparent', color: '#666',
-                                border: 'none', cursor: 'pointer', fontFamily: 'monospace'
-                            }}
-                        >
-                            MERCY (CANCEL)
-                        </button>
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                        background: 'rgba(0,0,0,0.9)', zIndex: 99999,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{
+                            background: '#220000', border: '2px solid red', padding: 20,
+                            width: '90%', maxWidth: 400, textAlign: 'center',
+                            display: 'flex', flexDirection: 'column', gap: 15
+                        }}>
+                            <h2 style={{ color: 'red', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+                                JUDGMENT DAY
+                            </h2>
+                            <p style={{ color: 'white', fontFamily: 'monospace' }}>
+                                DELETE <strong>@{banTarget}</strong> FOREVER?
+                            </p>
+                            <textarea
+                                placeholder="REASON FOR EXECUTION"
+                                value={banReason}
+                                onChange={(e) => setBanReason(e.target.value)}
+                                style={{
+                                    background: 'black', color: 'red', border: '1px solid red',
+                                    padding: 10, fontFamily: 'monospace', minHeight: 80
+                                }}
+                            />
+                            <button
+                                onClick={executeBan}
+                                disabled={isBanning}
+                                style={{
+                                    background: 'red', color: 'black', fontWeight: 'bold',
+                                    padding: 15, border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                                }}
+                            >
+                                {isBanning ? "OBLITERATING..." : "EXECUTE"}
+                            </button>
+                            <button
+                                onClick={() => { setShowBanModal(false); setBanTarget(null); }}
+                                style={{
+                                    background: 'transparent', color: '#666',
+                                    border: 'none', cursor: 'pointer', fontFamily: 'monospace'
+                                }}
+                            >
+                                MERCY (CANCEL)
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </article>
+                )
+            }
+        </article >
     );
+
 }

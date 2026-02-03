@@ -12,7 +12,7 @@ export async function POST(req) {
 
     try {
         const body = await req.json();
-        let { username, languages, bio, avatar } = body;
+        let { username, languages, bio, avatar, link } = body;
 
         // SERVER-SIDE VALIDATION
         if (username) {
@@ -29,8 +29,8 @@ export async function POST(req) {
             }
         }
 
-        if (bio && bio.length > 100) {
-            return NextResponse.json({ error: 'Bio must be under 100 characters' }, { status: 400 });
+        if (bio && bio.length > 500) {
+            return NextResponse.json({ error: 'Bio must be under 500 characters' }, { status: 400 });
         }
 
         // Check for uniqueness if username is changing
@@ -53,6 +53,7 @@ export async function POST(req) {
         if (languages) updateData.languages = languages;
         if (bio !== undefined) updateData.bio = bio; // Allow empty string
         if (avatar) updateData.image = avatar; // Map avatar to image field
+        if (link !== undefined) updateData.link = link; // Support link updates
 
         // Always mark onboarded if we are updating? Or maybe keep it separate.
         // If username is provided, likely we are onboarding or fixing profile.

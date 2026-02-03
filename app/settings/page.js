@@ -15,10 +15,13 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (user) {
-            setUsername(user.username || "");
-            setBio(user.bio || "");
-            setLink(user.link || "");
-            setAvatar(user.avatar || "");
+            const t = setTimeout(() => {
+                setUsername(user.username || "");
+                setBio(user.bio || "");
+                setLink(user.link || "");
+                setAvatar(user.avatar || "");
+            }, 0);
+            return () => clearTimeout(t);
         }
     }, [user]);
 

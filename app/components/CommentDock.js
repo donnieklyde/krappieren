@@ -15,18 +15,24 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
 
     // Reset comment when switching posts
     useEffect(() => {
-        setComment("");
-        setShowSuggestions(false);
+        const t = setTimeout(() => {
+            setComment("");
+            setShowSuggestions(false);
+        }, 0);
+        return () => clearTimeout(t);
     }, [postId]);
 
     // Auto-fill @username when replying
     useEffect(() => {
         if (replyTo) {
-            setComment(`@${replyTo.user} `);
+            const t = setTimeout(() => {
+                setComment(`@${replyTo.user} `);
+            }, 0);
             // Focus and move cursor to end
             if (textareaRef.current) {
                 textareaRef.current.focus();
             }
+            return () => clearTimeout(t);
         }
     }, [replyTo]);
 
@@ -100,7 +106,7 @@ export default function CommentDock({ postId, replyTo, onCancelReply }) {
                 <div className={styles.preview}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontSize: 12, color: '#aaa' }}>Replying to <b style={{ color: 'white' }}>@{replyTo.user}</b></span>
-                        <span style={{ color: '#ccc', fontStyle: 'italic', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 13 }}>"{sanitizeText(replyTo.text)}"</span>
+                        <span style={{ color: '#ccc', fontStyle: 'italic', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 13 }}>&quot;{sanitizeText(replyTo.text)}&quot;</span>
                     </div>
                     <button
                         onClick={(e) => { e.stopPropagation(); onCancelReply(); }}

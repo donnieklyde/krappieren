@@ -40,11 +40,11 @@ export function UserProvider({ children }) {
         }
 
         if (stored) {
-            setUser(stored);
+            setTimeout(() => setUser(stored), 0);
         } else {
             // New user or fresh login on this device
             // Prioritize Session data from DB
-            setUser(prev => ({
+            setTimeout(() => setUser(prev => ({
                 ...prev,
                 username: session.user.username || session.user.name?.replace(/\s+/g, '').toLowerCase() || "newuser",
                 email: session.user.email,
@@ -52,7 +52,7 @@ export function UserProvider({ children }) {
                 // Only optimistic if we actually have a valid username
                 isOnboarded: (session.user.username && session.user.username.toLowerCase() !== 'newuser'),
                 languages: session.user.languages || prev.languages
-            }));
+            })), 0);
         }
 
         // Sync with DB (username, etc.)

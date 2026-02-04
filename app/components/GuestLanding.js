@@ -98,7 +98,7 @@ export default function GuestLanding() {
 
     const handleUsernameChange = (e) => {
         // Strict sanitization: A-Z SPACE only
-        const val = e.target.value.toUpperCase().replace(/[^A-Z ]/g, '');
+        const val = e.target.value.toUpperCase().replace(/[^A-ZÄÖÜẞ ]/g, '');
         setUsername(val);
         setError("");
     };

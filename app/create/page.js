@@ -29,7 +29,7 @@ export default function CreatePage() {
             const language = detectLanguage(content);
             console.log("Detected language:", language);
 
-            await addPost(content.toUpperCase(), {
+            await addPost(content, {
                 username: user.username,
                 avatarUrl: user.avatar || ""
             }, language);

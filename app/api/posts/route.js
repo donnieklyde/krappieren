@@ -99,9 +99,9 @@ export async function GET(request) {
                 user: c.author.username || 'Anonymous',
                 replyTo: c.replyToId ? { id: c.replyToId } : null
             })),
-            language: p.language
+            language: p.language,
+            hasLiked: currentUserId ? p.likes.some(like => like.userId === currentUserId) : false
         }));
-
         return NextResponse.json(formattedPosts);
     } catch (error) {
         // Silent error handling for production

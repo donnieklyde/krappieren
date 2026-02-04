@@ -5,13 +5,17 @@ import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
-export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
+export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false, likes = 0, hasLiked = false }) {
     const { user } = useUser();
     const router = useRouter();
     const [showBanModal, setShowBanModal] = useState(false);
     const [banTarget, setBanTarget] = useState(null);
     const [banReason, setBanReason] = useState("");
     const [isBanning, setIsBanning] = useState(false);
+
+    // Likes / Same Here State
+    const [likeCount, setLikeCount] = useState(likes);
+    const [isLiked, setIsLiked] = useState(hasLiked);
 
     // Stats State
 
@@ -111,12 +115,34 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
         }
     };
 
+    const toggleSameHere = async () => {
+        if (!user) return;
+
+        const previousLiked = isLiked;
+        const previousCount = likeCount;
+
+        setIsLiked(!previousLiked);
+        setLikeCount(prev => previousLiked ? prev - 1 : prev + 1);
+
+        try {
+            const res = await fetch('/api/posts/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId: id })
+            });
+
+            if (!res.ok) {
+                setIsLiked(previousLiked);
+                setLikeCount(previousCount);
+            }
+        } catch (err) {
+            setIsLiked(previousLiked);
+            setLikeCount(previousCount);
+        }
+    };
+
     const toggleFollow = async (targetUser) => {
         if (!user) return router.push('/');
-
-        // Optimistic toggle (though we don't have visual state for follow in card yet, maybe toast?)
-        // The user request: "reimplement boss(following) functionality when longtap the name"
-        // And "shall all be noted in income flow" (handled by backend usually)
 
         try {
             const res = await fetch('/api/user/follow', {
@@ -134,6 +160,7 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
             console.error("Follow failed", err);
         }
     };
+
 
 
 
@@ -165,6 +192,22 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ color: '#666', fontSize: 13 }}>{time}</span>
 
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <button
+                        className={styles.sameHereBtn}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSameHere();
+                        }}
+                        style={{
+                            fontWeight: isLiked ? 'bold' : 'normal',
+                            opacity: isLiked ? 1 : 0.5
+                        }}
+                    >
+                        same here {likeCount > 0 && `(${likeCount})`}
+                    </button>
+                    <span style={{ color: '#666', fontSize: 13 }}>{time}</span>
                 </div>
             </div>
 

@@ -5,7 +5,7 @@ import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 import { sanitizeText } from "../utils/sanitizer";
 
-export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false, likeCount = 0, initialLiked = false }) {
+export default function PostCard({ id, username, content, time, avatarUrl, comments = [], isStatic = false, onReply, activeReplyId, isGuest = false }) {
     const { user } = useUser();
     const router = useRouter();
     const [showBanModal, setShowBanModal] = useState(false);
@@ -14,8 +14,7 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
     const [isBanning, setIsBanning] = useState(false);
 
     // Stats State
-    const [likes, setLikes] = useState(likeCount);
-    const [liked, setLiked] = useState(initialLiked);
+
     const [isFollowing, setIsFollowing] = useState(false); // Optimistic, ideally passed as prop
 
 
@@ -136,32 +135,7 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
         }
     };
 
-    const toggleLike = async (e) => {
-        e.stopPropagation();
-        if (!user) return router.push('/');
 
-        const newLiked = !liked;
-        setLiked(newLiked);
-        setLikes(prev => newLiked ? prev + 1 : prev - 1);
-
-        try {
-            const endpoint = activeReplyId ? '/api/posts/comment/like' : '/api/posts/like'; // Need to distinguish comment vs post
-            // The prop 'id' is for Post. Comments are rendered recursively. 
-            // Wait, this PostCard handles the POST itself. The comments are children.
-            // If I click '$' on the main post:
-
-            await fetch('/api/posts/like', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ postId: id })
-            });
-        } catch (err) {
-            console.error("Like failed", err);
-            // Revert
-            setLiked(!newLiked);
-            setLikes(prev => !newLiked ? prev + 1 : prev - 1);
-        }
-    };
 
     return (
         <article className={styles.card} style={isStatic ? { height: 'auto', background: 'transparent' } : {}}>
@@ -190,29 +164,7 @@ export default function PostCard({ id, username, content, time, avatarUrl, comme
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ color: '#666', fontSize: 13 }}>{time}</span>
-                    {!isGuest && (
-                        <button
-                            onClick={toggleLike}
-                            style={{
-                                background: 'transparent',
-                                border: '1px solid #333',
-                                borderRadius: '50%',
-                                width: 24,
-                                height: 24,
-                                color: liked ? 'gold' : '#666',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: 12,
-                                fontWeight: 'bold',
-                                transition: 'color 0.2s'
-                            }}
-                        >
-                            $
-                        </button>
-                    )}
-                    {likes > 0 && <span style={{ color: 'gold', fontSize: 12 }}>${likes}</span>}
+
                 </div>
             </div>
 
